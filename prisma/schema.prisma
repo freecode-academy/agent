@@ -1,3 +1,5 @@
+// Внимание! Не трогать эту схему и не создавать новые миграции!
+
 generator client {
   provider      = "prisma-client-js"
   binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
@@ -12,6 +14,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum userType {
+  Human
+  AI
+}
+
 enum UserStatus {
   newbie
   active
@@ -19,20 +26,36 @@ enum UserStatus {
 }
 
 model User {
-  id        String     @id @default(cuid()) @db.VarChar(36)
-  createdAt DateTime   @default(now()) @db.Timestamp(3)
-  updatedAt DateTime   @default(now()) @updatedAt @db.Timestamp(3)
-  status    UserStatus @default(active)
-  username  String?
-  password  String?    @db.VarChar(72)
-  email     String?
-  phone     String?
-  fullname  String?
-  image     String?    @db.Text
-  sudo      Boolean    @default(false)
-  data      Json?
-  intro     String?    @db.Text
-  content   String?    @db.Text
+  id               String     @id @default(cuid()) @db.VarChar(36)
+  createdAt        DateTime   @default(now()) @db.Timestamp(3)
+  updatedAt        DateTime   @default(now()) @updatedAt @db.Timestamp(3)
+  status           UserStatus @default(active)
+  username         String?
+  email            String?
+  phone            String?
+  showEmail        Boolean    @default(false)
+  showPhone        Boolean    @default(false)
+  showFullname     Boolean    @default(true)
+  password         String?    @db.VarChar(72)
+  fullname         String?
+  image            String?    @db.Text
+  address          String?    @db.Text
+  active           Boolean?
+  blocked          Boolean    @default(false)
+  activated        Boolean?
+  deleted          Boolean?
+  hidden           Boolean?
+  sudo             Boolean?   @default(false)
+  CreatedBy        String?    @db.VarChar(36)
+  EthAccountAuthed String?    @db.VarChar(36)
+  isMentor         Boolean    @default(value: false)
+  technologyLevel  Int?       @db.SmallInt
+  telegram         String?
+  type             userType   @default(Human)
+  data             Json?
+  intro            String?    @db.Text
+  content          String?    @db.Text
+  rating           Int        @default(0)
 
   Tokens          Token[]
   EthAccount      EthAccount?
@@ -67,8 +90,45 @@ model User {
   Referrals  User[]  @relation(name: "Referrer")
   referrerId String? @db.VarChar(36)
 
+  // Relations from source schema
+  Careers                                      Career[]
+  CodeChallenges                               CodeChallenge[]
+  CodeChallengeBlocks                          CodeChallengeBlock[]
+  CodeChallengeCompletions                     CodeChallengeCompletion[]
+  Files                                        File[]
+  Positions_PositionToUser                     Position[]
+  Projects_ProjectToUser                       Project[]
+  ProjectMembers_ProjectMember_CreatedByToUser ProjectMember[]           @relation("ProjectMember_CreatedByToUser")
+  ProjectMembers_ProjectMember_UserToUser      ProjectMember[]           @relation("ProjectMember_UserToUser")
+  ProjectTasks                                 ProjectTask[]
+  ResetPasswords                               ResetPassword[]
+  Resources                                    Resource[]
+  ResourceTags                                 ResourceTag[]
+  TaskMembers_TaskMember_CreatedByToUser       TaskMember[]              @relation("TaskMember_CreatedByToUser")
+  TaskMembers_TaskMember_UserToUser            TaskMember[]              @relation("TaskMember_UserToUser")
+  TaskReactions                                TaskReaction[]
+  TaskTechnologies                             TaskTechnology[]
+  Teams                                        Team[]
+  TeamMembers_TeamMember_CreatedByToUser       TeamMember[]              @relation("TeamMember_CreatedByToUser")
+  TeamMembers_TeamMember_UserToUser            TeamMember[]              @relation("TeamMember_UserToUser")
+  Technologies                                 Technology[]
+  TechnologyLessons                            TechnologyLesson[]
+  TechnologyLessonUsers                        TechnologyLessonUser[]
+  Timers                                       Timer[]
+  UserTechnologies                             UserTechnology[]
+  Positions_PositionUsers                      Position[]                @relation("PositionUsers")
+  Projects_PrismaProjectUsers                  Project[]                 @relation("PrismaProjectUsers")
+  LearnStrategies                              LearnStrategy[]
+  UserLearnStrategies                          UserLearnStrategy[]
+  MentorMenteeMentors                          MentorMentee[]            @relation("MentorMenteeMentor")
+  MentorMenteeMentees                          MentorMentee[]            @relation("MentorMenteeMentee")
+  ChatMessages                                 ChatMessage[]             @relation(name: "ChatMessageCreatedBy")
+  IncomeChatMessages                           ChatMessage[]             @relation(name: "ChatMessageUserTo")
+
   @@unique([email])
   @@unique([username])
+  @@index([CreatedBy], map: "User_CreatedBy")
+  @@index([EthAccountAuthed], map: "User_EthAccountAuthed")
 }
 
 model Token {
@@ -165,16 +225,23 @@ model MindLog {
 
 enum TaskStatus {
   New
+  Accepted
   Rejected
   Progress
+  Paused
   Done
+  Discuss
+  Approved
+  RevisionsRequired
+  Completed
 }
 
 model Task {
   id               String     @id @default(cuid()) @db.VarChar(36)
   createdAt        DateTime   @default(now()) @db.Timestamp(3)
   updatedAt        DateTime   @default(now()) @updatedAt @db.Timestamp(3)
-  title            String     @db.Text
+  name             String     @db.Text
+  title            String?    @db.Text
   description      String?    @db.Text
   content          String?    @db.Text
   status           TaskStatus @default(value: New)
@@ -182,6 +249,7 @@ model Task {
   endDatePlaning   DateTime?
   startDate        DateTime?
   endDate          DateTime?
+  needHelp         Boolean?
 
   createdById String @db.VarChar(36)
   CreatedBy   User   @relation(fields: [createdById], references: [id], onDelete: Cascade, name: "TaskCreatedBy")
@@ -189,11 +257,28 @@ model Task {
   assigneeId String? @db.VarChar(36)
   Assignee   User?   @relation(fields: [assigneeId], references: [id], onDelete: Cascade, name: "TaskAssignee")
 
+  ChatRoom                String?   @db.VarChar(36)
+  ChatRoom_ChatRoomToTask ChatRoom? @relation(fields: [ChatRoom], references: [id])
+
+  projectId String?  @db.VarChar(36)
+  Project   Project? @relation(fields: [projectId], references: [id])
+
+  WorkLogs                 TaskWorkLog[]
+  CodeChallengeCompletions CodeChallengeCompletion[]
+  ProjectTasks             ProjectTask[]
+  Resources                Resource[]
+  TaskMembers              TaskMember[]
+  TaskReactions            TaskReaction[]
+  TaskTechnologies         TaskTechnology[]
+  Timers                   Timer[]
+
   parentId String? @db.VarChar(36)
-  Parent   Task?   @relation(fields: [parentId], references: [id], onDelete: Cascade, name: "TaskChildren")
+  Parent   Task?   @relation(fields: [parentId], references: [id], name: "TaskChildren")
   Children Task[]  @relation(name: "TaskChildren")
 
-  WorkLogs TaskWorkLog[]
+  @@index([ChatRoom], map: "Task_ChatRoom")
+  @@index([createdById], map: "Task_createdById")
+  @@index([parentId], map: "Task_parentId")
 }
 
 model TaskWorkLog {
@@ -860,4 +945,798 @@ model PostRevision {
 
   @@index([postId])
   @@index([createdAt])
+}
+
+// ============================================
+// Models from source schema (freecode.academy)
+// ============================================
+
+model File {
+  id            String    @id @default(cuid()) @db.VarChar(36)
+  path          String    @db.Text
+  name          String?   @db.Text
+  filename      String?   @db.Text
+  mimetype      String    @db.Text
+  encoding      String    @db.Text
+  hash          String?   @db.Text
+  size          Decimal?
+  ImageResource String?   @db.VarChar(36)
+  CreatedBy     String?   @db.VarChar(36)
+  rank          Int?
+  Gallery       String?   @db.VarChar(36)
+  createdAt     DateTime  @default(now()) @db.Timestamp(3)
+  updatedAt     DateTime  @default(now()) @updatedAt @db.Timestamp(3)
+  User          User?     @relation(fields: [CreatedBy], references: [id])
+  Resource      Resource? @relation(fields: [ImageResource], references: [id])
+  Projects      Project[]
+
+  @@index([CreatedBy], map: "File_CreatedBy")
+  @@index([Gallery], map: "File_Gallery")
+  @@index([ImageResource], map: "File_ImageResource")
+}
+
+model Career {
+  id          String    @id @default(cuid()) @db.VarChar(36)
+  createdAt   DateTime  @default(now()) @db.Timestamp(3)
+  updatedAt   DateTime  @default(now()) @updatedAt @db.Timestamp(3)
+  name        String?   @db.Text
+  description String?   @db.Text
+  start_date  DateTime?
+  CreatedBy   String?   @db.VarChar(36)
+  User        User?     @relation(fields: [CreatedBy], references: [id])
+
+  @@index([CreatedBy], map: "Career_CreatedBy")
+}
+
+model ChatMessageOld {
+  id          String    @id @default(cuid()) @db.VarChar(36)
+  createdAt   DateTime  @default(now()) @db.Timestamp(3)
+  updatedAt   DateTime  @default(now()) @updatedAt @db.Timestamp(3)
+  content     Json?
+  contentText String?   @db.Text
+  CreatedBy   String?   @db.VarChar(36)
+  Room        String?   @db.VarChar(36)
+  ChatRoom    ChatRoom? @relation(fields: [Room], references: [id])
+  toUser      String?   @db.VarChar(36)
+
+  @@index([CreatedBy], map: "ChatMessageOld_CreatedBy")
+  @@index([Room], map: "ChatMessageOld_Room")
+}
+
+model ChatRoom {
+  id              String           @id @default(cuid()) @db.VarChar(36)
+  createdAt       DateTime         @default(now()) @db.Timestamp(3)
+  updatedAt       DateTime         @default(now()) @updatedAt @db.Timestamp(3)
+  name            String           @db.Text
+  description     String?          @db.Text
+  image           String?          @db.Text
+  code            String?          @unique @db.VarChar(36)
+  isPublic        Boolean?
+  CreatedBy       String?          @db.VarChar(36)
+  ChatMessageOlds ChatMessageOld[]
+  Tasks           Task[]
+
+  @@index([CreatedBy], map: "ChatRoom_CreatedBy")
+}
+
+model CodeChallenge {
+  id                       String                    @id @default(cuid()) @db.VarChar(36)
+  externalKey              String?                   @unique @db.VarChar(36)
+  createdAt                DateTime                  @default(now()) @db.Timestamp(3)
+  updatedAt                DateTime                  @default(now()) @updatedAt @db.Timestamp(3)
+  name                     String?                   @db.Text
+  dashedName               String?                   @db.Text
+  localeTitle              String?                   @db.Text
+  description              String?                   @db.Text
+  challengeType            Int?
+  forumTopicId             Int?
+  translations             Json?
+  tests                    Json?
+  solutions                Json?
+  instructions             String?                   @db.Text
+  files                    Json?
+  videoUrl                 String?                   @db.Text
+  order                    Int?
+  superOrder               Int?
+  challengeOrder           Int?
+  required                 Json?
+  isRequired               Boolean?
+  isPrivate                Boolean?
+  isBeta                   Boolean?
+  template                 String?                   @db.Text
+  time                     String?                   @db.Text
+  rank                     Int?
+  Block                    String?                   @db.VarChar(36)
+  CreatedBy                String?                   @db.VarChar(36)
+  Topic                    String?                   @db.VarChar(36)
+  CodeChallengeBlock       CodeChallengeBlock?       @relation(fields: [Block], references: [id])
+  User                     User?                     @relation(fields: [CreatedBy], references: [id])
+  Resource                 Resource?                 @relation(fields: [Topic], references: [id])
+  CodeChallengeCompletions CodeChallengeCompletion[]
+
+  @@index([Block], map: "CodeChallenge_Block")
+  @@index([CreatedBy], map: "CodeChallenge_CreatedBy")
+  @@index([Topic], map: "CodeChallenge_Topic")
+}
+
+model CodeChallengeBlock {
+  id                       String               @id @default(cuid()) @db.VarChar(36)
+  externalKey              String?              @db.Text
+  createdAt                DateTime             @default(now()) @db.Timestamp(3)
+  updatedAt                DateTime             @default(now()) @updatedAt @db.Timestamp(3)
+  name                     String?              @db.Text
+  rank                     Int?
+  CreatedBy                String?              @db.VarChar(36)
+  Parent                   String?              @db.VarChar(36)
+  User                     User?                @relation(fields: [CreatedBy], references: [id])
+  CodeChallengeBlock       CodeChallengeBlock?  @relation("CodeChallengeBlockToCodeChallengeBlock_Parent", fields: [Parent], references: [id])
+  CodeChallenge            CodeChallenge[]
+  other_CodeChallengeBlock CodeChallengeBlock[] @relation("CodeChallengeBlockToCodeChallengeBlock_Parent")
+
+  @@index([CreatedBy], map: "CodeChallengeBlock_CreatedBy")
+  @@index([Parent], map: "CodeChallengeBlock_Parent")
+}
+
+model CodeChallengeCompletion {
+  id                                                   String         @id @default(cuid()) @db.VarChar(36)
+  createdAt                                            DateTime       @default(now()) @db.Timestamp(3)
+  updatedAt                                            DateTime       @default(now()) @updatedAt @db.Timestamp(3)
+  Task                                                 String?        @db.VarChar(36)
+  CreatedBy                                            String?        @db.VarChar(36)
+  CodeChallenge                                        String?        @db.VarChar(36)
+  content                                              String?        @db.Text
+  success                                              Boolean?
+  CodeChallenge_CodeChallengeToCodeChallengeCompletion CodeChallenge? @relation(fields: [CodeChallenge], references: [id])
+  User                                                 User?          @relation(fields: [CreatedBy], references: [id])
+  Task_CodeChallengeCompletionToTask                   Task?          @relation(fields: [Task], references: [id])
+
+  @@index([CodeChallenge], map: "CodeChallengeCompletion_CodeChallenge")
+  @@index([CreatedBy], map: "CodeChallengeCompletion_CreatedBy")
+  @@index([Task], map: "CodeChallengeCompletion_Task")
+}
+
+model NotificationType {
+  id        String   @id @default(cuid()) @db.VarChar(36)
+  createdAt DateTime @default(now()) @db.Timestamp(3)
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamp(3)
+  name      String   @db.Text
+  code      String?  @unique @db.VarChar(36)
+  comment   String?  @db.Text
+  CreatedBy String?  @db.VarChar(36)
+
+  @@index([CreatedBy], map: "NotificationType_CreatedBy")
+}
+
+model Position {
+  id                  String   @id @default(cuid()) @db.VarChar(36)
+  code                String?  @unique @db.VarChar(36)
+  name                String   @db.Text
+  CreatedBy           String?  @db.VarChar(36)
+  createdAt           DateTime @default(now()) @db.Timestamp(3)
+  updatedAt           DateTime @default(now()) @updatedAt @db.Timestamp(3)
+  User_PositionToUser User?    @relation(fields: [CreatedBy], references: [id])
+  User_PositionUsers  User[]   @relation("PositionUsers")
+
+  @@index([CreatedBy], map: "Position_CreatedBy")
+}
+
+enum ProjectStatus {
+  New
+  Accepted
+  Rejected
+  Processing
+  Completed
+  Reopened
+}
+
+enum ProjectType {
+  Education
+}
+
+model Project {
+  id                                        String          @id @default(cuid()) @db.VarChar(36)
+  name                                      String          @db.Text
+  domain                                    String?         @db.Text
+  createdAt                                 DateTime        @default(now()) @db.Timestamp(3)
+  updatedAt                                 DateTime        @default(now()) @updatedAt @db.Timestamp(3)
+  description                               String?         @db.Text
+  url                                       String?         @db.Text
+  content                                   Json?
+  contentText                               String?         @db.Text
+  status                                    ProjectStatus?  @default(value: New)
+  public                                    Boolean?
+  CreatedBy                                 String?         @db.VarChar(36)
+  Image                                     String?         @db.VarChar(36)
+  Team                                      String?         @db.VarChar(36)
+  Resource                                  String?         @db.VarChar(36)
+  type                                      ProjectType?
+  User_ProjectToUser                        User?           @relation(fields: [CreatedBy], references: [id])
+  File                                      File?           @relation(fields: [Image], references: [id])
+  Resource_Project_ResourceToResource       Resource?       @relation("Project_ResourceToResource", fields: [Resource], references: [id])
+  Team_ProjectToTeam                        Team?           @relation(fields: [Team], references: [id])
+  ProjectMembers                            ProjectMember[]
+  ProjectTasks                              ProjectTask[]
+  Resources_ProjectToResource_PrismaProject Resource[]      @relation("ProjectToResource_PrismaProject")
+  User_PrismaProjectUsers                   User[]          @relation("PrismaProjectUsers")
+  Team_ProjectCustomers                     Team[]          @relation("ProjectCustomers")
+  Tasks                                     Task[]
+
+  @@index([CreatedBy], map: "Project_CreatedBy")
+  @@index([Image], map: "Project_Image")
+  @@index([Resource], map: "Project_Resource")
+  @@index([Team], map: "Project_Team")
+}
+
+enum ProjectMemberStatus {
+  Invited
+  Active
+  Fired
+  Quit
+}
+
+model ProjectMember {
+  id                                 String              @id @default(cuid()) @db.VarChar(36)
+  status                             ProjectMemberStatus @default(value: Active)
+  User                               String?             @db.VarChar(36)
+  CreatedBy                          String?             @db.VarChar(36)
+  Project                            String?             @db.VarChar(36)
+  createdAt                          DateTime            @default(now()) @db.Timestamp(3)
+  updatedAt                          DateTime            @default(now()) @updatedAt @db.Timestamp(3)
+  User_ProjectMember_CreatedByToUser User?               @relation("ProjectMember_CreatedByToUser", fields: [CreatedBy], references: [id])
+  Project_ProjectToProjectMember     Project?            @relation(fields: [Project], references: [id])
+  User_ProjectMember_UserToUser      User?               @relation("ProjectMember_UserToUser", fields: [User], references: [id])
+  Services                           Service[]           @relation("ProjectMemberServices")
+
+  @@index([CreatedBy], map: "ProjectMember_CreatedBy")
+  @@index([Project], map: "ProjectMember_Project")
+  @@index([User], map: "ProjectMember_User")
+}
+
+model ProjectTask {
+  id                           String   @id @default(cuid()) @db.VarChar(36)
+  createdAt                    DateTime @default(now()) @db.Timestamp(3)
+  updatedAt                    DateTime @default(now()) @updatedAt @db.Timestamp(3)
+  Project                      String?  @db.VarChar(36)
+  Task                         String?  @db.VarChar(36)
+  CreatedBy                    String?  @db.VarChar(36)
+  User                         User?    @relation(fields: [CreatedBy], references: [id])
+  Project_ProjectToProjectTask Project? @relation(fields: [Project], references: [id])
+  Task_ProjectTaskToTask       Task?    @relation(fields: [Task], references: [id])
+
+  @@index([CreatedBy], map: "ProjectTask_CreatedBy")
+  @@index([Project], map: "ProjectTask_Project")
+  @@index([Task], map: "ProjectTask_Task")
+}
+
+model ResetPassword {
+  id                       String    @id @default(cuid()) @db.VarChar(36)
+  createdAt                DateTime  @default(now()) @db.Timestamp(3)
+  updatedAt                DateTime  @default(now()) @updatedAt @db.Timestamp(3)
+  code                     String    @db.VarChar(36)
+  password                 String
+  validTill                DateTime?
+  User                     String    @db.VarChar(36)
+  User_ResetPasswordToUser User      @relation(fields: [User], references: [id])
+
+  @@index([User], map: "ResetPassword_User")
+}
+
+enum ResourceType {
+  Blog
+  Comment
+  PersonalBlog
+  Project
+  Resource
+  Service
+  Team
+  Topic
+}
+
+model Resource {
+  id          String       @id @default(cuid()) @db.VarChar(36)
+  code        String?      @unique @db.VarChar(36)
+  createdAt   DateTime     @default(now()) @db.Timestamp(3)
+  updatedAt   DateTime     @default(now()) @updatedAt @db.Timestamp(3)
+  type        ResourceType @default(value: Resource)
+  name        String?      @db.Text
+  longtitle   String?      @db.Text
+  content     Json?
+  contentText String?      @db.Text
+
+  intro                                     String?         @db.Text
+  contentV2                                 String?         @db.Text
+  published                                 Boolean         @default(true)
+  deleted                                   Boolean         @default(false)
+  hidemenu                                  Boolean         @default(false)
+  searchable                                Boolean         @default(true)
+  uri                                       String
+  isfolder                                  Boolean
+  rating                                    Decimal?
+  positiveVotesCount                        Int?
+  negativeVotesCount                        Int?
+  neutralVotesCount                         Int?
+  oldID                                     Int?            @unique
+  commentOldID                              Int?            @unique
+  class_key                                 String?         @db.Text
+  template                                  Int?
+  mockUpdate                                DateTime?
+  components                                Json?
+  Parent                                    String?         @db.VarChar(36)
+  Team                                      String?         @db.VarChar(36)
+  Service                                   String?         @db.VarChar(36)
+  EthAccount                                String?         @db.VarChar(36)
+  PrismaProject                             String?         @db.VarChar(36)
+  CreatedBy                                 String?         @db.VarChar(36)
+  Topic                                     String?         @db.VarChar(36)
+  Blog                                      String?         @db.VarChar(36)
+  Task                                      String?         @db.VarChar(36)
+  Resource_ResourceToResource_Blog          Resource?       @relation("ResourceToResource_Blog", fields: [Blog], references: [id])
+  User                                      User?           @relation(fields: [CreatedBy], references: [id])
+  Resource_ResourceToResource_Parent        Resource?       @relation("ResourceToResource_Parent", fields: [Parent], references: [id])
+  Project_ProjectToResource_PrismaProject   Project?        @relation("ProjectToResource_PrismaProject", fields: [PrismaProject], references: [id])
+  Service_ResourceToService                 Service?        @relation(fields: [Service], references: [id])
+  Task_ResourceToTask                       Task?           @relation(fields: [Task], references: [id])
+  Team_ResourceToTeam                       Team?           @relation(fields: [Team], references: [id])
+  Resource_ResourceToResource_Topic         Resource?       @relation("ResourceToResource_Topic", fields: [Topic], references: [id])
+  CodeChallenges                            CodeChallenge[]
+  Files                                     File[]
+  Projects_Project_ResourceToResource       Project[]       @relation("Project_ResourceToResource")
+  other_Resource_ResourceToResource_Blogs   Resource[]      @relation("ResourceToResource_Blog")
+  other_Resource_ResourceToResource_Parents Resource[]      @relation("ResourceToResource_Parent")
+  other_Resource_ResourceToResource_Topics  Resource[]      @relation("ResourceToResource_Topic")
+  ResourceTags                              ResourceTag[]
+  Votes                                     Vote[]
+
+  @@unique([uri])
+  @@index([Blog], map: "Resource_Blog")
+  @@index([CreatedBy], map: "Resource_CreatedBy")
+  @@index([EthAccount], map: "Resource_EthAccount")
+  @@index([Parent], map: "Resource_Parent")
+  @@index([PrismaProject], map: "Resource_PrismaProject")
+  @@index([Service], map: "Resource_Service")
+  @@index([Task], map: "Resource_Task")
+  @@index([Team], map: "Resource_Team")
+  @@index([Topic], map: "Resource_Topic")
+}
+
+model ResourceTag {
+  id                             String    @id @default(cuid()) @db.VarChar(36)
+  createdAt                      DateTime  @default(now()) @db.Timestamp(3)
+  updatedAt                      DateTime  @default(now()) @updatedAt @db.Timestamp(3)
+  status                         String
+  CreatedBy                      String?   @db.VarChar(36)
+  Resource                       String?   @db.VarChar(36)
+  Tag                            String?   @db.VarChar(36)
+  User                           User?     @relation(fields: [CreatedBy], references: [id])
+  Resource_ResourceToResourceTag Resource? @relation(fields: [Resource], references: [id])
+  Tag_ResourceTagToTag           Tag?      @relation(fields: [Tag], references: [id])
+
+  @@index([CreatedBy], map: "ResourceTag_CreatedBy")
+  @@index([Resource], map: "ResourceTag_Resource")
+  @@index([Tag], map: "ResourceTag_Tag")
+}
+
+model Service {
+  id              String           @id @default(cuid()) @db.VarChar(36)
+  name            String?          @db.Text
+  description     String?          @db.Text
+  code            String?          @unique @db.VarChar(36)
+  rank            Int?
+  oldID           Int?             @unique
+  Category        String?          @db.VarChar(36)
+  Parent          String?          @db.VarChar(36)
+  CreatedBy       String?          @db.VarChar(36)
+  createdAt       DateTime         @default(now()) @db.Timestamp(3)
+  updatedAt       DateTime         @default(now()) @updatedAt @db.Timestamp(3)
+  ServiceCategory ServiceCategory? @relation(fields: [Category], references: [id])
+  Service         Service?         @relation("ServiceToService_Parent", fields: [Parent], references: [id])
+  Resources       Resource[]
+  other_Services  Service[]        @relation("ServiceToService_Parent")
+  ProjectMembers  ProjectMember[]  @relation("ProjectMemberServices")
+
+  @@index([Category], map: "Service_Category")
+  @@index([CreatedBy], map: "Service_CreatedBy")
+  @@index([Parent], map: "Service_Parent")
+}
+
+model ServiceCategory {
+  id                      String            @id @default(cuid()) @db.VarChar(36)
+  name                    String            @db.Text
+  description             String?           @db.Text
+  code                    String?           @unique @db.VarChar(36)
+  Parent                  String?           @db.VarChar(36)
+  CreatedBy               String?           @db.VarChar(36)
+  createdAt               DateTime          @default(now()) @db.Timestamp(3)
+  updatedAt               DateTime          @default(now()) @updatedAt @db.Timestamp(3)
+  ServiceCategory         ServiceCategory?  @relation("ServiceCategoryToServiceCategory_Parent", fields: [Parent], references: [id])
+  Services                Service[]
+  other_ServiceCategories ServiceCategory[] @relation("ServiceCategoryToServiceCategory_Parent")
+
+  @@index([CreatedBy], map: "ServiceCategory_CreatedBy")
+  @@index([Parent], map: "ServiceCategory_Parent")
+}
+
+enum TagStatus {
+  Active
+  Moderated
+  Blocked
+}
+
+model Tag {
+  id           String        @id @default(cuid()) @db.VarChar(36)
+  createdAt    DateTime      @default(now()) @db.Timestamp(3)
+  updatedAt    DateTime      @default(now()) @updatedAt @db.Timestamp(3)
+  name         String        @unique
+  status       TagStatus     @default(value: Active)
+  CreatedBy    String?       @db.VarChar(36)
+  ResourceTags ResourceTag[]
+
+  @@index([CreatedBy], map: "Tag_CreatedBy")
+}
+
+enum TaskMemberStatus {
+  Invited
+  Active
+  Fired
+  Quit
+}
+
+model TaskMember {
+  id                              String           @id @default(cuid()) @db.VarChar(36)
+  status                          TaskMemberStatus @default(value: Active)
+  Task                            String?          @db.VarChar(36)
+  User                            String?          @db.VarChar(36)
+  CreatedBy                       String?          @db.VarChar(36)
+  createdAt                       DateTime         @default(now()) @db.Timestamp(3)
+  updatedAt                       DateTime         @default(now()) @updatedAt @db.Timestamp(3)
+  User_TaskMember_CreatedByToUser User?            @relation("TaskMember_CreatedByToUser", fields: [CreatedBy], references: [id])
+  Task_TaskToTaskMember           Task?            @relation(fields: [Task], references: [id])
+  User_TaskMember_UserToUser      User?            @relation("TaskMember_UserToUser", fields: [User], references: [id])
+
+  @@index([CreatedBy], map: "TaskMember_CreatedBy")
+  @@index([Task], map: "TaskMember_Task")
+  @@index([User], map: "TaskMember_User")
+}
+
+enum TaskReactionType {
+  UpVote
+  DownVote
+}
+
+model TaskReaction {
+  id                      String           @id @default(cuid()) @db.VarChar(36)
+  createdAt               DateTime         @default(now()) @db.Timestamp(3)
+  updatedAt               DateTime         @default(now()) @updatedAt @db.Timestamp(3)
+  type                    TaskReactionType
+  Task                    String?          @db.VarChar(36)
+  CreatedBy               String           @db.VarChar(36)
+  User                    User             @relation(fields: [CreatedBy], references: [id])
+  Task_TaskToTaskReaction Task?            @relation(fields: [Task], references: [id])
+
+  @@index([CreatedBy], map: "TaskReaction_CreatedBy")
+  @@index([Task], map: "TaskReaction_Task")
+}
+
+model TaskTechnology {
+  id                                    String      @id @default(cuid()) @db.VarChar(36)
+  createdAt                             DateTime    @default(now()) @db.Timestamp(3)
+  updatedAt                             DateTime    @default(now()) @updatedAt @db.Timestamp(3)
+  level                                 Int?        @db.SmallInt
+  Technology                            String?     @db.VarChar(36)
+  Task                                  String?     @db.VarChar(36)
+  CreatedBy                             String      @db.VarChar(36)
+  User                                  User        @relation(fields: [CreatedBy], references: [id])
+  Task_TaskToTaskTechnology             Task?       @relation(fields: [Task], references: [id])
+  Technology_TaskTechnologyToTechnology Technology? @relation(fields: [Technology], references: [id])
+
+  @@unique([Task, Technology], map: "tt_task_tech_uniq")
+  @@index([CreatedBy], map: "TaskTechnology_CreatedBy")
+  @@index([Task], map: "TaskTechnology_Task")
+  @@index([Technology], map: "TaskTechnology_Technology")
+}
+
+enum TeamStatus {
+  Active
+  Inactive
+}
+
+model Team {
+  id                       String       @id @default(cuid()) @db.VarChar(36)
+  name                     String       @db.Text
+  status                   TeamStatus   @default(value: Active)
+  oldID                    Int?         @unique
+  address                  String?      @db.Text
+  website                  String?      @db.Text
+  email                    String?      @db.Text
+  phone                    String?      @db.Text
+  Parent                   String?      @db.VarChar(36)
+  createdAt                DateTime     @default(now()) @db.Timestamp(3)
+  updatedAt                DateTime     @default(now()) @updatedAt @db.Timestamp(3)
+  CreatedBy                String       @db.VarChar(36)
+  User                     User         @relation(fields: [CreatedBy], references: [id])
+  Team                     Team?        @relation("TeamToTeam_Parent", fields: [Parent], references: [id])
+  Projects_ProjectToTeam   Project[]
+  Resources                Resource[]
+  other_Teams              Team[]       @relation("TeamToTeam_Parent")
+  TeamMembers              TeamMember[]
+  Project_ProjectCustomers Project[]    @relation("ProjectCustomers")
+
+  @@index([CreatedBy], map: "Team_CreatedBy")
+  @@index([Parent], map: "Team_Parent")
+}
+
+enum TeamMemberStatus {
+  Invited
+  Active
+  Fired
+}
+
+model TeamMember {
+  id                              String           @id @default(cuid()) @db.VarChar(36)
+  status                          TeamMemberStatus @default(value: Active)
+  User                            String?          @db.VarChar(36)
+  Team                            String?          @db.VarChar(36)
+  CreatedBy                       String           @db.VarChar(36)
+  createdAt                       DateTime         @default(now()) @db.Timestamp(3)
+  updatedAt                       DateTime         @default(now()) @updatedAt @db.Timestamp(3)
+  User_TeamMember_CreatedByToUser User             @relation("TeamMember_CreatedByToUser", fields: [CreatedBy], references: [id])
+  Team_TeamToTeamMember           Team?            @relation(fields: [Team], references: [id])
+  User_TeamMember_UserToUser      User?            @relation("TeamMember_UserToUser", fields: [User], references: [id])
+
+  @@index([CreatedBy], map: "TeamMember_CreatedBy")
+  @@index([Team], map: "TeamMember_Team")
+  @@index([User], map: "TeamMember_User")
+}
+
+model Technology {
+  id                  String               @id @default(cuid()) @db.VarChar(36)
+  createdAt           DateTime             @default(now()) @db.Timestamp(3)
+  updatedAt           DateTime             @default(now()) @updatedAt @db.Timestamp(3)
+  name                String
+  description         String?              @db.Text
+  components          Json?
+  contentText         String?              @db.Text
+  site_url            String?              @db.Text
+  level1hours         Int?                 @db.Integer
+  level2hours         Int?                 @db.Integer
+  level3hours         Int?                 @db.Integer
+  level4hours         Int?                 @db.Integer
+  level5hours         Int?                 @db.Integer
+  CreatedBy           String               @db.VarChar(36)
+  User                User                 @relation(fields: [CreatedBy], references: [id])
+  TaskTechnologies    TaskTechnology[]
+  TechnologyLessons   TechnologyLesson[]
+  UserTechnologies    UserTechnology[]
+  LearnStrategyStages LearnStrategyStage[]
+
+  @@unique([name])
+  @@index([CreatedBy], map: "Technology_CreatedBy")
+}
+
+model TechnologyLesson {
+  id                                      String                 @id @default(cuid()) @db.VarChar(36)
+  name                                    String?                @db.Text
+  components                              Json?
+  contentText                             String?                @db.Text
+  CreatedBy                               String                 @db.VarChar(36)
+  User                                    User                   @relation(fields: [CreatedBy], references: [id])
+  Technology                              String                 @db.VarChar(36)
+  Technology_TechnologyToTechnologyLesson Technology             @relation(fields: [Technology], references: [id])
+  TechnologyLessonUsers                   TechnologyLessonUser[]
+
+  @@index([CreatedBy], map: "TechnologyLesson_CreatedBy")
+  @@index([Technology], map: "TechnologyLesson_Technology")
+}
+
+enum TechnologyLessonUserStatus {
+  Accepted
+  Completed
+}
+
+model TechnologyLessonUser {
+  id               String                     @id @default(cuid()) @db.VarChar(36)
+  createdAt        DateTime                   @default(now()) @db.Timestamp(3)
+  updatedAt        DateTime                   @default(now()) @updatedAt @db.Timestamp(3)
+  status           TechnologyLessonUserStatus @default(value: Accepted)
+  completedAt      DateTime?
+  CreatedBy        String                     @db.VarChar(36)
+  User             User                       @relation(fields: [CreatedBy], references: [id])
+  Lesson           String                     @db.VarChar(36)
+  TechnologyLesson TechnologyLesson           @relation(fields: [Lesson], references: [id])
+
+  @@index([CreatedBy], map: "TechnologyLessonUser_CreatedBy")
+  @@index([Lesson], map: "TechnologyLessonUser_Lesson")
+}
+
+model Timer {
+  id               String    @id @default(cuid()) @db.VarChar(36)
+  createdAt        DateTime  @default(now()) @db.Timestamp(3)
+  stopedAt         DateTime?
+  updatedAt        DateTime  @default(now()) @updatedAt @db.Timestamp(3)
+  content          String?   @db.Text
+  Task             String?   @db.VarChar(36)
+  CreatedBy        String?   @db.VarChar(36)
+  User             User?     @relation(fields: [CreatedBy], references: [id])
+  Task_TaskToTimer Task?     @relation(fields: [Task], references: [id])
+
+  @@index([CreatedBy], map: "Timer_CreatedBy")
+  @@index([Task], map: "Timer_Task")
+}
+
+enum UserTechnologyStatus {
+  PlanToStudy
+  RefusedToStudy
+  Study
+  RarelyUse
+  ActiveUse
+  NoLongerUse
+}
+
+enum UserTechnologyHiringStatus {
+  Active
+  Neutral
+  Negative
+}
+
+model UserTechnology {
+  id                                    String                      @id @default(cuid()) @db.VarChar(36)
+  createdAt                             DateTime                    @default(now()) @db.Timestamp(3)
+  updatedAt                             DateTime                    @default(now()) @updatedAt @db.Timestamp(3)
+  components                            Json?
+  date_from                             DateTime?
+  date_till                             DateTime?
+  status                                UserTechnologyStatus?
+  hiring_status                         UserTechnologyHiringStatus?
+  isMentor                              Boolean                     @default(value: false)
+  CreatedBy                             String                      @db.VarChar(36)
+  User                                  User                        @relation(fields: [CreatedBy], references: [id])
+  Technology                            String                      @db.VarChar(36)
+  Technology_TechnologyToUserTechnology Technology                  @relation(fields: [Technology], references: [id])
+  level                                 Int?                        @db.SmallInt
+  rating                                Int                         @default(0)
+
+  @@unique([CreatedBy, Technology], map: "ut_user_tech_uniq")
+  @@index([CreatedBy], map: "UserTechnology_CreatedBy")
+  @@index([Technology], map: "UserTechnology_Technology")
+}
+
+model Vote {
+  id                      String    @id @default(cuid()) @db.VarChar(36)
+  createdAt               DateTime  @default(now()) @db.Timestamp(3)
+  updatedAt               DateTime  @default(now()) @updatedAt @db.Timestamp(3)
+  value                   Decimal
+  Resource                String?   @db.VarChar(36)
+  User                    String    @db.VarChar(36)
+  Resource_ResourceToVote Resource? @relation(fields: [Resource], references: [id])
+
+  @@index([Resource], map: "Vote_Resource")
+  @@index([User], map: "Vote_User")
+}
+
+enum LetterStatus {
+  Created
+  Processing
+  Sended
+  Error
+}
+
+model Letter {
+  id           String       @id @default(cuid()) @db.VarChar(36)
+  email        String       @db.Text
+  subject      String       @db.Text
+  message      String       @db.Text
+  status       LetterStatus @default(value: Created)
+  errorMessage String?      @db.Text
+  rank         Int?
+  deleteOnSend Boolean      @default(value: true)
+  replyTo      String?      @db.Text
+  returnTo     String?      @db.Text
+  createdAt    DateTime     @default(now()) @db.Timestamp(3)
+  updatedAt    DateTime     @default(now()) @updatedAt @db.Timestamp(3)
+  User         String?      @db.VarChar(36)
+
+  @@index([User], map: "Letter_User")
+}
+
+enum LogLevel {
+  Info
+  Notice
+  Warning
+  Error
+  Fatal
+}
+
+model Log {
+  id         String   @id @default(cuid()) @db.VarChar(36)
+  level      LogLevel @default(value: Info)
+  objectType String?  @db.VarChar(36)
+  message    String   @db.Text
+  stack      String?  @db.Text
+  createdAt  DateTime @default(now()) @db.Timestamp(3)
+  updatedAt  DateTime @default(now()) @updatedAt @db.Timestamp(3)
+}
+
+model LearnStrategy {
+  id                  String               @id @default(cuid()) @db.VarChar(36)
+  createdAt           DateTime             @default(now()) @db.Timestamp(3)
+  updatedAt           DateTime             @default(now()) @updatedAt @db.Timestamp(3)
+  name                String
+  description         String?
+  level               Int                  @db.SmallInt
+  createdById         String               @db.VarChar(36)
+  CreatedBy           User                 @relation(fields: [createdById], references: [id])
+  LearnStrategyStages LearnStrategyStage[] @relation("LearnStrategyStages")
+
+  LearnStrategyStagesTargets LearnStrategyStage[] @relation("LearnStrategyStagesTargets")
+
+  UserLearnStrategies UserLearnStrategy[]
+}
+
+model LearnStrategyStage {
+  id        String   @id @default(cuid()) @db.VarChar(36)
+  createdAt DateTime @default(now()) @db.Timestamp(3)
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamp(3)
+
+  learnStrategyId String        @db.VarChar(36)
+  LearnStrategy   LearnStrategy @relation("LearnStrategyStages", fields: [learnStrategyId], references: [id])
+
+  learnStrategyTargetId String?        @db.VarChar(36)
+  LearnStrategyTarget   LearnStrategy? @relation("LearnStrategyStagesTargets", fields: [learnStrategyTargetId], references: [id])
+
+  technologyId String?     @db.VarChar(36)
+  Technology   Technology? @relation(fields: [technologyId], references: [id])
+  level        Int?        @db.SmallInt
+
+  @@unique([learnStrategyId, learnStrategyTargetId], map: "lss_strategy_target_uniq")
+  @@unique([learnStrategyId, technologyId], map: "lss_strategy_tech_uniq")
+}
+
+model UserLearnStrategy {
+  id              String        @id @default(cuid()) @db.VarChar(36)
+  createdAt       DateTime      @default(now()) @db.Timestamp(3)
+  updatedAt       DateTime      @default(now()) @updatedAt @db.Timestamp(3)
+  createdById     String        @db.VarChar(36)
+  CreatedBy       User          @relation(fields: [createdById], references: [id])
+  learnStrategyId String        @db.VarChar(36)
+  LearnStrategy   LearnStrategy @relation(fields: [learnStrategyId], references: [id])
+
+  @@unique([createdById, learnStrategyId], map: "uls_user_strategy_uniq")
+}
+
+enum MentorMenteeStatus {
+  Request
+  Accepted
+  Rejected
+}
+
+model MentorMentee {
+  id        String             @id @default(cuid()) @db.VarChar(36)
+  createdAt DateTime           @default(now()) @db.Timestamp(3)
+  updatedAt DateTime           @default(now()) @updatedAt @db.Timestamp(3)
+  status    MentorMenteeStatus
+  mentorId  String             @db.VarChar(36)
+  Mentor    User               @relation("MentorMenteeMentor", fields: [mentorId], references: [id])
+  menteeId  String             @db.VarChar(36)
+  Mentee    User               @relation("MentorMenteeMentee", fields: [menteeId], references: [id])
+
+  @@unique([mentorId, menteeId], map: "mm_mentor_mentee_uniq")
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid()) @db.VarChar(36)
+  text      String   @db.Text
+  createdAt DateTime @default(now()) @db.Timestamp(3)
+
+  mood          Float   @default(0)
+  assertiveness Float   @default(0)
+  intentTone    Float   @default(0)
+  socialGoal    String?
+  tags          String?
+  usage         Json?
+
+  createdBy String @db.VarChar(36)
+  CreatedBy User   @relation(fields: [createdBy], references: [id], onDelete: Cascade, name: "ChatMessageCreatedBy")
+
+  toUserId String? @db.VarChar(36)
+  ToUser   User?   @relation(fields: [toUserId], references: [id], onDelete: Cascade, name: "ChatMessageUserTo")
 }
