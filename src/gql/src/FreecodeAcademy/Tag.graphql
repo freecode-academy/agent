@@ -1,0 +1,30 @@
+query tag($where: TagWhereUniqueInput!) {
+  object: tag(where: $where) {
+    ...tag_
+  }
+}
+
+query tagsConnection($first: Int!, $skip: Int) {
+  tagsCount
+  tags(take: $first, skip: $skip) {
+    ...tag_
+  }
+}
+
+fragment tag_ on Tag {
+  id
+  name
+  createdById
+  Resources {
+    id
+    Resource {
+      id
+      type
+      name
+      uri
+    }
+  }
+  # CreatedBy: CreatedByUser {
+  #   ...UserNoNesting
+  # }
+}
