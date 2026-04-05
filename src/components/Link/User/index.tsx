@@ -7,11 +7,13 @@ import {
   NameContainer,
   NameLink,
 } from './styles'
+import { Avatar } from 'src/components/Avatar'
 
 type UserLike = {
   id?: UserNoNestingFragment['id']
   username?: UserNoNestingFragment['username']
   fullname?: UserNoNestingFragment['fullname']
+  image?: UserNoNestingFragment['image']
 }
 
 export function createUserLink(user: UserLike): string {
@@ -55,9 +57,13 @@ export const UserLink: React.FC<UserLinkProps> = ({
 
   const avatarElement = withAvatar ? (
     <AvatarLink href={url} title={displayName}>
-      <UserAvatar $size={size}>
-        <UserIcon />
-      </UserAvatar>
+      {user.image ? (
+        <Avatar user={user} size={size} />
+      ) : (
+        <UserAvatar $size={size}>
+          <UserIcon />
+        </UserAvatar>
+      )}
     </AvatarLink>
   ) : null
 
