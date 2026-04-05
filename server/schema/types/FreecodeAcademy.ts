@@ -1,5 +1,7 @@
 export * from './LearnStrategyStage'
 export * from './LearnStrategy'
+export * from './Project'
+export * from './Resource'
 export * from './Technology'
 export * from './UserLearnStrategy'
 export * from './UserTechnology'
