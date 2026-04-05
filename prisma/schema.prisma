@@ -1489,19 +1489,21 @@ model TeamMember {
 }
 
 model Technology {
-  id                  String               @id @default(cuid()) @db.VarChar(36)
-  createdAt           DateTime             @default(now()) @db.Timestamp(3)
-  updatedAt           DateTime             @default(now()) @updatedAt @db.Timestamp(3)
-  name                String
-  description         String?              @db.Text
-  components          Json?
-  contentText         String?              @db.Text
-  site_url            String?              @db.Text
-  level1hours         Int?                 @db.Integer
-  level2hours         Int?                 @db.Integer
-  level3hours         Int?                 @db.Integer
-  level4hours         Int?                 @db.Integer
-  level5hours         Int?                 @db.Integer
+  id          String   @id @default(cuid()) @db.VarChar(36)
+  createdAt   DateTime @default(now()) @db.Timestamp(3)
+  updatedAt   DateTime @default(now()) @updatedAt @db.Timestamp(3)
+  name        String
+  description String?  @db.Text
+  components  Json?
+  contentText String?  @db.Text
+  site_url    String?  @db.Text
+  level1hours Int?     @db.Integer
+  level2hours Int?     @db.Integer
+  level3hours Int?     @db.Integer
+  level4hours Int?     @db.Integer
+  level5hours Int?     @db.Integer
+
+  // TODO Move CreatedBy to createdById
   CreatedBy           String               @db.VarChar(36)
   User                User                 @relation(fields: [CreatedBy], references: [id])
   TaskTechnologies    TaskTechnology[]
@@ -1579,21 +1581,24 @@ enum UserTechnologyHiringStatus {
 }
 
 model UserTechnology {
-  id                                    String                      @id @default(cuid()) @db.VarChar(36)
-  createdAt                             DateTime                    @default(now()) @db.Timestamp(3)
-  updatedAt                             DateTime                    @default(now()) @updatedAt @db.Timestamp(3)
-  components                            Json?
-  date_from                             DateTime?
-  date_till                             DateTime?
-  status                                UserTechnologyStatus?
-  hiring_status                         UserTechnologyHiringStatus?
-  isMentor                              Boolean                     @default(value: false)
-  CreatedBy                             String                      @db.VarChar(36)
-  User                                  User                        @relation(fields: [CreatedBy], references: [id])
-  Technology                            String                      @db.VarChar(36)
-  Technology_TechnologyToUserTechnology Technology                  @relation(fields: [Technology], references: [id])
-  level                                 Int?                        @db.SmallInt
-  rating                                Int                         @default(0)
+  id            String                      @id @default(cuid()) @db.VarChar(36)
+  createdAt     DateTime                    @default(now()) @db.Timestamp(3)
+  updatedAt     DateTime                    @default(now()) @updatedAt @db.Timestamp(3)
+  components    Json?
+  date_from     DateTime?
+  date_till     DateTime?
+  status        UserTechnologyStatus?
+  hiring_status UserTechnologyHiringStatus?
+  isMentor      Boolean                     @default(value: false)
+
+  // TODO Move CreatedBy to createdById
+  CreatedBy                             String     @db.VarChar(36)
+  User                                  User       @relation(fields: [CreatedBy], references: [id])
+  // TODO Move Technology to technologyId
+  Technology                            String     @db.VarChar(36)
+  Technology_TechnologyToUserTechnology Technology @relation(fields: [Technology], references: [id])
+  level                                 Int?       @db.SmallInt
+  rating                                Int        @default(0)
 
   @@unique([CreatedBy, Technology], map: "ut_user_tech_uniq")
   @@index([CreatedBy], map: "UserTechnology_CreatedBy")

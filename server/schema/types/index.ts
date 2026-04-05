@@ -19,3 +19,5 @@ export * from './EXReaction'
 export * from './ai-guild'
 export * from './World3d'
 export * from './Post'
+
+export * from './FreecodeAcademy'

@@ -1,0 +1,83 @@
+query learnStrategy($where: LearnStrategyWhereUniqueInput!) {
+  learnStrategy(where: $where) {
+    ...learnStrategy_
+  }
+}
+
+query learnStrategiesConnection(
+  $where: LearnStrategyWhereInput
+  # $orderBy: [LearnStrategyOrderByWithRelationInput!]
+  $take: Int
+  $skip: Int
+) {
+  learnStrategiesCount(where: $where)
+  learnStrategies(where: $where, take: $take, skip: $skip) {
+    ...learnStrategy_
+  }
+}
+
+query learnStrategies(
+  $where: LearnStrategyWhereInput
+  # $orderBy: [LearnStrategyOrderByWithRelationInput!]
+  $take: Int
+  $skip: Int
+) {
+  learnStrategies(where: $where, take: $take, skip: $skip) {
+    ...learnStrategy_
+  }
+}
+
+# mutation createLearnStrategy($data: LearnStrategyCreateInput!) {
+#   createLearnStrategy(data: $data) {
+#     ...learnStrategy_
+#   }
+# }
+
+# mutation updateLearnStrategy(
+#   $data: LearnStrategyUpdateInput!
+#   $where: LearnStrategyWhereUniqueInput!
+# ) {
+#   updateLearnStrategy(data: $data, where: $where) {
+#     ...learnStrategy_
+#   }
+# }
+
+fragment LearnStrategyNoNesting on LearnStrategy {
+  id
+  createdAt
+  updatedAt
+  name
+  description
+  level
+  createdById
+}
+
+fragment learnStrategy_ on LearnStrategy {
+  ...LearnStrategyNoNesting
+  CreatedBy {
+    ...UserNoNesting
+  }
+  LearnStrategyStages {
+    ...learnStrategyStageNoNesting
+    Technology {
+      # ...learnStrategyStageTechnology
+      ...TechnologyNoNesting
+    }
+  }
+  UserLearnStrategies {
+    ...UserLearnStrategyNoNesting
+    CreatedBy {
+      ...UserNoNesting
+    }
+  }
+}
+
+fragment learnStrategyStageTechnology on Technology {
+  ...TechnologyNoNesting
+  UserTechnologies {
+    ...UserTechnology_
+    # CreatedBy {
+    #   ...UserNoNesting
+    # }
+  }
+}

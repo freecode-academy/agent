@@ -1,0 +1,110 @@
+query technology(
+  $where: TechnologyWhereUniqueInput!
+  $withLearnStrategies: Boolean! = false
+) {
+  object: technology(where: $where) {
+    ...technology_
+  }
+}
+
+query technologies(
+  $take: Int
+  $skip: Int
+  $where: TechnologyWhereInput
+) # $orderBy: [TechnologyOrderByWithRelationInput!] = { createdAt: desc }
+{
+  technologies(take: $take, skip: $skip, where: $where) {
+    ...technologiesConnectionTechnology
+  }
+}
+
+query technologiesConnection(
+  $take: Int
+  $skip: Int
+  $where: TechnologyWhereInput
+) # $orderBy: [TechnologyOrderByWithRelationInput!] = { createdAt: desc }
+{
+  technologiesCount(where: $where)
+  technologies(take: $take, skip: $skip, where: $where) {
+    ...technologiesConnectionTechnology
+  }
+}
+
+# mutation createTechnology(
+#   $data: TechnologyCreateInput!
+#   $withLearnStrategies: Boolean! = false
+# ) {
+#   createTechnology(data: $data) {
+#     ...technology_
+#   }
+# }
+
+# mutation updateTechnology(
+#   $data: TechnologyUpdateInput!
+#   $where: TechnologyWhereUniqueInput!
+#   $withLearnStrategies: Boolean! = false
+# ) {
+#   updateTechnology(data: $data, where: $where) {
+#     ...technology_
+#   }
+# }
+
+fragment technologiesConnectionTechnology on Technology {
+  ...TechnologyNoNesting
+  CreatedBy {
+    ...technologiesConnectionUser
+  }
+  UserTechnologies {
+    ...technologiesConnectionUserTechnology
+    CreatedBy {
+      ...technologiesConnectionUser
+    }
+  }
+}
+
+fragment technologiesConnectionUser on User {
+  ...UserNoNesting
+}
+
+fragment technologiesConnectionUserTechnology on UserTechnology {
+  id
+  createdAt
+  updatedAt
+  components
+  date_from
+  date_till
+  status
+}
+
+fragment technology_ on Technology {
+  ...TechnologyNoNesting
+  CreatedBy {
+    ...UserNoNesting
+  }
+  UserTechnologies {
+    ...technology_UserTechnology
+  }
+  LearnStrategyStages @include(if: $withLearnStrategies) {
+    ...learnStrategyStageNoNesting
+    LearnStrategy {
+      ...LearnStrategyNoNesting
+    }
+  }
+}
+
+fragment TechnologyNoNesting on Technology {
+  id
+  createdAt
+  updatedAt
+  name
+  description
+  # components
+  # contentText
+  content
+  site_url
+  level1hours
+  level2hours
+  level3hours
+  level4hours
+  level5hours
+}

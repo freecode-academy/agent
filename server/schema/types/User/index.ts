@@ -71,5 +71,7 @@ builder.prismaObject('User', {
           : null
       },
     }),
+
+    UserTechnologies: t.relation('UserTechnologies'),
   }),
 })

@@ -1,23 +1,34 @@
-query me {
+query me($withUserTechnologies: Boolean = true) {
   me {
     ...meUser
   }
 }
 
-query user($where: UserWhereUniqueInput!) {
+query user(
+  $where: UserWhereUniqueInput!
+  $withUserTechnologies: Boolean = false
+) {
   object: user(where: $where) {
     ...User_
   }
 }
 
-query usersConnection($where: UserWhereInput, $skip: Int, $first: Int = 10) {
+query usersConnection(
+  $where: UserWhereInput
+  $skip: Int
+  $first: Int = 10
+  $withUserTechnologies: Boolean = false
+) {
   usersCount(where: $where)
   users(where: $where, skip: $skip, take: $first) {
     ...User_
   }
 }
 
-mutation updateCurrentUser($data: CurrentUserUpdateInput!) {
+mutation updateCurrentUser(
+  $data: CurrentUserUpdateInput!
+  $withUserTechnologies: Boolean = false
+) {
   response: updateCurrentUser(data: $data) {
     ...User_
   }
@@ -26,6 +37,7 @@ mutation updateCurrentUser($data: CurrentUserUpdateInput!) {
 mutation updateUser(
   $data: UserUpdateDataInput!
   $where: UserWhereUniqueInput!
+  $withUserTechnologies: Boolean = false
 ) {
   updateUser(data: $data, where: $where) {
     ...User_
@@ -70,6 +82,13 @@ fragment meUser on User {
 
 fragment User_ on User {
   ...UserNoNesting
+
+  UserTechnologies @include(if: $withUserTechnologies) {
+    ...technology_UserTechnology
+    Technology {
+      ...TechnologyNoNesting
+    }
+  }
 }
 
 fragment UserNoNesting on User {

@@ -1,0 +1,23 @@
+# mutation createUserLearnStrategy($data: UserLearnStrategyCreateInput!) {
+#   createUserLearnStrategy(data: $data) {
+#     ...UserLearnStrategy_
+#   }
+# }
+
+fragment UserLearnStrategyNoNesting on UserLearnStrategy {
+  id
+  createdAt
+  updatedAt
+  createdById
+  learnStrategyId
+}
+
+fragment UserLearnStrategy_ on UserLearnStrategy {
+  ...UserLearnStrategyNoNesting
+  CreatedBy {
+    ...UserNoNesting
+  }
+  LearnStrategy {
+    ...LearnStrategyNoNesting
+  }
+}

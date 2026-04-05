@@ -1,0 +1,55 @@
+# mutation createUserTechnologyProcessor($data: UserTechnologyCreateInput!) {
+#   response: createUserTechnologyProcessor(data: $data) {
+#     success
+#     message
+#     errors {
+#       key
+#       message
+#     }
+#     data {
+#       id
+#     }
+#   }
+# }
+
+# mutation updateUserTechnologyProcessor(
+#   $data: UserTechnologyUpdateInput!
+#   $where: UserTechnologyWhereUniqueInput!
+# ) {
+#   response: updateUserTechnologyProcessor(data: $data, where: $where) {
+#     success
+#     message
+#     errors {
+#       key
+#       message
+#     }
+#     data {
+#       ...UserTechnology_
+#     }
+#   }
+# }
+
+fragment UserTechnology_ on UserTechnology {
+  ...UserTechnologyNoNesting
+}
+
+fragment UserTechnologyNoNesting on UserTechnology {
+  id
+  createdAt
+  updatedAt
+  components
+  date_from
+  date_till
+  status
+  hiring_status
+  level
+  technologyId
+  isMentor
+}
+
+fragment technology_UserTechnology on UserTechnology {
+  ...UserTechnologyNoNesting
+  CreatedBy {
+    ...UserNoNesting
+  }
+}

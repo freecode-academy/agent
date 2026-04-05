@@ -1,0 +1,20 @@
+mutation createLearnStrategyStage($data: LearnStrategyStageCreateInput!) {
+  createLearnStrategyStage(data: $data) {
+    ...learnStrategyStageNoNesting
+  }
+}
+
+mutation deleteLearnStrategyStage($where: LearnStrategyStageWhereUniqueInput!) {
+  deleteLearnStrategyStage(where: $where) {
+    id
+  }
+}
+
+fragment learnStrategyStageNoNesting on LearnStrategyStage {
+  id
+  createdAt
+  learnStrategyId
+  learnStrategyTargetId
+  technologyId
+  level
+}
