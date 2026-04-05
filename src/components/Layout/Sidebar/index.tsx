@@ -99,9 +99,9 @@ const navItems = [
       </svg>
     ),
   },
-  process.env.NEXT_PUBLIC_POSTS_ENABLED && {
-    label: 'Posts',
-    href: '/posts',
+  {
+    label: 'Publications',
+    href: '/topics',
     icon: (
       <svg
         viewBox="0 0 24 24"

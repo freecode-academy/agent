@@ -1,6 +1,10 @@
 import { builder } from 'server/schema/builder'
 import { ResourceTypeEnum } from './types'
 
+import './resolvers/resource'
+import './resolvers/resources'
+import './resolvers/resourcesCount'
+
 builder.prismaObject('Resource', {
   fields: (t) => ({
     id: t.exposeID('id', {
@@ -10,11 +14,26 @@ builder.prismaObject('Resource', {
     updatedAt: t.expose('updatedAt', { type: 'DateTime', nullable: false }),
     name: t.exposeString('name'),
     uri: t.exposeString('uri', { nullable: false }),
-    // content: t.exposeString('contentText', { nullable: true }),
-    // public: t.exposeBoolean('public'),
+    intro: t.exposeString('intro', { nullable: true }),
+    longtitle: t.exposeString('longtitle', { nullable: true }),
+    // contentText: t.exposeString('contentText', { nullable: true }),
+    // contentV2: t.exposeString('contentV2', { nullable: true }),
 
-    // createdById: t.exposeString('CreatedBy'),
-    // CreatedBy: t.relation('User_ProjectToUser'),
+    contentV2: t.string({
+      resolve: ({ contentV2, contentText }) => contentV2 || contentText,
+    }),
+    published: t.exposeBoolean('published', {
+      nullable: false,
+    }),
+    deleted: t.exposeBoolean('deleted', {
+      nullable: false,
+    }),
+    searchable: t.exposeBoolean('searchable', {
+      nullable: false,
+    }),
+
+    createdById: t.exposeString('CreatedBy'),
+    CreatedBy: t.relation('User'),
 
     type: t.field({
       type: ResourceTypeEnum,

@@ -1,0 +1,119 @@
+query resource(
+  $where: ResourceWhereUniqueInput!
+  $resourceWithDetailes: Boolean = true
+) {
+  resource(where: $where) {
+    ...resource_
+  }
+}
+
+query resources(
+  $where: ResourceWhereInput
+  $first: Int = 10
+  $skip: Int
+  $resourceWithDetailes: Boolean = false
+) {
+  resources(where: $where, take: $first, skip: $skip) {
+    ...resource_
+  }
+}
+
+query resourcesConnection(
+  $first: Int = 10
+  $skip: Int
+  $where: ResourceWhereInput
+  $resourceWithDetailes: Boolean = false
+) {
+  resourcesCount(where: $where)
+  resources(take: $first, skip: $skip, where: $where) {
+    ...resource_
+  }
+}
+
+fragment resource_ on Resource {
+  ...ResourceNoNesting
+  CreatedBy {
+    ...UserNoNesting
+  }
+  # Comments(orderBy: { createdAt: asc }) {
+  #   ...ResourceNoNesting
+  #   CreatedBy {
+  #     ...UserNoNesting
+  #   }
+  # }
+  # Blog {
+  #   id
+  #   name
+  #   longtitle
+  #   uri
+  # }
+  # Topic {
+  #   id
+  #   name
+  #   longtitle
+  #   uri
+  #   type
+  # }
+  # Tags {
+  #   id
+  #   Tag: ResourceTagTag {
+  #     id
+  #     name
+  #   }
+  # }
+  # CodeChallenge {
+  #   id
+  #   name
+  # }
+  # Task {
+  #   ...TaskNoNesting
+  # }
+}
+
+fragment ResourceNoNesting on Resource {
+  id
+  createdAt
+  updatedAt
+  type
+  name
+  longtitle
+  # content
+  intro
+  # components
+  # contentText
+  published
+  deleted
+  # hidemenu
+  searchable
+  uri
+  # isfolder
+  # rating
+  # positiveVotesCount
+  # negativeVotesCount
+  # neutralVotesCount
+  # oldID
+  # commentOldID
+  # class_key
+  # template
+  # mockUpdate
+
+  createdById
+
+  ... @include(if: $resourceWithDetailes) {
+    contentV2
+  }
+}
+
+# fragment topic_ on Resource{
+#   ...resource_
+#   CodeChallenge {
+#     id
+#     name
+#   }
+# }
+
+# mutation deleteResource($where: ResourceWhereUniqueInput!) {
+#   deleteResource(where: $where) {
+#     ...ResourceNoNesting
+#   }
+# }
