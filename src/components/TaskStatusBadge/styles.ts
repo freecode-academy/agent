@@ -6,6 +6,12 @@ const statusColors: Record<TaskStatusEnum, { bg: string; text: string }> = {
   [TaskStatusEnum.PROGRESS]: { bg: '#fff3e0', text: '#f57c00' },
   [TaskStatusEnum.DONE]: { bg: '#e8f5e9', text: '#388e3c' },
   [TaskStatusEnum.REJECTED]: { bg: '#ffebee', text: '#d32f2f' },
+  [TaskStatusEnum.ACCEPTED]: { bg: '#e8f5e9', text: '#2e7d32' },
+  [TaskStatusEnum.APPROVED]: { bg: '#e3f2fd', text: '#1565c0' },
+  [TaskStatusEnum.COMPLETED]: { bg: '#e8f5e9', text: '#43a047' },
+  [TaskStatusEnum.DISCUSS]: { bg: '#fff3e0', text: '#ef6c00' },
+  [TaskStatusEnum.PAUSED]: { bg: '#f3e5f5', text: '#7b1fa2' },
+  [TaskStatusEnum.REVISIONSREQUIRED]: { bg: '#ffebee', text: '#c62828' },
 }
 
 export const TaskStatusBadgeStyled = styled.span<{

@@ -15,6 +15,7 @@ builder.mutationField('createTask', (t) =>
       return ctx.prisma.task.create({
         ...query,
         data: {
+          name: args.data.title,
           title: args.data.title,
           description: args.data.description ?? undefined,
           content: args.data.content ?? undefined,
