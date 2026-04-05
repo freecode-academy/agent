@@ -55,7 +55,7 @@ const navItems = [
   },
   {
     label: 'Members',
-    href: '/users',
+    href: '/people',
     icon: (
       <svg
         viewBox="0 0 24 24"

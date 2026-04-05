@@ -1,6 +1,5 @@
 import React from 'react'
 import { UserFragment } from 'src/gql/generated'
-import Link from 'next/link'
 import {
   UsersViewStyled,
   UsersViewGridStyled,
@@ -10,6 +9,7 @@ import { SeparatorStyled } from 'src/components/Separator/styles'
 import { StatusToggler } from '../User/View/StatusToggler'
 import { FormattedDate } from 'src/ui-kit/format/FormattedDate'
 import { Pagination } from 'src/components/Pagination'
+import { UserLink } from 'src/components/Link/User'
 
 type UsersViewProps = {
   users: UserFragment[]
@@ -27,9 +27,7 @@ export const UsersView: React.FC<UsersViewProps> = ({ users, count, page }) => {
       <UsersViewGridStyled>
         {users.map((user) => (
           <UsersViewCardStyled key={user.id}>
-            <Link href={`/users/${user.id}`}>
-              {user.fullname || user.username || 'Anonymous'}
-            </Link>
+            <UserLink user={user} />
 
             <SeparatorStyled />
 

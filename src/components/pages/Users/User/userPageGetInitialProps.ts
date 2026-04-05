@@ -8,17 +8,26 @@ export const userPageGetInitialProps: Page<UserPageProps>['getInitialProps'] =
     const userId: string | undefined =
       typeof query.id === 'string' && query.id ? query.id : undefined
 
-    const variables = getUserQueryVariables(userId)
+    const username: string | undefined =
+      typeof query.username === 'string' && query.username
+        ? query.username
+        : undefined
 
-    const user = userId
-      ? await apolloClient.query<UserQuery, UserQueryVariables>({
-          query: UserDocument,
-          variables,
-        })
+    const variables =
+      userId || username ? getUserQueryVariables(userId, username) : undefined
+
+    const user = variables
+      ? await apolloClient
+          .query<UserQuery, UserQueryVariables>({
+            query: UserDocument,
+            variables,
+          })
+          .then((r) => r.data?.object)
       : undefined
 
     return {
       userId,
+      username,
       statusCode: !user ? 404 : undefined,
     }
   }

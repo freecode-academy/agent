@@ -16,7 +16,7 @@ builder.queryField('users', (t) =>
         skip: args.skip ?? undefined,
         take: args.take ?? undefined,
         orderBy: {
-          createdAt: 'desc',
+          updatedAt: 'desc',
         },
       }),
   }),

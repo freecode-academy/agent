@@ -15,14 +15,9 @@ type UserLike = {
 }
 
 export function createUserLink(user: UserLike): string {
-  const { id } = user
+  const { id, username } = user
 
-  if (!id) {
-    console.error(`Can not get user ID`, user)
-    return '#'
-  }
-
-  return `/users/${id}`
+  return username ? `/profile/${username}` : `/profile/id/${id}`
 }
 
 type UserLinkProps = {
@@ -50,7 +45,7 @@ export const UserLink: React.FC<UserLinkProps> = ({
   }
 
   const { id, fullname, username } = user
-  const displayName = fullname || username || 'Unnamed User'
+  const displayName = fullname || username || id || ''
 
   if (!id) {
     return null

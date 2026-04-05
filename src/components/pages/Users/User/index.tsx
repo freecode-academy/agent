@@ -6,8 +6,8 @@ import { UserStatusEnum, useUserQuery } from 'src/gql/generated'
 import { SeoHeaders } from 'src/components/seo/SeoHeaders'
 import { Page } from '../../_App/interfaces'
 
-export const UserPage: Page<UserPageProps> = ({ userId }) => {
-  const variables = getUserQueryVariables(userId)
+export const UserPage: Page<UserPageProps> = ({ userId, username }) => {
+  const variables = getUserQueryVariables(userId, username)
 
   const response = useUserQuery({
     skip: !variables,
