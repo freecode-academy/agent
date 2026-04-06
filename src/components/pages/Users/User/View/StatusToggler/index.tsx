@@ -49,20 +49,22 @@ export const StatusToggler: React.FC<StatusTogglerProps> = ({ user }) => {
   )
 
   return (
-    <>
-      <Button
-        onClick={onClickToggleStatus}
-        disabled={loading || !currentUser?.sudo}
-        variant={
-          status === UserStatusEnum.BLOCKED
-            ? ComponentVariant.DANGER
-            : status === UserStatusEnum.NEWBIE
-              ? ComponentVariant.WARNING
-              : ComponentVariant.SUCCESS
-        }
-      >
-        {status}
-      </Button>
-    </>
+    currentUser?.sudo === true && (
+      <>
+        <Button
+          onClick={onClickToggleStatus}
+          disabled={loading || !currentUser?.sudo}
+          variant={
+            status === UserStatusEnum.BLOCKED
+              ? ComponentVariant.DANGER
+              : status === UserStatusEnum.NEWBIE
+                ? ComponentVariant.WARNING
+                : ComponentVariant.SUCCESS
+          }
+        >
+          {status}
+        </Button>
+      </>
+    )
   )
 }

@@ -100,4 +100,5 @@ fragment UserNoNesting on User {
   content
   sudo
   status
+  intro
 }

@@ -4,12 +4,14 @@ import {
   UsersViewStyled,
   UsersViewGridStyled,
   UsersViewCardStyled,
+  UsersViewCardToolbarStyled,
 } from './styles'
 import { SeparatorStyled } from 'src/components/Separator/styles'
 import { StatusToggler } from '../User/View/StatusToggler'
 import { FormattedDate } from 'src/ui-kit/format/FormattedDate'
 import { Pagination } from 'src/components/Pagination'
 import { UserLink } from 'src/components/Link/User'
+import { Markdown } from 'src/components/Markdown'
 
 type UsersViewProps = {
   users: UserFragment[]
@@ -27,12 +29,16 @@ export const UsersView: React.FC<UsersViewProps> = ({ users, count, page }) => {
       <UsersViewGridStyled>
         {users.map((user) => (
           <UsersViewCardStyled key={user.id}>
-            <UserLink user={user} />
+            <UsersViewCardToolbarStyled>
+              <UserLink user={user} />
 
-            <SeparatorStyled />
+              <SeparatorStyled />
 
-            <FormattedDate value={user.createdAt} />
-            <StatusToggler user={user} />
+              <FormattedDate value={user.createdAt} />
+              <StatusToggler user={user} />
+            </UsersViewCardToolbarStyled>
+
+            {user.intro && <Markdown>{user.intro}</Markdown>}
           </UsersViewCardStyled>
         ))}
       </UsersViewGridStyled>

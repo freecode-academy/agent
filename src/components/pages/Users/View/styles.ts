@@ -10,11 +10,17 @@ export const UsersViewGridStyled = styled.div`
   gap: ${({ theme }) => theme.spacing.md};
 `
 
+export const UsersViewCardToolbarStyled = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+`
+
 export const UsersViewCardStyled = styled.div`
   padding: ${({ theme }) => theme.spacing.md};
   border: 1px solid ${({ theme }) => theme.colors.border};
   border-radius: ${({ theme }) => theme.radii.md};
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 10px;
 `
