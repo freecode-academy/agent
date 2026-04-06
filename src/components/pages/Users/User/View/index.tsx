@@ -15,6 +15,7 @@ import { SendTransfer } from './SendTransfer'
 import { StatusToggler } from './StatusToggler'
 import { SeparatorStyled } from 'src/components/Separator/styles'
 import { GetReferrerToken } from './GetReferrerToken'
+import { UserTechnologies } from './UserTechnologies'
 
 type UserPageViewProps = {
   user: UserFragment
@@ -68,6 +69,10 @@ export const UserPageView: React.FC<UserPageViewProps> = ({
             <SignOutButton />
           </UserPageActionsStyled>
         </>
+      )}
+
+      {user.UserTechnologies && user.UserTechnologies?.length > 0 && (
+        <UserTechnologies userTechnologies={user.UserTechnologies} />
       )}
 
       {!isCurrentUser && currentUser && (

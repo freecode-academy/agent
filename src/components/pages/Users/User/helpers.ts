@@ -9,5 +9,6 @@ export function getUserQueryVariables(
       id,
       username,
     },
+    withUserTechnologies: true,
   }
 }

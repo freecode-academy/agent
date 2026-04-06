@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import React, { useMemo } from 'react'
 import { LearnStrategyPageViewProps } from './interfaces'
 import { LearnStrategyView } from './LearnStrategy'
@@ -8,8 +7,6 @@ export const LearnStrategyPageView: React.FC<LearnStrategyPageViewProps> = ({
   learnStrategy,
 }) => {
   const { user: currentUser } = useAppContext()
-
-  console.log('LearnStrategyPageView currentUser', currentUser)
 
   return useMemo(() => {
     return (
