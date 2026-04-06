@@ -117,6 +117,12 @@ export const PostEditForm: React.FC<PostEditFormProps> = ({
                       id: post.id,
                     },
                   },
+                }).then((r) => {
+                  if (r.data?.response) {
+                    cancelHandler?.()
+                  }
+
+                  return r
                 })
               : createPostMutation({
                   variables: {
@@ -126,6 +132,12 @@ export const PostEditForm: React.FC<PostEditFormProps> = ({
                       parentId,
                     },
                   },
+                }).then((r) => {
+                  if (r.data?.response) {
+                    router.push(`/posts/${r.data.response.id}`)
+                  }
+
+                  return r
                 })
 
             request
@@ -136,10 +148,6 @@ export const PostEditForm: React.FC<PostEditFormProps> = ({
                   addMessage?.('Success', {
                     variant: 'success',
                   })
-
-                  cancelHandler?.()
-
-                  router.push(`/posts/${post.id}`)
                 } else {
                   addMessage?.('Error', { variant: 'error' })
                 }
