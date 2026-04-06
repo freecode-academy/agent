@@ -30,12 +30,13 @@ export const LearnStrategyCreateInput = builder.inputType(
   },
 )
 
-export const LearnStrategyUpdateDataInput = builder.inputType(
-  'LearnStrategyUpdateDataInput',
+export const LearnStrategyUpdateInput = builder.inputType(
+  'LearnStrategyUpdateInput',
   {
     fields: (t) => ({
       name: t.string({ required: false }),
       description: t.string({ required: false }),
+      level: t.int({ required: false }),
     }),
   },
 )

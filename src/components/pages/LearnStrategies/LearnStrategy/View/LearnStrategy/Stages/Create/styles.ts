@@ -2,30 +2,31 @@ import styled, { css } from 'styled-components'
 import { minWidth } from 'src/theme/helpers'
 import { ButtonStyled } from 'src/ui-kit/Button/styles'
 
-export const CreateLearnStrategyStageStyled = styled.div`
-  .list {
-    display: grid;
-    grid-gap: 10px;
+export const CreateLearnStrategyStageListStyled = styled.div`
+  column-gap: 10px;
 
-    > * {
-      display: flex;
-      align-items: center;
+  > * {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    break-inside: avoid;
 
-      ${ButtonStyled} {
-        width: 100%;
-      }
+    ${ButtonStyled} {
+      width: 100%;
     }
-
-    ${minWidth.sm(css`
-      grid-template-columns: repeat(3, 1fr);
-    `)}
-
-    ${minWidth.md(css`
-      grid-template-columns: repeat(4, 1fr);
-    `)}
-    
-    ${minWidth.lg(css`
-      grid-template-columns: repeat(6, 1fr);
-    `)}
   }
+
+  ${minWidth.sm(css`
+    column-count: 3;
+  `)}
+
+  ${minWidth.md(css`
+    column-count: 4;
+  `)}
+
+  ${minWidth.lg(css`
+    column-count: 6;
+  `)}
 `
+
+export const CreateLearnStrategyStageStyled = styled.div``

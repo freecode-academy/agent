@@ -4,7 +4,11 @@ export const LearnStrategiesViewHeaderStyled = styled.div`
   margin-bottom: 24px;
 `
 
-export const LearnStrategiesViewStyled = styled.div``
+export const LearnStrategiesViewStyled = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+`
 
 export const StrategiesGrid = styled.div`
   display: grid;

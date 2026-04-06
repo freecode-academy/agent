@@ -9,6 +9,7 @@ import { CreateLearnStrategyStageTechnologyProps } from './interfaces'
 import { Button } from 'src/ui-kit/Button'
 import { TextField } from 'src/ui-kit/controls/TextField'
 import { ComponentSize, ComponentVariant } from 'src/ui-kit/interfaces'
+import { CreateLearnStrategyStageListStyled } from '../styles'
 
 /**
  * Выбор технологии
@@ -100,7 +101,7 @@ export const CreateLearnStrategyStageTechnology: React.FC<
   return useMemo(() => {
     return (
       <>
-        <div className="list">
+        <CreateLearnStrategyStageListStyled>
           {technologiesFiltered.map((n) => {
             const isCurrent = currentTechnology?.id === n.id
 
@@ -127,7 +128,7 @@ export const CreateLearnStrategyStageTechnology: React.FC<
               </div>
             )
           })}
-        </div>
+        </CreateLearnStrategyStageListStyled>
 
         <Button
           onClick={submit}

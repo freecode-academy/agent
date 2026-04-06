@@ -81,11 +81,7 @@ export const CreateLearnStrategyStage: React.FC<
         if (r.data?.createLearnStrategyStage) {
           openedSetter(false)
 
-          try {
-            await client.resetStore()
-          } catch (error) {
-            console.error(error)
-          }
+          await client.resetStore().catch(console.error)
         }
       })
       .catch(alert)

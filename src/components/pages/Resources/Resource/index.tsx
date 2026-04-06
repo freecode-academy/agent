@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { ResourceType, useResourceQuery } from 'src/gql/generated'
 import { Page } from '../../_App/interfaces'
 import { ResourcePageProps } from './interfaces'
@@ -10,8 +9,6 @@ import { TopicView } from './view/Topic'
 
 export const ResourcePage: Page<ResourcePageProps> = (props) => {
   const { uri, page } = props
-
-  console.log('ResourcePage props', props)
 
   const response = useResourceQuery({
     variables: {

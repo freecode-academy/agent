@@ -9,6 +9,7 @@ import { UserLink as UikitUserLink } from 'src/components/Link/User'
 import { CreateLearnStrategyStageLearnStrategyProps } from './interfaces'
 import { Button } from 'src/ui-kit/Button'
 import { ComponentSize, ComponentVariant } from 'src/ui-kit/interfaces'
+import { CreateLearnStrategyStageListStyled } from '../styles'
 
 /**
  * Выбор стратегии развития
@@ -79,7 +80,7 @@ export const CreateLearnStrategyStageLearnStrategy: React.FC<
   return useMemo(() => {
     return (
       <>
-        <div className="list">
+        <CreateLearnStrategyStageListStyled>
           {learnStrategiesFiltered.map((n) => {
             const isCurrent = currentLearnStrategy?.id === n.id
 
@@ -99,7 +100,7 @@ export const CreateLearnStrategyStageLearnStrategy: React.FC<
               </div>
             )
           })}
-        </div>
+        </CreateLearnStrategyStageListStyled>
 
         <Button
           onClick={submit}

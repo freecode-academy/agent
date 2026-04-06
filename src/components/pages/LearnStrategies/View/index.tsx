@@ -15,12 +15,24 @@ import {
 } from './styles'
 import { LevelIcon } from 'src/components/LevelIcon'
 import { getUserTechnologyLevelText } from '../../UserTechnologies/helpers/getUserTechnologyLevelText'
+import { useAppContext } from 'src/components/AppContext'
+import { Button } from 'src/ui-kit/Button'
 
 export const LearnStrategiesView: React.FC<LearnStrategiesViewProps> = ({
   learnStrategies,
 }) => {
+  const { user: currentUser } = useAppContext()
+
   return (
     <LearnStrategiesViewStyled>
+      {currentUser?.sudo && (
+        <div>
+          <Link href={'/learnstrategies/create'}>
+            <Button>Create new strategy</Button>
+          </Link>
+        </div>
+      )}
+
       <StrategiesGrid>
         {learnStrategies.map((n) => {
           const membersCount = n.UserLearnStrategies?.length || 0

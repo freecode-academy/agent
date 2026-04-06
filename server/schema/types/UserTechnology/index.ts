@@ -41,7 +41,9 @@ builder.prismaObject('UserTechnology', {
       type: UserTechnologyHiringStatusEnum,
       resolve: ({ hiring_status }) => hiring_status,
     }),
-    level: t.exposeInt('rating', { nullable: false }),
+    level: t.exposeInt('level', {
+      nullable: true,
+    }),
     isMentor: t.exposeBoolean('isMentor', {
       description: 'Готов быть ментором',
     }),

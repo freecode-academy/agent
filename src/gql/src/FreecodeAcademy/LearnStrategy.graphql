@@ -27,20 +27,20 @@ query learnStrategies(
   }
 }
 
-# mutation createLearnStrategy($data: LearnStrategyCreateInput!) {
-#   createLearnStrategy(data: $data) {
-#     ...learnStrategy_
-#   }
-# }
+mutation createLearnStrategy($data: LearnStrategyCreateInput!) {
+  response: createLearnStrategy(data: $data) {
+    ...learnStrategy_
+  }
+}
 
-# mutation updateLearnStrategy(
-#   $data: LearnStrategyUpdateInput!
-#   $where: LearnStrategyWhereUniqueInput!
-# ) {
-#   updateLearnStrategy(data: $data, where: $where) {
-#     ...learnStrategy_
-#   }
-# }
+mutation updateLearnStrategy(
+  $data: LearnStrategyUpdateInput!
+  $where: LearnStrategyWhereUniqueInput!
+) {
+  response: updateLearnStrategy(data: $data, where: $where) {
+    ...learnStrategy_
+  }
+}
 
 fragment LearnStrategyNoNesting on LearnStrategy {
   id

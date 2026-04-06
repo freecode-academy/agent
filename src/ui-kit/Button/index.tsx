@@ -8,7 +8,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 }
 
 export const Button: React.FC<ButtonProps> = ({
-  variant = ComponentVariant.PRIMARY,
+  variant = ComponentVariant.DEFAULT,
   size = ComponentSize.MD,
   children,
   ...props

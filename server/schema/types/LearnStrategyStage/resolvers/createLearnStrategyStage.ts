@@ -50,7 +50,7 @@ builder.mutationField('createLearnStrategyStage', (t) =>
           throw new Error('Нельзя ссылаться на саму себя')
         }
 
-        createData.LearnStrategy = {
+        createData.LearnStrategyTarget = {
           connect: {
             id: LearnStrategyTarget.id,
           },

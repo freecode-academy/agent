@@ -1,7 +1,7 @@
 import { Prisma } from '@prisma/client'
 import { builder } from '../../../builder'
 import {
-  LearnStrategyUpdateDataInput,
+  LearnStrategyUpdateInput,
   LearnStrategyWhereUniqueInput,
 } from '../inputs'
 
@@ -9,11 +9,11 @@ builder.mutationField('updateLearnStrategy', (t) =>
   t.prismaField({
     type: 'LearnStrategy',
     args: {
-      data: t.arg({ type: LearnStrategyUpdateDataInput, required: true }),
+      data: t.arg({ type: LearnStrategyUpdateInput, required: true }),
       where: t.arg({ type: LearnStrategyWhereUniqueInput, required: true }),
     },
     resolve: async (query, _root, args, ctx) => {
-      const { name, description } = args.data
+      const { name, description, level, ...other } = args.data
       const { id: currentUserId } = ctx.currentUser || {}
 
       const where: Prisma.LearnStrategyWhereUniqueInput = {
@@ -43,8 +43,10 @@ builder.mutationField('updateLearnStrategy', (t) =>
       return ctx.prisma.learnStrategy.update({
         ...query,
         data: {
+          ...other,
           name,
           description,
+          level: level ?? undefined,
         },
         where,
       })
