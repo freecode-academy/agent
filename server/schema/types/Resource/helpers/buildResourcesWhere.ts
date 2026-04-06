@@ -4,6 +4,7 @@ import { PrismaContext } from 'server/context/interfaces'
 interface ResourceWhereInput {
   type?: ResourceType | null
   blogId?: string | null
+  topicId?: string | null
 }
 
 export function buildResourcesWhere(
@@ -12,7 +13,7 @@ export function buildResourcesWhere(
 ): Prisma.ResourceWhereInput {
   const { currentUser } = ctx || {}
 
-  const { type, blogId, ...other } = where || {}
+  const { type, blogId, topicId, ...other } = where || {}
 
   let filterByStatus: Prisma.ResourceWhereInput['AND'] | undefined = [
     {
@@ -43,6 +44,7 @@ export function buildResourcesWhere(
     AND: filterByStatus || undefined,
     ...other,
     Blog: blogId ?? undefined,
+    Topic: topicId ?? undefined,
   }
 
   return result

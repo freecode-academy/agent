@@ -1,6 +1,5 @@
 import styled, { css } from 'styled-components'
-
-type ResourceVariant = 'list' | 'full'
+import { ResourceVariant } from './interfaces'
 
 type ResourceStyledProps = {
   $variant: ResourceVariant
@@ -62,6 +61,10 @@ export const ResourceIntroStyled = styled.p`
 
 export const ResourceContentStyled = styled.div`
   line-height: 1.6;
+
+  &:empty {
+    display: none;
+  }
 `
 
 export const ResourceStyledToolbar = styled.div`

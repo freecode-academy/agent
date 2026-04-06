@@ -1,13 +1,17 @@
 /* eslint-disable no-console */
-import { useResourceQuery } from 'src/gql/generated'
+import { ResourceType, useResourceQuery } from 'src/gql/generated'
 import { Page } from '../../_App/interfaces'
 import { ResourcePageProps } from './interfaces'
 import { resourcePageGetInitialProps } from './resourcePageGetInitialProps'
 import { SeoHeaders } from 'src/components/seo/SeoHeaders'
 import { Markdown } from 'src/components/Markdown'
+import { BlogView } from './view/Blog'
+import { TopicView } from './view/Topic'
 
-export const ResourcePage: Page<ResourcePageProps> = ({ uri }) => {
-  console.log('ResourcePage uri', uri)
+export const ResourcePage: Page<ResourcePageProps> = (props) => {
+  const { uri, page } = props
+
+  console.log('ResourcePage props', props)
 
   const response = useResourceQuery({
     variables: {
@@ -24,13 +28,37 @@ export const ResourcePage: Page<ResourcePageProps> = ({ uri }) => {
     return null
   }
 
+  let content: React.ReactNode | null
+
+  switch (resource.type) {
+    case ResourceType.BLOG:
+      content = <BlogView page={page || 1} resource={resource} />
+      break
+
+    case ResourceType.TOPIC:
+      content = <TopicView resource={resource} />
+      break
+
+    default:
+      content = null
+  }
+
   return (
     <>
-      <SeoHeaders title={resource.name ?? undefined} />
+      <SeoHeaders
+        title={resource.name ?? undefined}
+        description={resource.longtitle}
+      />
 
-      {resource.name}
+      {(page || 1) < 2 && (
+        <>
+          {resource.name}
 
-      <Markdown>{resource.contentV2}</Markdown>
+          <Markdown>{resource.contentV2}</Markdown>
+        </>
+      )}
+
+      {content}
     </>
   )
 }

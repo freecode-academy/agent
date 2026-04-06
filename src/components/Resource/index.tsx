@@ -21,9 +21,8 @@ import { UserLink } from '../Link/User'
 // import { CreateResourceComment } from './CreateComment'
 import { SeparatorStyled } from '../Separator/styles'
 import { ResourceLink } from '../Link/Resource'
+import { ResourceVariant } from './interfaces'
 // import { ResourceStatusChip } from './Status'
-
-type ResourceVariant = 'list' | 'full'
 
 type ResourceProps = {
   resource: ResourceFragment
@@ -74,9 +73,9 @@ export const Resource: React.FC<ResourceProps> = ({
       <ResourceStyledToolbar>
         {variant === 'list' ? (
           <ResourceLink resource={resource} />
-        ) : (
+        ) : variant === 'full' ? (
           titleElement
-        )}
+        ) : null}
 
         <SeparatorStyled />
         {/* <ResourceStatusChip resource={resource} /> */}
@@ -102,15 +101,17 @@ export const Resource: React.FC<ResourceProps> = ({
         )}
       </ResourceMetaStyled>
 
-      {variant === 'list' ? null : (
-        <>
-          <ResourceContentStyled>
+      <ResourceContentStyled>
+        {variant === 'list' ? (
+          <Markdown>{resource.intro}</Markdown>
+        ) : (
+          <>
             <Markdown>{resource.contentV2}</Markdown>
-          </ResourceContentStyled>
 
-          {/* {currentUser && <CreateResourceComment resource={resource} />} */}
-        </>
-      )}
+            {/* {currentUser && <CreateResourceComment resource={resource} />} */}
+          </>
+        )}
+      </ResourceContentStyled>
     </ResourceStyled>
   )
 }

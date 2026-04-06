@@ -17,5 +17,6 @@ export function getResourcesConnectionQueryVariables({
   return {
     where: { ...where },
     skip: (page - 1) * first,
+    first,
   }
 }

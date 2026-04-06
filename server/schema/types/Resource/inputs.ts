@@ -1,10 +1,19 @@
 import { builder } from '../../builder'
+import { SortOrder } from '../common'
 import { ResourceTypeEnum } from './types'
+
+export const ResourceOrderByInput = builder.inputType('ResourceOrderByInput', {
+  fields: (t) => ({
+    createdAt: t.field({ type: SortOrder }),
+    updatedAt: t.field({ type: SortOrder }),
+  }),
+})
 
 export const ResourceWhereInput = builder.inputType('ResourceWhereInput', {
   fields: (t) => ({
     type: t.field({ type: ResourceTypeEnum }),
     blogId: t.string(),
+    topicId: t.string(),
   }),
 })
 

@@ -9,23 +9,25 @@ query resource(
 
 query resources(
   $where: ResourceWhereInput
-  $first: Int = 10
+  $orderBy: ResourceOrderByInput
+  $first: Int
   $skip: Int
   $resourceWithDetailes: Boolean = false
 ) {
-  resources(where: $where, take: $first, skip: $skip) {
+  resources(where: $where, orderBy: $orderBy, take: $first, skip: $skip) {
     ...resource_
   }
 }
 
 query resourcesConnection(
-  $first: Int = 10
+  $first: Int
+  $orderBy: ResourceOrderByInput
   $skip: Int
   $where: ResourceWhereInput
   $resourceWithDetailes: Boolean = false
 ) {
   resourcesCount(where: $where)
-  resources(take: $first, skip: $skip, where: $where) {
+  resources(take: $first, orderBy: $orderBy, skip: $skip, where: $where) {
     ...resource_
   }
 }

@@ -1,5 +1,5 @@
 import { builder } from '../../../builder'
-import { ResourceWhereInput } from '../inputs'
+import { ResourceOrderByInput, ResourceWhereInput } from '../inputs'
 import { buildResourcesWhere } from '../helpers/buildResourcesWhere'
 
 builder.queryField('resources', (t) =>
@@ -7,6 +7,7 @@ builder.queryField('resources', (t) =>
     type: ['Resource'],
     args: {
       where: t.arg({ type: ResourceWhereInput }),
+      orderBy: t.arg({ type: ResourceOrderByInput }),
       skip: t.arg.int(),
       take: t.arg.int(),
     },
@@ -14,7 +15,9 @@ builder.queryField('resources', (t) =>
       return await ctx.prisma.resource.findMany({
         ...query,
         where: buildResourcesWhere(args.where, ctx),
-        orderBy: { createdAt: 'desc' },
+        orderBy: {
+          createdAt: args.orderBy?.createdAt ?? 'desc',
+        },
         skip: args.skip ?? undefined,
         take: args.take ?? undefined,
       })

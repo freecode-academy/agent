@@ -2,7 +2,7 @@ import { ResourcesPageViewProps } from './interfaces'
 import { Resource } from 'src/components/Resource'
 import {
   ResourcesPageViewStyled,
-  ResourcesPageViewTitleStyled,
+  // ResourcesPageViewTitleStyled,
   ResourcesPageViewListStyled,
   ResourcesPageViewToolbarStyled,
 } from './styles'
@@ -20,7 +20,7 @@ export const ResourcesPageView: React.FC<ResourcesPageViewProps> = ({
   return (
     <ResourcesPageViewStyled>
       <ResourcesPageViewToolbarStyled>
-        <ResourcesPageViewTitleStyled>Resources</ResourcesPageViewTitleStyled>
+        {/* <ResourcesPageViewTitleStyled>Resources</ResourcesPageViewTitleStyled> */}
 
         {/* <Link href="/resources/create">
           <Button>Create resource</Button>
