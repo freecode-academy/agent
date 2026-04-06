@@ -1,29 +1,28 @@
 import { useMemo } from 'react'
 import {
-  useTechnologyQuery,
-  TechnologyDocument,
-  TechnologyQuery,
-  TechnologyQueryVariables,
+  useTeamQuery,
+  TeamDocument,
+  TeamQuery,
+  TeamQueryVariables,
 } from 'src/gql/generated'
 
-import { TechnologyView } from './View'
+import { TeamView } from './View'
 
 import { Page } from '../../_App/interfaces'
 import { useRouter } from 'next/router'
 import { ParsedUrlQuery } from 'querystring'
 
-function getQueryParams(query: ParsedUrlQuery): TechnologyQueryVariables {
+function getQueryParams(query: ParsedUrlQuery): TeamQueryVariables {
   const id = query.id
 
   return {
     where: {
       id: id && typeof id === 'string' ? id : '',
     },
-    withLearnStrategies: true,
   }
 }
 
-export const TechnologyPage: Page = () => {
+export const TeamPage: Page = () => {
   const router = useRouter()
 
   const { query } = router
@@ -34,28 +33,28 @@ export const TechnologyPage: Page = () => {
     }
   }, [query])
 
-  const response = useTechnologyQuery({
+  const response = useTeamQuery({
     variables: queryVariables,
     // onError: console.error,
   })
 
-  if (!response.data?.object) {
+  if (!response.data?.team) {
     return null
   }
 
   return (
     <>
-      <TechnologyView technology={response.data?.object} />
+      <TeamView team={response.data?.team} />
     </>
   )
 }
 
-TechnologyPage.getInitialProps = async (context) => {
+TeamPage.getInitialProps = async (context) => {
   const { apolloClient } = context
 
   // TODO Fix private rooms access
-  const result = await apolloClient.query<TechnologyQuery>({
-    query: TechnologyDocument,
+  const result = await apolloClient.query<TeamQuery>({
+    query: TeamDocument,
 
     /**
      * Важно, чтобы все переменные запроса серверные и фронтовые совпадали,
@@ -66,6 +65,6 @@ TechnologyPage.getInitialProps = async (context) => {
     },
   })
   return {
-    statusCode: !result.data?.object ? 404 : undefined,
+    statusCode: !result.data?.team ? 404 : undefined,
   }
 }

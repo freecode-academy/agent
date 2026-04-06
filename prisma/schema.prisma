@@ -1442,6 +1442,8 @@ enum TeamStatus {
 
 model Team {
   id                       String       @id @default(cuid()) @db.VarChar(36)
+  createdAt                DateTime     @default(now()) @db.Timestamp(3)
+  updatedAt                DateTime     @default(now()) @updatedAt @db.Timestamp(3)
   name                     String       @db.Text
   status                   TeamStatus   @default(value: Active)
   oldID                    Int?         @unique
@@ -1449,9 +1451,8 @@ model Team {
   website                  String?      @db.Text
   email                    String?      @db.Text
   phone                    String?      @db.Text
+  content                  String?      @db.Text
   Parent                   String?      @db.VarChar(36)
-  createdAt                DateTime     @default(now()) @db.Timestamp(3)
-  updatedAt                DateTime     @default(now()) @updatedAt @db.Timestamp(3)
   CreatedBy                String       @db.VarChar(36)
   User                     User         @relation(fields: [CreatedBy], references: [id])
   Team                     Team?        @relation("TeamToTeam_Parent", fields: [Parent], references: [id])

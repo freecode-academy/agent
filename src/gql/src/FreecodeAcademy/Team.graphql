@@ -1,0 +1,70 @@
+query team($where: TeamWhereUniqueInput!, $teamWithDetailes: Boolean = true) {
+  team(where: $where) {
+    ...team_
+  }
+}
+
+query teams(
+  $where: TeamWhereInput
+  $orderBy: TeamOrderByInput
+  $take: Int
+  $skip: Int
+  $teamWithDetailes: Boolean = false
+) {
+  teams(where: $where, orderBy: $orderBy, take: $take, skip: $skip) {
+    ...team_
+  }
+}
+
+query teamsConnection(
+  $take: Int
+  $orderBy: TeamOrderByInput
+  $skip: Int
+  $where: TeamWhereInput
+  $teamWithDetailes: Boolean = false
+) {
+  teamsCount(where: $where)
+  teams(take: $take, orderBy: $orderBy, skip: $skip, where: $where) {
+    ...team_
+  }
+}
+
+mutation createTeam(
+  $data: TeamCreateInput!
+  $teamWithDetailes: Boolean = true
+) {
+  response: createTeam(data: $data) {
+    ...team_
+  }
+}
+
+mutation updateTeam(
+  $data: TeamUpdateInput!
+  $where: TeamWhereUniqueInput!
+  $teamWithDetailes: Boolean = true
+) {
+  response: updateTeam(data: $data, where: $where) {
+    ...team_
+  }
+}
+
+fragment team_ on Team {
+  ...TeamNoNesting
+  CreatedBy {
+    ...UserNoNesting
+  }
+}
+
+fragment TeamNoNesting on Team {
+  id
+  name
+  status
+  createdAt
+  updatedAt
+  website
+  address
+
+  ... @include(if: $teamWithDetailes) {
+    content
+  }
+}

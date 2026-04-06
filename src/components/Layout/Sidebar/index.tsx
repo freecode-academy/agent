@@ -51,6 +51,28 @@ const navItems = [
     ),
   },
   {
+    label: 'Teams',
+    href: '/teams',
+    icon: (
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <circle cx="12" cy="5" r="3" />
+        <circle cx="5" cy="19" r="3" />
+        <circle cx="19" cy="19" r="3" />
+        <path d="M12 8v4" />
+        <path d="M8.5 14.5L5.5 16.5" />
+        <path d="M15.5 14.5L18.5 16.5" />
+        <circle cx="12" cy="14" r="2" />
+      </svg>
+    ),
+  },
+  {
     label: 'Growth Strategies',
     href: '/learnstrategies',
     icon: (
