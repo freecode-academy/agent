@@ -10,7 +10,7 @@ import {
   GridTableAttributesContainerStyled,
 } from 'src/components/GridTable/styles'
 import UserTechnologyRow from './UserTechnologyRow'
-// import { TechnologyUpdateForm } from './UpdateForm'
+import { TechnologyForm } from '../Form'
 import { TechnologyLearnStrategyStages } from './LearnStrategyStages'
 import { useAppContext } from 'src/components/AppContext'
 import { Button } from 'src/ui-kit/Button'
@@ -164,6 +164,13 @@ export const TechnologyView: React.FC<TechnologyViewProps> = ({
       />
 
       {editButton}
+
+      {editFormOpened ? (
+        <TechnologyForm
+          technology={technology}
+          cancelHandler={editFormOpenedToggle}
+        />
+      ) : null}
 
       <TechnologyViewStyled>
         <div>

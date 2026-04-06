@@ -1,7 +1,5 @@
 import styled from 'styled-components'
 
-export const TechnologiesViewStyled = styled.div``
-
 export const TechnologiesGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -76,4 +74,10 @@ export const TechnologyCardMembers = styled.div`
     height: 16px;
     color: #9ca3af;
   }
+`
+
+export const TechnologiesViewStyled = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 `

@@ -2,6 +2,8 @@ import React from 'react'
 import Link from 'next/link'
 import { TechnologiesConnectionTechnologyFragment } from 'src/gql/generated'
 import { UserLink } from 'src/components/Link/User'
+import { useAppContext } from 'src/components/AppContext'
+import { Button } from 'src/ui-kit/Button'
 import {
   TechnologiesViewStyled,
   TechnologiesGrid,
@@ -25,10 +27,19 @@ export const TechnologiesView: React.FC<TechnologiesViewProps> = ({
   page,
   limit,
 }) => {
+  const { user: currentUser } = useAppContext()
   const totalPages = count ? Math.floor(count / (limit ?? 10)) + 1 : 0
 
   return (
     <TechnologiesViewStyled>
+      {currentUser?.sudo && (
+        <div>
+          <Link href={'/technologies/create'}>
+            <Button>Create new technology</Button>
+          </Link>
+        </div>
+      )}
+
       <TechnologiesGrid>
         {objects.map((n) => {
           const membersCount = n.UserTechnologies?.length || 0

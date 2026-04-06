@@ -17,12 +17,13 @@ builder.mutationField('createTechnology', (t) =>
 
       validateTechnology(data)
 
-      const { ...other } = data
+      const { content, ...other } = data
 
       return prisma.technology.create({
         ...query,
         data: {
           ...other,
+          contentText: content ?? undefined,
           User: {
             connect: {
               id: currentUser.id,

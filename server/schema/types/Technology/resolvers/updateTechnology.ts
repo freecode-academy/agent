@@ -1,15 +1,12 @@
 import { builder } from '../../../builder'
-import {
-  TechnologyUpdateDataInput,
-  TechnologyWhereUniqueInput,
-} from '../inputs'
+import { TechnologyUpdateInput, TechnologyWhereUniqueInput } from '../inputs'
 import { validateTechnology } from './validateTechnology'
 
 builder.mutationField('updateTechnology', (t) =>
   t.prismaField({
     type: 'Technology',
     args: {
-      data: t.arg({ type: TechnologyUpdateDataInput, required: true }),
+      data: t.arg({ type: TechnologyUpdateInput, required: true }),
       where: t.arg({ type: TechnologyWhereUniqueInput, required: true }),
     },
     resolve: async (query, _root, { data, where }, ctx) => {
@@ -21,12 +18,13 @@ builder.mutationField('updateTechnology', (t) =>
 
       validateTechnology(data)
 
-      const { name, ...other } = data
+      const { name, content, ...other } = data
 
       return prisma.technology.update({
         ...query,
         data: {
           name: name ?? undefined,
+          contentText: content ?? undefined,
           ...other,
         },
         where: { id: where.id ?? undefined },

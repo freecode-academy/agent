@@ -10,9 +10,8 @@ query technology(
 query technologies(
   $take: Int
   $skip: Int
-  $where: TechnologyWhereInput
-) # $orderBy: [TechnologyOrderByWithRelationInput!] = { createdAt: desc }
-{
+  $where: TechnologyWhereInput # $orderBy: [TechnologyOrderByWithRelationInput!] = { createdAt: desc }
+) {
   technologies(take: $take, skip: $skip, where: $where) {
     ...technologiesConnectionTechnology
   }
@@ -21,33 +20,32 @@ query technologies(
 query technologiesConnection(
   $take: Int
   $skip: Int
-  $where: TechnologyWhereInput
-) # $orderBy: [TechnologyOrderByWithRelationInput!] = { createdAt: desc }
-{
+  $where: TechnologyWhereInput # $orderBy: [TechnologyOrderByWithRelationInput!] = { createdAt: desc }
+) {
   technologiesCount(where: $where)
   technologies(take: $take, skip: $skip, where: $where) {
     ...technologiesConnectionTechnology
   }
 }
 
-# mutation createTechnology(
-#   $data: TechnologyCreateInput!
-#   $withLearnStrategies: Boolean! = false
-# ) {
-#   createTechnology(data: $data) {
-#     ...technology_
-#   }
-# }
+mutation createTechnology(
+  $data: TechnologyCreateInput!
+  $withLearnStrategies: Boolean! = false
+) {
+  response: createTechnology(data: $data) {
+    ...technology_
+  }
+}
 
-# mutation updateTechnology(
-#   $data: TechnologyUpdateInput!
-#   $where: TechnologyWhereUniqueInput!
-#   $withLearnStrategies: Boolean! = false
-# ) {
-#   updateTechnology(data: $data, where: $where) {
-#     ...technology_
-#   }
-# }
+mutation updateTechnology(
+  $data: TechnologyUpdateInput!
+  $where: TechnologyWhereUniqueInput!
+  $withLearnStrategies: Boolean! = false
+) {
+  response: updateTechnology(data: $data, where: $where) {
+    ...technology_
+  }
+}
 
 fragment technologiesConnectionTechnology on Technology {
   ...TechnologyNoNesting

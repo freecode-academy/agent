@@ -1,7 +1,18 @@
 import React, { useMemo } from 'react'
-
-import { TechnologyLinkProps } from './interfaces'
 import Link from 'next/link'
+import { TechnologyNoNestingFragment } from 'src/gql/generated'
+
+export function makeTechnologyLink(
+  object: NonNullable<TechnologyLinkProps['object']>,
+) {
+  const { id } = object
+
+  return `/technologies/${id}`
+}
+
+export interface TechnologyLinkProps extends React.PropsWithChildren {
+  object: TechnologyNoNestingFragment | null | undefined
+}
 
 const TechnologyLink: React.FC<TechnologyLinkProps> = ({
   object,
@@ -14,14 +25,14 @@ const TechnologyLink: React.FC<TechnologyLinkProps> = ({
 
     return (
       <Link
-        href={`/technologies/${object.id}`}
+        href={makeTechnologyLink(object)}
         title={object?.name || ''}
         {...other}
       >
         {object?.name}
       </Link>
     )
-  }, [object?.id, object?.name, other])
+  }, [object, other])
 }
 
 export default TechnologyLink

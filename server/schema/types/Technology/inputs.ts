@@ -32,8 +32,8 @@ export const TechnologyCreateInput = builder.inputType(
   },
 )
 
-export const TechnologyUpdateDataInput = builder.inputType(
-  'TechnologyUpdateDataInput',
+export const TechnologyUpdateInput = builder.inputType(
+  'TechnologyUpdateInput',
   {
     fields: (t) => ({
       name: t.string({ required: false }),

@@ -48,11 +48,13 @@ export const UserPageView: React.FC<UserPageViewProps> = ({
         </>
       </UserPageViewToolbarStyled>
 
-      <Markdown>{user.content}</Markdown>
-
       {isEditing ? (
         <UserEditForm user={user} closeForm={handleCloseForm} />
-      ) : null}
+      ) : (
+        <>
+          <Markdown>{user.content}</Markdown>
+        </>
+      )}
 
       {isCurrentUser && currentUser && (
         <>

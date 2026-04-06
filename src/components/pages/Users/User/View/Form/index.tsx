@@ -157,7 +157,11 @@ export const UserEditForm: React.FC<UserEditFormProps> = ({
         <Controller name="content" render={fieldRenderer} />
 
         <div>
-          <Button type="submit" disabled={inRequest}>
+          <Button
+            type="submit"
+            disabled={inRequest}
+            variant={ComponentVariant.PRIMARY}
+          >
             Save
           </Button>
           <Button

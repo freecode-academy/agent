@@ -15,6 +15,7 @@ import { useAppContext } from 'src/components/AppContext'
 import { useSnackbar } from 'src/ui-kit/Snackbar'
 import { Button } from 'src/ui-kit/Button'
 import { AuthProviders } from '../AuthProviders'
+import { ComponentVariant } from 'src/ui-kit/interfaces'
 
 export type { SignInFormData }
 
@@ -131,7 +132,11 @@ export const SignInForm: React.FC<SignInFormProps> = ({
 
         <AuthProviders onSuccessHandler={onSuccessHandler} />
 
-        <Button type="submit" disabled={loading}>
+        <Button
+          type="submit"
+          disabled={loading}
+          variant={ComponentVariant.PRIMARY}
+        >
           {loading ? 'Signing in...' : 'Sign In'}
         </Button>
       </FormProvider>

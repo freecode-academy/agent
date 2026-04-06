@@ -17,6 +17,7 @@ import { AuthProviders } from '../AuthProviders'
 import { useSearchParams } from 'next/navigation'
 import { GET_PARAM_REFERRERTOKEN_NAME, SignUpFormData } from './interfaces'
 import { signUpSchema } from './schema'
+import { ComponentVariant } from 'src/ui-kit/interfaces'
 
 export interface SignUpFormProps {
   onSuccessHandler?: (data: SignupMutation['response']) => void
@@ -152,7 +153,11 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({
 
         <AuthProviders onSuccessHandler={onSuccessHandler} />
 
-        <Button type="submit" disabled={loading}>
+        <Button
+          type="submit"
+          disabled={loading}
+          variant={ComponentVariant.PRIMARY}
+        >
           {loading ? 'Signing up...' : 'Sign up'}
         </Button>
       </FormProvider>
