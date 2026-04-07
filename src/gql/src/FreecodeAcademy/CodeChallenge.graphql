@@ -1,0 +1,118 @@
+query codeChallenge(
+  $where: CodeChallengeWhereUniqueInput!
+  $resourceWithDetailes: Boolean = true
+) {
+  codeChallenge(where: $where) {
+    ...CodeChallengePage
+  }
+  # codeChallengeCompletions (
+  #   where: {
+  #     CodeChallenge_CodeChallengeToCodeChallengeCompletion: {
+
+  #     }
+  #   }
+  #   # orderBy: $orderBy
+  # ){
+  #   ...codeChallengeCompletion_
+  # }
+}
+
+query codeChallenges(
+  $where: CodeChallengeWhereInput
+  $orderBy: CodeChallengeOrderByInput!
+  $take: Int
+  $skip: Int
+  # $cursor: CodeChallengeWhereUniqueInput
+  $resourceWithDetailes: Boolean = false
+) {
+  codeChallenges(
+    where: $where
+    orderBy: $orderBy
+    take: $take
+    skip: $skip
+    # cursor: $cursor
+  ) {
+    ...CodeChallenge_
+  }
+}
+
+fragment CodeChallengePage on CodeChallenge {
+  ...CodeChallenge_
+  ...codeChallengeWithBlocks_
+  # CodeChallengeCompletionsSuccess: CodeChallengeCompletions(
+  #   orderBy: [{ createdAt: desc }]
+  #   where: { success: { equals: true } }
+  # ) {
+  #   ...CodeChallengePageChallengeCompletion
+  # }
+}
+
+# fragment CodeChallengePageChallengeCompletion on CodeChallengeCompletion {
+#   ...codeChallengeCompletionNoNesting
+#   CreatedBy {
+#     ...UserNoNesting
+#   }
+# }
+
+# mutation updateCodeChallenge(
+#   $where: CodeChallengeWhereUniqueInput!
+#   $data: CodeChallengeUpdateInput!
+# ) {
+#   updateCodeChallenge(where: $where, data: $data) {
+#     ...CodeChallenge_
+#   }
+# }
+
+fragment CodeChallenge_ on CodeChallenge {
+  ...CodeChallengeNoNestiong
+
+  # CreatedBy {
+  #   ...UserNoNesting
+  # }
+  Topic {
+    ...resource_
+  }
+}
+
+fragment CodeChallengeNoNestiong on CodeChallenge {
+  id
+  # externalKey
+  createdAt
+  updatedAt
+  name
+  # dashedName
+  # localeTitle
+  description
+  # challengeType
+  # forumTopicId
+  # translations
+  # tests
+  # solutions
+  instructions
+  # files
+  # videoUrl
+  # order
+  # superOrder
+  # challengeOrder
+  # required
+  # isRequired
+  # isPrivate
+  # isBeta
+  # template
+  rank
+  blockId
+}
+
+fragment codeChallengeWithBlocks_ on CodeChallenge {
+  id
+  name
+  # localeTitle
+  CodeChallengeBlock {
+    id
+    name
+    Parent {
+      id
+      name
+    }
+  }
+}

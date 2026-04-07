@@ -1020,38 +1020,40 @@ model ChatRoom {
 }
 
 model CodeChallenge {
-  id                       String                    @id @default(cuid()) @db.VarChar(36)
-  externalKey              String?                   @unique @db.VarChar(36)
-  createdAt                DateTime                  @default(now()) @db.Timestamp(3)
-  updatedAt                DateTime                  @default(now()) @updatedAt @db.Timestamp(3)
-  name                     String?                   @db.Text
-  dashedName               String?                   @db.Text
-  localeTitle              String?                   @db.Text
-  description              String?                   @db.Text
-  challengeType            Int?
-  forumTopicId             Int?
-  translations             Json?
-  tests                    Json?
-  solutions                Json?
-  instructions             String?                   @db.Text
-  files                    Json?
-  videoUrl                 String?                   @db.Text
-  order                    Int?
-  superOrder               Int?
-  challengeOrder           Int?
-  required                 Json?
-  isRequired               Boolean?
-  isPrivate                Boolean?
-  isBeta                   Boolean?
-  template                 String?                   @db.Text
-  time                     String?                   @db.Text
-  rank                     Int?
-  Block                    String?                   @db.VarChar(36)
-  CreatedBy                String?                   @db.VarChar(36)
-  Topic                    String?                   @db.VarChar(36)
-  CodeChallengeBlock       CodeChallengeBlock?       @relation(fields: [Block], references: [id])
-  User                     User?                     @relation(fields: [CreatedBy], references: [id])
-  Resource                 Resource?                 @relation(fields: [Topic], references: [id])
+  id                 String              @id @default(cuid()) @db.VarChar(36)
+  externalKey        String?             @unique @db.VarChar(36)
+  createdAt          DateTime            @default(now()) @db.Timestamp(3)
+  updatedAt          DateTime            @default(now()) @updatedAt @db.Timestamp(3)
+  name               String?             @db.Text
+  dashedName         String?             @db.Text
+  localeTitle        String?             @db.Text
+  description        String?             @db.Text
+  challengeType      Int?
+  forumTopicId       Int?
+  translations       Json?
+  tests              Json?
+  solutions          Json?
+  instructions       String?             @db.Text
+  files              Json?
+  videoUrl           String?             @db.Text
+  order              Int?
+  superOrder         Int?
+  challengeOrder     Int?
+  required           Json?
+  isRequired         Boolean?
+  isPrivate          Boolean?
+  isBeta             Boolean?
+  template           String?             @db.Text
+  time               String?             @db.Text
+  rank               Int?
+  Block              String?             @db.VarChar(36)
+  CreatedBy          String?             @db.VarChar(36)
+  CodeChallengeBlock CodeChallengeBlock? @relation(fields: [Block], references: [id])
+  User               User?               @relation(fields: [CreatedBy], references: [id])
+
+  Topic    String?   @db.VarChar(36)
+  Resource Resource? @relation(fields: [Topic], references: [id])
+
   CodeChallengeCompletions CodeChallengeCompletion[]
 
   @@index([Block], map: "CodeChallenge_Block")
@@ -1060,16 +1062,19 @@ model CodeChallenge {
 }
 
 model CodeChallengeBlock {
-  id                       String               @id @default(cuid()) @db.VarChar(36)
-  externalKey              String?              @db.Text
-  createdAt                DateTime             @default(now()) @db.Timestamp(3)
-  updatedAt                DateTime             @default(now()) @updatedAt @db.Timestamp(3)
-  name                     String?              @db.Text
-  rank                     Int?
-  CreatedBy                String?              @db.VarChar(36)
-  Parent                   String?              @db.VarChar(36)
-  User                     User?                @relation(fields: [CreatedBy], references: [id])
-  CodeChallengeBlock       CodeChallengeBlock?  @relation("CodeChallengeBlockToCodeChallengeBlock_Parent", fields: [Parent], references: [id])
+  id          String   @id @default(cuid()) @db.VarChar(36)
+  externalKey String?  @db.Text
+  createdAt   DateTime @default(now()) @db.Timestamp(3)
+  updatedAt   DateTime @default(now()) @updatedAt @db.Timestamp(3)
+  name        String?  @db.Text
+  rank        Int?
+
+  CreatedBy String? @db.VarChar(36)
+  User      User?   @relation(fields: [CreatedBy], references: [id])
+
+  Parent             String?             @db.VarChar(36)
+  CodeChallengeBlock CodeChallengeBlock? @relation("CodeChallengeBlockToCodeChallengeBlock_Parent", fields: [Parent], references: [id])
+
   CodeChallenge            CodeChallenge[]
   other_CodeChallengeBlock CodeChallengeBlock[] @relation("CodeChallengeBlockToCodeChallengeBlock_Parent")
 

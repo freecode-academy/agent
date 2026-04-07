@@ -1,0 +1,73 @@
+query codeChallengeBlocks(
+  $where: CodeChallengeBlockWhereInput
+  $orderBy: CodeChallengeBlockOrderByInput
+  $take: Int
+  $skip: Int
+  $codeChallengeBlockWithDetails: Boolean = false
+) {
+  codeChallengeBlocks(
+    where: $where
+    orderBy: $orderBy
+    take: $take
+    skip: $skip
+  ) {
+    ...CodeChallengeBlock_
+  }
+}
+
+query codeChallengeBlock(
+  $where: CodeChallengeBlockWhereUniqueInput!
+  $codeChallengeBlockWithDetails: Boolean = true
+) {
+  object: codeChallengeBlock(where: $where) {
+    ...CodeChallengeBlock_
+  }
+}
+
+fragment CodeChallengeBlock_ on CodeChallengeBlock {
+  ...CodeChallengeBlockNoNesting
+
+  ... @include(if: $codeChallengeBlockWithDetails) {
+    Challenges {
+      ...CodeChallengeNoNestiong
+    }
+    Children {
+      ...CodeChallengeBlockNoNesting
+      Challenges {
+        ...CodeChallengeNoNestiong
+      }
+    }
+  }
+}
+
+fragment CodeChallengeBlockNoNesting on CodeChallengeBlock {
+  id
+  # externalKey
+  # createdAt
+  # updatedAt
+  name
+  # rank
+}
+
+# fragment challenge on CodeChallenge {
+#   id
+#   name
+#   localeTitle
+#   # externalKey
+#   # createdAt
+#   # updatedAt
+#   # description
+#   # challengeType
+#   # instructions
+#   # order
+#   # superOrder
+#   # challengeOrder
+#   # required
+#   # Нет смысла сейчас использовать, слишком мало записей
+#   # isRequired
+
+#   # isPrivate
+#   # isBeta
+#   # time
+#   # rank
+# }

@@ -1,3 +1,5 @@
+export * from './CodeChallenge'
+export * from './CodeChallengeBlock'
 export * from './LearnStrategyStage'
 export * from './LearnStrategy'
 export * from './Project'

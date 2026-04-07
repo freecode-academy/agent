@@ -47,6 +47,8 @@ const ruleTree = {
     factParticipations: isSudo,
     factProjections: isSudo,
     knowledgeSpaces: isSudo,
+
+    teamMembers: isSudo,
   },
   Mutation: {
     // Example: require authentication for specific mutations
