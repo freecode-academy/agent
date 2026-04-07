@@ -130,7 +130,10 @@ export const SignInForm: React.FC<SignInFormProps> = ({
         <Controller name="username" render={fieldRenderer} />
         <Controller name="password" render={fieldRenderer} />
 
-        <AuthProviders onSuccessHandler={onSuccessHandler} />
+        <AuthProviders
+          onSuccessHandler={onSuccessHandler}
+          referrerToken={null}
+        />
 
         <Button
           type="submit"
