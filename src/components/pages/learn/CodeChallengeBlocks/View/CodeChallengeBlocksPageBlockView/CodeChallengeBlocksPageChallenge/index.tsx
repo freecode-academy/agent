@@ -2,7 +2,7 @@ import React from 'react'
 import Link from 'next/link'
 import { CodeChallengeBlocksPageChallengeProps } from './interfaces'
 import { CodeChallengeBlocksPageChallengeStyled } from './styles'
-// import CodeChallengeStatusIcon from 'src/pages/learn/CodeChallenge/components/StatusIcon'
+// import CodeChallengeStatusIcon from 'src/components/pages/learn/CodeChallenge/components/StatusIcon'
 // import { useCodeChallengStatus } from 'src/hooks/useCodeChallengStatus'
 
 export const CodeChallengeBlocksPageChallenge: React.FC<

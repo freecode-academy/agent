@@ -37,7 +37,7 @@ export const CodeChallengeBlocksPageBlockView: React.FC<
     let content: React.ReactNode[] = []
 
     /**
-     * For src/pages/learn/CodeChallengeBlocks/CodeChallengeBlock
+     * For src/components/pages/learn/CodeChallengeBlocks/CodeChallengeBlock
      */
     if (challenges?.length) {
       const challengesContent = challenges.map((challenge) => {

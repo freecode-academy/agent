@@ -45,13 +45,14 @@ export function buildResourcesWhere(
     ...other,
     Blog: blogId ?? undefined,
     Topic: topicId ?? undefined,
+
+    /**
+     * Исключаем обсуждения тестовых заданий
+     */
+    CodeChallenges: {
+      none: {},
+    },
   }
 
   return result
 }
-
-//     t.nonNull.boolean('published')
-//     t.nonNull.boolean('deleted')
-//     t.nonNull.boolean('hidemenu')
-//     t.nonNull.boolean('searchable')
-//     t.nonNull.boolean('isfolder')

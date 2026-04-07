@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import Link from 'next/link'
 
 type WebSiteLinkProps = {
@@ -9,8 +8,6 @@ export const WebSiteLink: React.FC<WebSiteLinkProps> = ({ url }) => {
   let name: string
 
   const match = url.match(/^(https?:\/\/)([^/]+).*$/i)
-
-  console.log('match', match)
 
   if (match) {
     name = match[2].replace(/www\./i, '')

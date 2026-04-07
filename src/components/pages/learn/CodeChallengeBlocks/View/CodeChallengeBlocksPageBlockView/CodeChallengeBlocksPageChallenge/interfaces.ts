@@ -1,4 +1,4 @@
-// import { CodeChallengeContext } from 'src/pages/learn/CodeChallenge/Context'
+// import { CodeChallengeContext } from 'src/components/pages/learn/CodeChallenge/Context'
 
 import { CodeChallengeFragment } from 'src/gql/generated'
 

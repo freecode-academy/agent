@@ -3,7 +3,6 @@ import { Page } from '../../_App/interfaces'
 import { ResourcePageProps } from './interfaces'
 import { resourcePageGetInitialProps } from './resourcePageGetInitialProps'
 import { SeoHeaders } from 'src/components/seo/SeoHeaders'
-import { Markdown } from 'src/components/Markdown'
 import { BlogView } from './view/Blog'
 import { TopicView } from './view/Topic'
 
@@ -46,14 +45,6 @@ export const ResourcePage: Page<ResourcePageProps> = (props) => {
         title={resource.name ?? undefined}
         description={resource.longtitle}
       />
-
-      {(page || 1) < 2 && (
-        <>
-          {resource.name}
-
-          <Markdown>{resource.contentV2}</Markdown>
-        </>
-      )}
 
       {content}
     </>

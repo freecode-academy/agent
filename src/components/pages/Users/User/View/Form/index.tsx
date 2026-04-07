@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { UserFragment, useUpdateCurrentUserMutation } from 'src/gql/generated'
 import { UserEditFormStyled } from './styles'
 import {
@@ -112,8 +111,6 @@ export const UserEditForm: React.FC<UserEditFormProps> = ({
 
   const onChangeImage = useCallback<NonNullable<FileUploaderProps['onChange']>>(
     (file) => {
-      console.log('onChangeImage file', file)
-
       if (file?.path) {
         form.setValue('image', file.path, {
           shouldValidate: true,
@@ -150,8 +147,6 @@ export const UserEditForm: React.FC<UserEditFormProps> = ({
           label = 'Image'
 
           EditorComponent = ({ value }: { value: string }) => {
-            console.log('EditorComponent value', value)
-
             return (
               <>
                 <FileUploader

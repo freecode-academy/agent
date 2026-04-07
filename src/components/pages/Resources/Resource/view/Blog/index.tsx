@@ -2,6 +2,7 @@ import { ResourcesPageView } from 'src/components/pages/Topics/View'
 import { getResourcesConnectionQueryVariables } from 'src/components/Resource/helpers'
 import { useResourcesConnectionQuery } from 'src/gql/generated'
 import { ResourceViewProps } from '../interfaces'
+import { Markdown } from 'src/components/Markdown'
 
 type BlogViewProps = ResourceViewProps & {
   page: number
@@ -22,6 +23,14 @@ export const BlogView: React.FC<BlogViewProps> = ({ resource, page }) => {
 
   return (
     <>
+      {(page || 1) < 2 && (
+        <>
+          {resource.name}
+
+          <Markdown>{resource.contentV2}</Markdown>
+        </>
+      )}
+
       <ResourcesPageView resources={resources} count={count} page={page || 1} />
     </>
   )

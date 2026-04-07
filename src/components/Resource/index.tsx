@@ -82,7 +82,7 @@ export const Resource: React.FC<ResourceProps> = ({
         {/* {canEdit && <Button onClick={startEditing}>Edit</Button>} */}
       </ResourceStyledToolbar>
 
-      {variant === 'list' && resource.intro && (
+      {variant === 'list' && (resource.intro || resource.longtitle) && (
         <ResourceDescriptionStyled>
           {resource.intro || resource.longtitle}
         </ResourceDescriptionStyled>
