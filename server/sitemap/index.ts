@@ -1,15 +1,12 @@
-import { UserStatus } from '@prisma/client'
+import { Prisma, UserStatus } from '@prisma/client'
 import { Request, Response } from 'express'
 import { prismaClient } from 'server/prisma'
-import { buildPostWhere } from 'server/schema/types/Post/helpers/buildPostWhere'
+import { buildResourcesWhere } from 'server/schema/types/Resource/helpers/buildResourcesWhere'
 import { buildUserWhere } from 'server/schema/types/User/helpers/buildUserWhere'
 
-export enum SitemapSection {
-  index = '/sitemap.xml',
-  main = '/sitemap/main.xml',
-  posts = '/sitemap/posts.xml',
-  users = '/sitemap/users.xml',
-}
+const SITEMAP_LIMIT = 1000
+
+export type SitemapSection = 'main' | 'users' | 'resources' | 'tags'
 
 type UrlItem = {
   url: string
@@ -44,21 +41,51 @@ const generateSitemapXML = (
   return xml
 }
 
+const getSectionCount = async (section: SitemapSection): Promise<number> => {
+  switch (section) {
+    case 'users':
+      return prismaClient.user.count({ where: usersWhere })
+    case 'resources':
+      return prismaClient.resource.count({ where: resourcesWhere })
+    case 'tags':
+      return prismaClient.tag.count({ where: tagsWhere })
+    default:
+      return 0
+  }
+}
+
 export const generateSitemapIndex = async ({
   siteOrigin,
 }: SitemapGeneratorProps): Promise<string> => {
-  return `<?xml version="1.0" encoding="UTF-8"?>
-<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-    <sitemap>
-        <loc>${siteOrigin}/sitemap/main.xml</loc>
-    </sitemap>
-    <sitemap>
-        <loc>${siteOrigin}${SitemapSection.posts}</loc>
-    </sitemap>
-    <sitemap>
-        <loc>${siteOrigin}${SitemapSection.users}</loc>
-    </sitemap>
-</sitemapindex>`
+  const [usersCount, resourcesCount, tagsCount] = await Promise.all([
+    getSectionCount('users'),
+    getSectionCount('resources'),
+    getSectionCount('tags'),
+  ])
+
+  const usersPages = Math.ceil(usersCount / SITEMAP_LIMIT)
+  const resourcesPages = Math.ceil(resourcesCount / SITEMAP_LIMIT)
+  const tagsPages = Math.ceil(tagsCount / SITEMAP_LIMIT)
+
+  let xml = '<?xml version="1.0" encoding="UTF-8"?>\n'
+  xml += '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+
+  xml += `  <sitemap><loc>${siteOrigin}/sitemap.xml?section=main</loc></sitemap>\n`
+
+  for (let i = 1; i <= usersPages; i++) {
+    xml += `  <sitemap><loc>${siteOrigin}/sitemap.xml?section=users&amp;page=${i}</loc></sitemap>\n`
+  }
+
+  for (let i = 1; i <= resourcesPages; i++) {
+    xml += `  <sitemap><loc>${siteOrigin}/sitemap.xml?section=resources&amp;page=${i}</loc></sitemap>\n`
+  }
+
+  for (let i = 1; i <= tagsPages; i++) {
+    xml += `  <sitemap><loc>${siteOrigin}/sitemap.xml?section=tags&amp;page=${i}</loc></sitemap>\n`
+  }
+
+  xml += '</sitemapindex>'
+  return xml
 }
 
 export const generateSitemapMain = async (
@@ -75,35 +102,72 @@ export const generateSitemapMain = async (
       url: `/`,
       updatedAt: monday.toISOString().split('T')[0],
     },
+    {
+      url: `/comments`,
+      updatedAt: monday.toISOString().split('T')[0],
+    },
+    {
+      url: `/people`,
+      updatedAt: monday.toISOString().split('T')[0],
+    },
+    {
+      url: `/about`,
+      updatedAt: monday.toISOString().split('T')[0],
+    },
+    {
+      url: `/start/developers`,
+      updatedAt: monday.toISOString().split('T')[0],
+    },
   ]
 
   return generateSitemapXML(xmlData, props)
 }
 
-const postsWhere = buildPostWhere(
-  {
-    status: 'published',
-  },
-  undefined,
-)
+const resourcesWhere = buildResourcesWhere()
 
-export const generateSitemapPosts = async (
-  props: SitemapGeneratorProps,
+export const generateSitemapResources = async (
+  props: SitemapGeneratorProps & { page: number },
 ): Promise<string> => {
-  const posts = await prismaClient.post.findMany({
-    where: postsWhere,
+  const resources = await prismaClient.resource.findMany({
+    where: resourcesWhere,
     orderBy: {
       createdAt: 'asc',
     },
+    take: SITEMAP_LIMIT,
+    skip: (props.page - 1) * SITEMAP_LIMIT,
   })
 
-  const xmlData: UrlItem[] = posts.map((n) => {
-    const { id, updatedAt } = n
-
-    const uri = `/posts/${id}`
+  const xmlData: UrlItem[] = resources.map((n) => {
+    const { uri, updatedAt } = n
 
     return {
       url: `/${(uri ?? '').replaceAll(/^\/+|\/+$/g, '')}`,
+      updatedAt: updatedAt.toISOString(),
+    }
+  })
+
+  return generateSitemapXML(xmlData, props)
+}
+
+const tagsWhere: Prisma.TagWhereInput = {}
+
+export const generateSitemapTags = async (
+  props: SitemapGeneratorProps & { page: number },
+): Promise<string> => {
+  const tags = await prismaClient.tag.findMany({
+    where: tagsWhere,
+    orderBy: {
+      createdAt: 'asc',
+    },
+    take: SITEMAP_LIMIT,
+    skip: (props.page - 1) * SITEMAP_LIMIT,
+  })
+
+  const xmlData: UrlItem[] = tags.map((n) => {
+    const { name, updatedAt } = n
+
+    return {
+      url: `/tag/${name}`,
       updatedAt: updatedAt.toISOString(),
     }
   })
@@ -119,22 +183,23 @@ const usersWhere = buildUserWhere(
 )
 
 export const generateSitemapUsers = async (
-  props: SitemapGeneratorProps,
+  props: SitemapGeneratorProps & { page: number },
 ): Promise<string> => {
-  const posts = await prismaClient.user.findMany({
+  const users = await prismaClient.user.findMany({
     where: usersWhere,
     orderBy: {
       createdAt: 'asc',
     },
+    take: SITEMAP_LIMIT,
+    skip: (props.page - 1) * SITEMAP_LIMIT,
   })
 
-  const xmlData: UrlItem[] = posts.map((n) => {
-    const { id, updatedAt } = n
-
-    const uri = `/users/${id}`
+  const xmlData: UrlItem[] = users.map((n) => {
+    const { id, username, updatedAt } = n
 
     return {
-      url: `/${(uri ?? '').replaceAll(/^\/+|\/+$/g, '')}`,
+      // url: `/users/${id}`,
+      url: username ? `/profile/${username}` : `/profile/id/${id}`,
       updatedAt: updatedAt.toISOString(),
     }
   })
@@ -151,19 +216,26 @@ export const generateSitemap = async (req: Request, res: Response) => {
   res.header('Content-Type', 'application/xml')
 
   const siteOrigin = `${req.protocol}://${req.headers.host}`
+  const section = req.query.section as SitemapSection | undefined
+  const page = parseInt(req.query.page as string) || 1
 
-  switch (req.url) {
-    case SitemapSection.index:
-      res.send(await generateSitemapIndex({ siteOrigin }))
-      break
-    case SitemapSection.main:
+  if (!section) {
+    res.send(await generateSitemapIndex({ siteOrigin }))
+    return
+  }
+
+  switch (section) {
+    case 'main':
       res.send(await generateSitemapMain({ siteOrigin }))
       break
-    case SitemapSection.posts:
-      res.send(await generateSitemapPosts({ siteOrigin }))
+    case 'users':
+      res.send(await generateSitemapUsers({ siteOrigin, page }))
       break
-    case SitemapSection.users:
-      res.send(await generateSitemapUsers({ siteOrigin }))
+    case 'resources':
+      res.send(await generateSitemapResources({ siteOrigin, page }))
+      break
+    case 'tags':
+      res.send(await generateSitemapTags({ siteOrigin, page }))
       break
     default:
       res.status(404).send('Not found')

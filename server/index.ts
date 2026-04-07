@@ -5,7 +5,7 @@ import './prisma'
 import { setupGraphqlServer } from './graphqlServer'
 import { initN8n, stopN8n } from './n8n'
 import { runBootstrap } from './n8n/bootstrap'
-import { generateSitemap, SitemapSection } from './sitemap'
+import { generateSitemap } from './sitemap'
 import { imageResizerMiddleware } from './middleware/imageResizer'
 
 const withN8N = process.env.N8N_ENABLED === 'true'
@@ -88,7 +88,7 @@ async function startServer() {
     }),
   )
 
-  server.get(Object.values(SitemapSection), (req, res) => {
+  server.get('/sitemap.xml', (req, res) => {
     return generateSitemap(req, res)
   })
 

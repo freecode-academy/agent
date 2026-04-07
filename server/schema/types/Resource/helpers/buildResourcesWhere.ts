@@ -8,8 +8,8 @@ interface ResourceWhereInput {
 }
 
 export function buildResourcesWhere(
-  where: ResourceWhereInput | null | undefined,
-  ctx: PrismaContext | undefined,
+  where?: ResourceWhereInput | null | undefined,
+  ctx?: PrismaContext | undefined,
 ): Prisma.ResourceWhereInput {
   const { currentUser } = ctx || {}
 
