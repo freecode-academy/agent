@@ -7,12 +7,13 @@ export function makeResourceLink(resource: ResourceNoNestingFragment) {
   return uri
 }
 
-type ResourceLinkProps = {
+type ResourceLinkProps = React.PropsWithChildren<{
   resource: ResourceNoNestingFragment | null | undefined
-}
+}>
 
 export const ResourceLink: React.FC<ResourceLinkProps> = ({
   resource,
+  children,
   ...other
 }) => {
   return resource ? (
@@ -21,7 +22,7 @@ export const ResourceLink: React.FC<ResourceLinkProps> = ({
       title={resource?.name || undefined}
       {...other}
     >
-      {resource?.name}
+      {children || resource?.name}
     </Link>
   ) : undefined
 }

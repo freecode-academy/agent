@@ -32,6 +32,7 @@ export const ResourcePage: Page<ResourcePageProps> = (props) => {
       break
 
     case ResourceType.TOPIC:
+    case ResourceType.COMMENT:
       content = <TopicView resource={resource} />
       break
 

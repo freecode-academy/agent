@@ -9,20 +9,13 @@ import {
   ResourceMetaStyled,
   ResourceAuthorStyled,
   ResourceDateStyled,
-  // ResourceIntroStyled,
   ResourceContentStyled,
   ResourceStyledToolbar,
 } from './styles'
 import { UserLink } from '../Link/User'
-// import { useAppContext } from '../AppContext'
-// import { Button } from 'src/ui-kit/Button'
-// import { useBoolean } from 'src/hooks/useBoolean'
-// import { ResourceEditForm } from '../pages/Resources/Resource/Form'
-// import { CreateResourceComment } from './CreateComment'
 import { SeparatorStyled } from '../Separator/styles'
 import { ResourceLink } from '../Link/Resource'
 import { ResourceVariant } from './interfaces'
-// import { ResourceStatusChip } from './Status'
 
 type ResourceProps = {
   resource: ResourceFragment
@@ -41,26 +34,15 @@ export const Resource: React.FC<ResourceProps> = ({
     <ResourceTitleStyled $variant={variant}>{title}</ResourceTitleStyled>
   )
 
-  // const { user: currentUser } = useAppContext()
+  let dateNode: React.ReactNode | null = resource.createdAt && (
+    <ResourceDateStyled>
+      <FormattedDate value={resource.createdAt} format="dateMedium" />
+    </ResourceDateStyled>
+  )
 
-  // const [inEditMode, startEditing, stopEditing] = useBoolean()
-
-  // const canEdit =
-  //   currentUser && resource.createdById === currentUser.id && variant === 'full'
-
-  // let content: React.ReactNode
-
-  // switch (variant) {
-  //   case 'list':
-
-  //   content = <></>
-  //     break
-
-  //   case 'full':
-
-  //   content = <></>
-  //     break
-  // }
+  if (variant === 'comment') {
+    dateNode = <ResourceLink resource={resource}>{dateNode}</ResourceLink>
+  }
 
   return (
     <ResourceStyled $variant={variant}>
@@ -94,11 +76,7 @@ export const Resource: React.FC<ResourceProps> = ({
             <UserLink user={resource.CreatedBy} />
           </ResourceAuthorStyled>
         )}
-        {resource.createdAt && (
-          <ResourceDateStyled>
-            <FormattedDate value={resource.createdAt} format="dateMedium" />
-          </ResourceDateStyled>
-        )}
+        {dateNode}
       </ResourceMetaStyled>
 
       <ResourceContentStyled>
