@@ -41,17 +41,3 @@ export const TeamUpdateInput = builder.inputType('TeamUpdateInput', {
     status: t.field({ type: TeamStatusEnum, required: false }),
   }),
 })
-
-// email                    String?      @db.Text
-// phone                    String?      @db.Text
-// Parent                   String?      @db.VarChar(36)
-// createdAt                DateTime     @default(now()) @db.Timestamp(3)
-// updatedAt                DateTime     @default(now()) @updatedAt @db.Timestamp(3)
-// CreatedBy                String       @db.VarChar(36)
-// User                     User         @relation(fields: [CreatedBy], references: [id])
-// Team                     Team?        @relation("TeamToTeam_Parent", fields: [Parent], references: [id])
-// Projects_ProjectToTeam   Project[]
-// Resources                Resource[]
-// other_Teams              Team[]       @relation("TeamToTeam_Parent")
-// TeamMembers              TeamMember[]
-// Project_ProjectCustomers Project[]    @relation("ProjectCustomers")

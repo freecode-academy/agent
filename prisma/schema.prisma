@@ -1468,22 +1468,28 @@ model Team {
 
 enum TeamMemberStatus {
   Invited
+  Applied
   Active
+  Rejected
   Fired
 }
 
 model TeamMember {
-  id                              String           @id @default(cuid()) @db.VarChar(36)
-  status                          TeamMemberStatus @default(value: Active)
-  User                            String?          @db.VarChar(36)
-  Team                            String?          @db.VarChar(36)
-  CreatedBy                       String           @db.VarChar(36)
-  createdAt                       DateTime         @default(now()) @db.Timestamp(3)
-  updatedAt                       DateTime         @default(now()) @updatedAt @db.Timestamp(3)
-  User_TeamMember_CreatedByToUser User             @relation("TeamMember_CreatedByToUser", fields: [CreatedBy], references: [id])
-  Team_TeamToTeamMember           Team?            @relation(fields: [Team], references: [id])
-  User_TeamMember_UserToUser      User?            @relation("TeamMember_UserToUser", fields: [User], references: [id])
+  id        String           @id @default(cuid()) @db.VarChar(36)
+  status    TeamMemberStatus @default(value: Active)
+  createdAt DateTime         @default(now()) @db.Timestamp(3)
+  updatedAt DateTime         @default(now()) @updatedAt @db.Timestamp(3)
 
+  CreatedBy                       String @db.VarChar(36)
+  User_TeamMember_CreatedByToUser User   @relation("TeamMember_CreatedByToUser", fields: [CreatedBy], references: [id])
+
+  Team                  String? @db.VarChar(36)
+  Team_TeamToTeamMember Team?   @relation(fields: [Team], references: [id])
+
+  User                       String @db.VarChar(36)
+  User_TeamMember_UserToUser User   @relation("TeamMember_UserToUser", fields: [User], references: [id])
+
+  @@unique([Team, User])
   @@index([CreatedBy], map: "TeamMember_CreatedBy")
   @@index([Team], map: "TeamMember_Team")
   @@index([User], map: "TeamMember_User")

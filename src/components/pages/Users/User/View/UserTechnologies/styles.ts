@@ -16,12 +16,19 @@ export const UserTechnologiesCellStyled = styled.div`
   flex-wrap: wrap;
   align-items: center;
   gap: 4px;
-  padding: 8px 16px;
   background: #fff;
 
-  ${minWidth.sm(`
-    padding: 12px 16px;
+  &:empty {
+    display: none;
+  }
+
+  ${minWidth.sm(css`
+    padding: 8px 16px;
     border-bottom: 1px solid #e5e7eb;
+
+    &:empty {
+      display: initial;
+    }
   `)}
 `
 
@@ -79,16 +86,14 @@ export const UserTechnologiesStyled = styled.div`
 
   ${minWidth.sm(css`
     display: grid;
-    grid-template-columns: 2fr 80px 1.5fr auto;
+    grid-template-columns: auto 80px min-content min-content min-content;
     border-radius: 12px;
     overflow: hidden;
     border: 1px solid #e5e7eb;
     background: #f9fafb;
-  `)}
-
-  ${minWidth.md(`
+  `)}/* ${minWidth.md(`
     grid-template-columns: 2fr 80px 1.5fr auto;
-  `)}
+  `)} */
 `
 
 export const UserTechnologiesLevelStyled = styled.span<{ $level: number }>`

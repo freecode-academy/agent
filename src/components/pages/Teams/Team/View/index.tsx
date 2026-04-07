@@ -7,6 +7,7 @@ import { Button } from 'src/ui-kit/Button'
 import { ComponentSize } from 'src/ui-kit/interfaces'
 import { SeoHeaders } from 'src/components/seo/SeoHeaders'
 import { Markdown } from 'src/components/Markdown'
+import { TeamMembers } from './TeamMembers'
 
 export const TeamView: React.FC<TeamViewProps> = ({ team }) => {
   const context = useAppContext()
@@ -23,18 +24,26 @@ export const TeamView: React.FC<TeamViewProps> = ({ team }) => {
     editFormOpenedSetter(!editFormOpened)
   }, [editFormOpened])
 
-  const editButton = useMemo(() => {
-    if (!canEdit) {
+  const buttons = useMemo(() => {
+    const buttons: React.ReactNode[] = []
+
+    if (canEdit) {
+      buttons.push(
+        <Button
+          key="edit"
+          size={ComponentSize.SM}
+          onClick={editFormOpenedToggle}
+        >
+          {editFormOpened ? 'Закрыть' : 'Редактировать'}
+        </Button>,
+      )
+    }
+
+    if (!buttons.length) {
       return null
     }
 
-    return (
-      <div>
-        <Button size={ComponentSize.SM} onClick={editFormOpenedToggle}>
-          {editFormOpened ? 'Закрыть' : 'Редактировать'}
-        </Button>
-      </div>
-    )
+    return <div>{buttons}</div>
   }, [canEdit, editFormOpened, editFormOpenedToggle])
 
   return (
@@ -48,7 +57,7 @@ export const TeamView: React.FC<TeamViewProps> = ({ team }) => {
       />
 
       <TeamViewStyled>
-        {editButton}
+        {buttons}
 
         {editFormOpened ? (
           <TeamForm team={team} cancelHandler={editFormOpenedToggle} />
@@ -59,6 +68,8 @@ export const TeamView: React.FC<TeamViewProps> = ({ team }) => {
             <Markdown>{team.content}</Markdown>
           </>
         )}
+
+        <TeamMembers team={team} currentUser={currentUser} />
       </TeamViewStyled>
     </>
   )

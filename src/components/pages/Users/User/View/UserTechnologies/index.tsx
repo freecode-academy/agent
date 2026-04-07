@@ -37,6 +37,7 @@ export const UserTechnologies: React.FC<UserTechnologiesProps> = ({
         <UserTechnologiesCellStyled>Level</UserTechnologiesCellStyled>
         <UserTechnologiesCellStyled>Period</UserTechnologiesCellStyled>
         <UserTechnologiesCellStyled>Status</UserTechnologiesCellStyled>
+        <UserTechnologiesCellStyled>Hiring</UserTechnologiesCellStyled>
       </UserTechnologiesRowHeaderStyled>
 
       {userTechnologies.map((n) => (
@@ -65,6 +66,9 @@ export const UserTechnologies: React.FC<UserTechnologiesProps> = ({
 
           <UserTechnologiesCellStyled>
             <UserTechnologyStatus status={n.status} />
+          </UserTechnologiesCellStyled>
+
+          <UserTechnologiesCellStyled>
             <UserTechnologyHiringStatus status={n.hiring_status} />
           </UserTechnologiesCellStyled>
         </UserTechnologiesRowStyled>

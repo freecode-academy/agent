@@ -35,18 +35,6 @@ builder.prismaObject('Team', {
       resolve: ({ status }) => status,
     }),
 
-    // Members: t.relation('TeamMembers'),
+    Members: t.relation('TeamMembers'),
   }),
 })
-
-//                   String?      @db.Text
-//                   String?      @db.Text
-//                     String?      @db.Text
-//                     String?      @db.Text
-// Parent                   String?      @db.VarChar(36)
-// Team                     Team?        @relation("TeamToTeam_Parent", fields: [Parent], references: [id])
-// Teams_TeamToTeam   Team[]
-// Resources                Resource[]
-// other_Teams              Team[]       @relation("TeamToTeam_Parent")
-// TeamMembers              TeamMember[]
-// Team_TeamCustomers Team[]    @relation("TeamCustomers")

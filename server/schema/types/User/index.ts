@@ -24,6 +24,7 @@ builder.prismaObject('User', {
     }),
     image: t.exposeString('image'),
     content: t.exposeString('content'),
+    intro: t.exposeString('intro'),
     username: t.exposeString('username', { nullable: true }),
     fullname: t.exposeString('fullname', { nullable: true }),
     createdAt: t.expose('createdAt', { type: 'DateTime' }),
@@ -73,6 +74,5 @@ builder.prismaObject('User', {
     }),
 
     UserTechnologies: t.relation('UserTechnologies'),
-    intro: t.exposeString('intro'),
   }),
 })

@@ -1,0 +1,50 @@
+# query teamMember($where: TeamMemberWhereUniqueInput! ) {
+#   teamMember(where: $where) {
+#     ...TeamMember_
+#   }
+# }
+
+query teamMembers(
+  $where: TeamMemberWhereInput
+  $orderBy: TeamMemberOrderByInput
+  $take: Int
+  $skip: Int
+) {
+  teamMembers(where: $where, orderBy: $orderBy, take: $take, skip: $skip) {
+    ...TeamMember_
+  }
+}
+
+mutation createTeamMember($data: TeamMemberCreateInput!) {
+  response: createTeamMember(data: $data) {
+    ...TeamMember_
+  }
+}
+
+mutation updateTeamMember(
+  $data: TeamMemberUpdateInput!
+  $where: TeamMemberWhereUniqueInput!
+) {
+  response: updateTeamMember(data: $data, where: $where) {
+    ...TeamMember_
+  }
+}
+
+fragment TeamMember_ on TeamMember {
+  ...TeamMemberNoNesting
+  CreatedBy {
+    ...UserNoNesting
+  }
+  User {
+    ...UserNoNesting
+  }
+}
+
+fragment TeamMemberNoNesting on TeamMember {
+  id
+  status
+  createdAt
+  updatedAt
+  createdById
+  userId
+}

@@ -17,10 +17,16 @@ type UsersViewProps = {
   users: UserFragment[]
   count: number
   page: number
+  limit: number
 }
 
-export const UsersView: React.FC<UsersViewProps> = ({ users, count, page }) => {
-  const totalPages = count ? Math.floor(count / 10) + 1 : 0
+export const UsersView: React.FC<UsersViewProps> = ({
+  users,
+  count,
+  limit,
+  page,
+}) => {
+  const totalPages = count ? Math.floor(count / limit) + 1 : 0
 
   return (
     <UsersViewStyled>

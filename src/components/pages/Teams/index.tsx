@@ -1,5 +1,6 @@
 import { useEffect, useMemo } from 'react'
 import {
+  SortOrder,
   TeamsConnectionDocument,
   TeamsConnectionQueryVariables,
   TeamStatus,
@@ -20,6 +21,9 @@ const first = 10
 const defaultVariables: TeamsConnectionQueryVariables = {
   where: {
     status: TeamStatus.ACTIVE,
+  },
+  orderBy: {
+    updatedAt: SortOrder.DESC,
   },
   take: first,
 }
