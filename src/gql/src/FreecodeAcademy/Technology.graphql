@@ -53,7 +53,7 @@ fragment technologiesConnectionTechnology on Technology {
     ...technologiesConnectionUser
   }
   UserTechnologies {
-    ...technologiesConnectionUserTechnology
+    ...UserTechnologyNoNesting
     CreatedBy {
       ...technologiesConnectionUser
     }
@@ -62,16 +62,6 @@ fragment technologiesConnectionTechnology on Technology {
 
 fragment technologiesConnectionUser on User {
   ...UserNoNesting
-}
-
-fragment technologiesConnectionUserTechnology on UserTechnology {
-  id
-  createdAt
-  updatedAt
-  components
-  date_from
-  date_till
-  status
 }
 
 fragment technology_ on Technology {

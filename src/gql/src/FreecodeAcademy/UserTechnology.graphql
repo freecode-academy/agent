@@ -1,33 +1,23 @@
-# mutation createUserTechnologyProcessor($data: UserTechnologyCreateInput!) {
-#   response: createUserTechnologyProcessor(data: $data) {
-#     success
-#     message
-#     errors {
-#       key
-#       message
-#     }
-#     data {
-#       id
-#     }
-#   }
-# }
+mutation createUserTechnology($data: UserTechnologyCreateInput!) {
+  response: createUserTechnology(data: $data) {
+    ...UserTechnology_
+  }
+}
 
-# mutation updateUserTechnologyProcessor(
-#   $data: UserTechnologyUpdateInput!
-#   $where: UserTechnologyWhereUniqueInput!
-# ) {
-#   response: updateUserTechnologyProcessor(data: $data, where: $where) {
-#     success
-#     message
-#     errors {
-#       key
-#       message
-#     }
-#     data {
-#       ...UserTechnology_
-#     }
-#   }
-# }
+mutation updateUserTechnology(
+  $data: UserTechnologyUpdateInput!
+  $where: UserTechnologyWhereUniqueInput!
+) {
+  response: updateUserTechnology(data: $data, where: $where) {
+    ...UserTechnology_
+  }
+}
+
+mutation deleteUserTechnology($where: UserTechnologyWhereUniqueInput!) {
+  response: deleteUserTechnology(where: $where) {
+    id
+  }
+}
 
 fragment UserTechnology_ on UserTechnology {
   ...UserTechnologyNoNesting
@@ -37,7 +27,6 @@ fragment UserTechnologyNoNesting on UserTechnology {
   id
   createdAt
   updatedAt
-  components
   date_from
   date_till
   status
@@ -45,6 +34,7 @@ fragment UserTechnologyNoNesting on UserTechnology {
   level
   technologyId
   isMentor
+  # components
 }
 
 fragment technology_UserTechnology on UserTechnology {

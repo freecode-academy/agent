@@ -10,6 +10,12 @@
 // import { updateUserTechnologyProcessor } from './resolvers/updateUserTechnologyProcessor'
 
 import { builder } from 'server/schema/builder'
+
+import './inputs'
+import './resolvers/createUserTechnology'
+import './resolvers/updateUserTechnology'
+import './resolvers/deleteUserTechnology'
+
 import {
   UserTechnologyHiringStatusEnum,
   UserTechnologyStatusEnum,
@@ -22,7 +28,7 @@ builder.prismaObject('UserTechnology', {
     }),
     createdAt: t.expose('createdAt', { type: 'DateTime', nullable: false }),
     updatedAt: t.expose('updatedAt', { type: 'DateTime', nullable: false }),
-    components: t.expose('components', { type: 'Json', nullable: true }),
+    // components: t.expose('components', { type: 'Json', nullable: true }),
     // name: t.exposeString('name'),
     // description: t.exposeString('description', { nullable: true }),
     rating: t.exposeInt('rating', {

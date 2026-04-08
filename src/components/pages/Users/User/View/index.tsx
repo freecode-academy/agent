@@ -83,9 +83,13 @@ export const UserPageView: React.FC<UserPageViewProps> = ({
         </>
       )}
 
-      {user.UserTechnologies && user.UserTechnologies?.length > 0 && (
-        <UserTechnologies userTechnologies={user.UserTechnologies} />
-      )}
+      {(user.UserTechnologies && user.UserTechnologies?.length > 0) ||
+      isCurrentUser ? (
+        <UserTechnologies
+          userTechnologies={user.UserTechnologies ?? []}
+          isCurrentUser={isCurrentUser}
+        />
+      ) : null}
 
       {!isCurrentUser && currentUser && (
         <SendTransfer currentUser={currentUser} recipient={user} />
