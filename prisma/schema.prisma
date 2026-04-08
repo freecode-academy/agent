@@ -168,6 +168,30 @@ model TelegramAccount {
   User   User   @relation(fields: [userId], references: [id])
 }
 
+model File {
+  id            String    @id @default(cuid()) @db.VarChar(36)
+  path          String    @db.Text
+  name          String?   @db.Text
+  filename      String?   @db.Text
+  mimetype      String    @db.Text
+  encoding      String    @db.Text
+  hash          String?   @db.Text
+  size          Decimal?
+  ImageResource String?   @db.VarChar(36)
+  CreatedBy     String?   @db.VarChar(36)
+  rank          Int?
+  Gallery       String?   @db.VarChar(36)
+  createdAt     DateTime  @default(now()) @db.Timestamp(3)
+  updatedAt     DateTime  @default(now()) @updatedAt @db.Timestamp(3)
+  User          User?     @relation(fields: [CreatedBy], references: [id])
+  Resource      Resource? @relation(fields: [ImageResource], references: [id])
+  Projects      Project[]
+
+  @@index([CreatedBy], map: "File_CreatedBy")
+  @@index([Gallery], map: "File_Gallery")
+  @@index([ImageResource], map: "File_ImageResource")
+}
+
 enum MindLogType {
   // Initial reaction to a stimulus – associations, emotions, spontaneous hypotheses and internal response.
   Stimulus
@@ -950,30 +974,6 @@ model PostRevision {
 // ============================================
 // Models from source schema (freecode.academy)
 // ============================================
-
-model File {
-  id            String    @id @default(cuid()) @db.VarChar(36)
-  path          String    @db.Text
-  name          String?   @db.Text
-  filename      String?   @db.Text
-  mimetype      String    @db.Text
-  encoding      String    @db.Text
-  hash          String?   @db.Text
-  size          Decimal?
-  ImageResource String?   @db.VarChar(36)
-  CreatedBy     String?   @db.VarChar(36)
-  rank          Int?
-  Gallery       String?   @db.VarChar(36)
-  createdAt     DateTime  @default(now()) @db.Timestamp(3)
-  updatedAt     DateTime  @default(now()) @updatedAt @db.Timestamp(3)
-  User          User?     @relation(fields: [CreatedBy], references: [id])
-  Resource      Resource? @relation(fields: [ImageResource], references: [id])
-  Projects      Project[]
-
-  @@index([CreatedBy], map: "File_CreatedBy")
-  @@index([Gallery], map: "File_Gallery")
-  @@index([ImageResource], map: "File_ImageResource")
-}
 
 model Career {
   id          String    @id @default(cuid()) @db.VarChar(36)

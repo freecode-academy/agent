@@ -94,6 +94,7 @@ fragment User_ on User {
 fragment UserNoNesting on User {
   id
   createdAt
+  updatedAt
   username
   fullname
   image

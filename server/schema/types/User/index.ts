@@ -16,7 +16,11 @@ import './resolvers/createReferrerToken'
 // User object type
 builder.prismaObject('User', {
   fields: (t) => ({
-    id: t.exposeID('id'),
+    id: t.exposeID('id', {
+      nullable: false,
+    }),
+    createdAt: t.expose('createdAt', { type: 'DateTime', nullable: false }),
+    updatedAt: t.expose('updatedAt', { type: 'DateTime', nullable: false }),
     email: t.string({
       nullable: true,
       resolve: (user, _args, ctx) =>
@@ -27,11 +31,11 @@ builder.prismaObject('User', {
     intro: t.exposeString('intro'),
     username: t.exposeString('username', { nullable: true }),
     fullname: t.exposeString('fullname', { nullable: true }),
-    createdAt: t.expose('createdAt', { type: 'DateTime' }),
     sudo: t.exposeBoolean('sudo', { nullable: true }),
     status: t.field({
       type: UserStatusEnum,
       resolve: (user) => user.status,
+      nullable: false,
     }),
     EthAccount: t.relation('EthAccount', {
       async resolve(_query, parent, _args, context) {

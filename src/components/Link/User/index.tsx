@@ -9,21 +9,14 @@ import {
 } from './styles'
 import { Avatar } from 'src/components/Avatar'
 
-type UserLike = {
-  id?: UserNoNestingFragment['id']
-  username?: UserNoNestingFragment['username']
-  fullname?: UserNoNestingFragment['fullname']
-  image?: UserNoNestingFragment['image']
-}
-
-export function createUserLink(user: UserLike): string {
+export function createUserLink(user: UserNoNestingFragment): string {
   const { id, username } = user
 
   return username ? `/profile/${username}` : `/profile/id/${id}`
 }
 
 type UserLinkProps = {
-  user: UserLike
+  user: UserNoNestingFragment
   withAvatar?: boolean
   showName?: boolean
   size?: 'small' | 'normal' | 'big'
@@ -47,7 +40,7 @@ export const UserLink: React.FC<UserLinkProps> = ({
   }
 
   const { id, fullname, username } = user
-  const displayName = fullname || username || id || ''
+  const displayName = fullname || username || id
 
   if (!id) {
     return null
