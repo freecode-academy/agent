@@ -1,11 +1,11 @@
 import {
   MeUserFragment,
   TechnologyNoNestingFragment,
-  TechnologyUserTechnologyFragment,
+  UserTechnologyFragment,
 } from 'src/gql/generated'
 
 export type UserTechnologyRowProps = {
-  userTechnology: TechnologyUserTechnologyFragment
+  userTechnology: UserTechnologyFragment
 
   currentUser: MeUserFragment | null | undefined
 

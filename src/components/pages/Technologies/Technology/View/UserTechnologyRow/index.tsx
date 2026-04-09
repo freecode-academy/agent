@@ -332,11 +332,11 @@ const UserTechnologyRow: React.FC<UserTechnologyRowProps> = ({
             </GridTableAttributeStyled>
           ) : null}
 
-          {showCreateBy && userTechnology.CreatedBy ? (
-            <GridTableAttributeStyled>
+          <GridTableAttributeStyled>
+            {showCreateBy && userTechnology.CreatedBy ? (
               <UikitUserLink user={userTechnology.CreatedBy} />
-            </GridTableAttributeStyled>
-          ) : null}
+            ) : null}
+          </GridTableAttributeStyled>
 
           <GridTableAttributeStyled>{level}</GridTableAttributeStyled>
 

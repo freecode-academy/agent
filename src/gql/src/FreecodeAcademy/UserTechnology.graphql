@@ -21,6 +21,9 @@ mutation deleteUserTechnology($where: UserTechnologyWhereUniqueInput!) {
 
 fragment UserTechnology_ on UserTechnology {
   ...UserTechnologyNoNesting
+  CreatedBy {
+    ...UserNoNesting
+  }
 }
 
 fragment UserTechnologyNoNesting on UserTechnology {
@@ -35,11 +38,4 @@ fragment UserTechnologyNoNesting on UserTechnology {
   technologyId
   isMentor
   # components
-}
-
-fragment technology_UserTechnology on UserTechnology {
-  ...UserTechnologyNoNesting
-  CreatedBy {
-    ...UserNoNesting
-  }
 }

@@ -1,9 +1,10 @@
 query technology(
   $where: TechnologyWhereUniqueInput!
-  $withLearnStrategies: Boolean! = false
+  $withLearnStrategies: Boolean = false
+  $technologyWithDetails: Boolean = true
 ) {
   object: technology(where: $where) {
-    ...technology_
+    ...Technology_
   }
 }
 
@@ -11,9 +12,11 @@ query technologies(
   $take: Int
   $skip: Int
   $where: TechnologyWhereInput # $orderBy: [TechnologyOrderByWithRelationInput!] = { createdAt: desc }
+  $withLearnStrategies: Boolean = false
+  $technologyWithDetails: Boolean = false
 ) {
   technologies(take: $take, skip: $skip, where: $where) {
-    ...technologiesConnectionTechnology
+    ...Technology_
   }
 }
 
@@ -21,56 +24,50 @@ query technologiesConnection(
   $take: Int
   $skip: Int
   $where: TechnologyWhereInput # $orderBy: [TechnologyOrderByWithRelationInput!] = { createdAt: desc }
+  $withLearnStrategies: Boolean = false
+  $technologyWithDetails: Boolean = false
 ) {
   technologiesCount(where: $where)
   technologies(take: $take, skip: $skip, where: $where) {
-    ...technologiesConnectionTechnology
+    ...Technology_
   }
 }
 
 mutation createTechnology(
   $data: TechnologyCreateInput!
-  $withLearnStrategies: Boolean! = false
+  $withLearnStrategies: Boolean = false
+  $technologyWithDetails: Boolean = false
 ) {
   response: createTechnology(data: $data) {
-    ...technology_
+    ...Technology_
   }
 }
 
 mutation updateTechnology(
   $data: TechnologyUpdateInput!
   $where: TechnologyWhereUniqueInput!
-  $withLearnStrategies: Boolean! = false
+  $withLearnStrategies: Boolean = false
+  $technologyWithDetails: Boolean = false
 ) {
   response: updateTechnology(data: $data, where: $where) {
-    ...technology_
+    ...Technology_
   }
 }
 
-fragment technologiesConnectionTechnology on Technology {
+fragment Technology_ on Technology {
   ...TechnologyNoNesting
-  CreatedBy {
-    ...technologiesConnectionUser
-  }
-  UserTechnologies {
-    ...UserTechnologyNoNesting
-    CreatedBy {
-      ...technologiesConnectionUser
-    }
-  }
-}
 
-fragment technologiesConnectionUser on User {
-  ...UserNoNesting
-}
-
-fragment technology_ on Technology {
-  ...TechnologyNoNesting
   CreatedBy {
     ...UserNoNesting
   }
-  UserTechnologies {
-    ...technology_UserTechnology
+
+  ... @include(if: $technologyWithDetails) {
+    UserTechnologies {
+      ...UserTechnologyNoNesting
+      CreatedBy {
+        ...UserNoNesting
+      }
+    }
   }
   LearnStrategyStages @include(if: $withLearnStrategies) {
     ...learnStrategyStageNoNesting

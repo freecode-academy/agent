@@ -1,6 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
-import { TechnologiesConnectionTechnologyFragment } from 'src/gql/generated'
+import { TechnologyFragment } from 'src/gql/generated'
 import { UserLink } from 'src/components/Link/User'
 import { useAppContext } from 'src/components/AppContext'
 import { Button } from 'src/ui-kit/Button'
@@ -15,7 +15,7 @@ import {
 import { Pagination } from 'src/components/Pagination'
 
 type TechnologiesViewProps = {
-  objects: TechnologiesConnectionTechnologyFragment[]
+  objects: TechnologyFragment[]
   count: number | undefined
   page: number
   limit: number | undefined | null

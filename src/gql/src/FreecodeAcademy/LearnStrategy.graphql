@@ -12,7 +12,7 @@ query learnStrategiesConnection(
 ) {
   learnStrategiesCount(where: $where)
   learnStrategies(where: $where, take: $take, skip: $skip) {
-    ...learnStrategy_
+    ...LearnStrategyLight
   }
 }
 
@@ -50,6 +50,17 @@ fragment LearnStrategyNoNesting on LearnStrategy {
   description
   level
   createdById
+}
+
+fragment LearnStrategyLight on LearnStrategy {
+  ...LearnStrategyNoNesting
+  CreatedBy {
+    ...UserNoNesting
+  }
+
+  UserLearnStrategies {
+    ...UserLearnStrategyNoNesting
+  }
 }
 
 fragment learnStrategy_ on LearnStrategy {

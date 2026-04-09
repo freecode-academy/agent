@@ -195,8 +195,11 @@ export const UserTechnologies: React.FC<UserTechnologiesProps> = ({
             <Button
               onClick={inEditMode ? stopEdit : startEdit}
               variant={ComponentVariant.PRIMARY}
+              disabled={technologiesResponse.loading}
             >
-              {inEditMode ? 'Cancel' : 'Edit technologies'}
+              {inEditMode || technologiesResponse.loading
+                ? 'Cancel'
+                : 'Edit technologies'}
             </Button>
           </UserTechnologiesButtonsStyled>
         </>

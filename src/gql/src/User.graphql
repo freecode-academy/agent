@@ -83,8 +83,10 @@ fragment meUser on User {
 fragment User_ on User {
   ...UserNoNesting
 
+  content
+
   UserTechnologies @include(if: $withUserTechnologies) {
-    ...technology_UserTechnology
+    ...UserTechnologyNoNesting
     Technology {
       ...TechnologyNoNesting
     }
@@ -98,7 +100,6 @@ fragment UserNoNesting on User {
   username
   fullname
   image
-  content
   sudo
   status
   intro
