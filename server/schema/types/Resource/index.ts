@@ -4,6 +4,8 @@ import { ResourceTypeEnum } from './types'
 import './resolvers/resource'
 import './resolvers/resources'
 import './resolvers/resourcesCount'
+import './resolvers/createResource'
+import './resolvers/updateResource'
 
 builder.prismaObject('Resource', {
   fields: (t) => ({

@@ -54,9 +54,7 @@ export const CreateLearnStrategyStage: React.FC<
   useEffect(() => {
     // TODO Cleanup
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     stageType
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     opened
 
     variablesSetter(defaultVariables)

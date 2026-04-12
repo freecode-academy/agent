@@ -16,4 +16,8 @@ export const ResourcesPageViewToolbarStyled = styled.div`
   justify-content: space-between;
 `
 
-export const ResourcesPageViewStyled = styled.div``
+export const ResourcesPageViewStyled = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+`

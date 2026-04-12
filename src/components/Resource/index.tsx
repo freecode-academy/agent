@@ -5,7 +5,6 @@ import {
   ResourceStyled,
   ResourceBannerStyled,
   ResourceTitleStyled,
-  ResourceDescriptionStyled,
   ResourceMetaStyled,
   ResourceAuthorStyled,
   ResourceDateStyled,
@@ -63,12 +62,6 @@ export const Resource: React.FC<ResourceProps> = ({
         {/* <ResourceStatusChip resource={resource} /> */}
         {/* {canEdit && <Button onClick={startEditing}>Edit</Button>} */}
       </ResourceStyledToolbar>
-
-      {variant === 'list' && (resource.intro || resource.longtitle) && (
-        <ResourceDescriptionStyled>
-          {resource.intro || resource.longtitle}
-        </ResourceDescriptionStyled>
-      )}
 
       <ResourceMetaStyled>
         {resource.CreatedBy && (

@@ -3,7 +3,7 @@ query resource(
   $resourceWithDetailes: Boolean = true
 ) {
   resource(where: $where) {
-    ...resource_
+    ...Resource_
   }
 }
 
@@ -15,7 +15,7 @@ query resources(
   $resourceWithDetailes: Boolean = false
 ) {
   resources(where: $where, orderBy: $orderBy, take: $first, skip: $skip) {
-    ...resource_
+    ...Resource_
   }
 }
 
@@ -28,11 +28,30 @@ query resourcesConnection(
 ) {
   resourcesCount(where: $where)
   resources(take: $first, orderBy: $orderBy, skip: $skip, where: $where) {
-    ...resource_
+    ...Resource_
   }
 }
 
-fragment resource_ on Resource {
+mutation createResource(
+  $data: ResourceCreateInput!
+  $resourceWithDetailes: Boolean = true
+) {
+  response: createResource(data: $data) {
+    ...Resource_
+  }
+}
+
+mutation updateResource(
+  $data: ResourceUpdateDataInput!
+  $where: ResourceWhereUniqueInput!
+  $resourceWithDetailes: Boolean = true
+) {
+  response: updateResource(data: $data, where: $where) {
+    ...Resource_
+  }
+}
+
+fragment Resource_ on Resource {
   ...ResourceNoNesting
   CreatedBy {
     ...UserNoNesting
@@ -107,7 +126,7 @@ fragment ResourceNoNesting on Resource {
 }
 
 # fragment topic_ on Resource{
-#   ...resource_
+#   ...Resource_
 #   CodeChallenge {
 #     id
 #     name

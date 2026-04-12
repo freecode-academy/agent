@@ -95,6 +95,7 @@
     "sharp": "^0.34.5",
     "styled-components": "^6.1.19",
     "three": "^0.182.0",
+    "transliteration": "^2.6.1",
     "ts-node": "^10.9.2",
     "unist-util-visit": "^5.0.0",
     "web3": "^4.16.0",

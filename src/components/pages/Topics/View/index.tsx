@@ -7,8 +7,9 @@ import {
   ResourcesPageViewToolbarStyled,
 } from './styles'
 import { Pagination } from 'src/components/Pagination'
-// import { Button } from 'src/ui-kit/Button'
-// import Link from 'next/link'
+import { Button } from 'src/ui-kit/Button'
+import Link from 'next/link'
+import { useAppContext } from 'src/components/AppContext'
 
 export const ResourcesPageView: React.FC<ResourcesPageViewProps> = ({
   resources,
@@ -17,14 +18,18 @@ export const ResourcesPageView: React.FC<ResourcesPageViewProps> = ({
 }) => {
   const totalPages = count ? Math.floor(count / 10) + 1 : 0
 
+  const { user: currentUser } = useAppContext()
+
   return (
     <ResourcesPageViewStyled>
       <ResourcesPageViewToolbarStyled>
         {/* <ResourcesPageViewTitleStyled>Resources</ResourcesPageViewTitleStyled> */}
 
-        {/* <Link href="/resources/create">
-          <Button>Create resource</Button>
-        </Link> */}
+        {currentUser?.sudo && (
+          <Link href="/topics/create">
+            <Button>Create resource</Button>
+          </Link>
+        )}
       </ResourcesPageViewToolbarStyled>
 
       <ResourcesPageViewListStyled>

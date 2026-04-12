@@ -5,6 +5,9 @@ import { resourcePageGetInitialProps } from './resourcePageGetInitialProps'
 import { SeoHeaders } from 'src/components/seo/SeoHeaders'
 import { BlogView } from './view/Blog'
 import { TopicView } from './view/Topic'
+import { useMemo } from 'react'
+import { createBlogPosting } from 'src/components/seo/JsonLd/helpers'
+import { JsonLd } from 'src/components/seo/JsonLd'
 
 export const ResourcePage: Page<ResourcePageProps> = (props) => {
   const { uri, page } = props
@@ -20,13 +23,9 @@ export const ResourcePage: Page<ResourcePageProps> = (props) => {
 
   const resource = response.data?.resource
 
-  if (!resource) {
-    return null
-  }
-
   let content: React.ReactNode | null
 
-  switch (resource.type) {
+  switch (resource?.type) {
     case ResourceType.BLOG:
       content = <BlogView page={page || 1} resource={resource} />
       break
@@ -40,12 +39,54 @@ export const ResourcePage: Page<ResourcePageProps> = (props) => {
       content = null
   }
 
+  const blogPostingSchema = useMemo(() => {
+    if (!resource) {
+      return null
+    }
+
+    switch (resource.type) {
+      case ResourceType.BLOG:
+      case ResourceType.TOPIC:
+      case ResourceType.COMMENT: {
+        return createBlogPosting({
+          headline: resource.name || '',
+          description: resource.longtitle || undefined,
+          datePublished: resource.createdAt,
+          dateModified: resource.updatedAt,
+          author: resource.CreatedBy
+            ? {
+                '@type': 'Person',
+                name:
+                  resource.CreatedBy.fullname ||
+                  resource.CreatedBy.username ||
+                  '',
+              }
+            : undefined,
+        })
+      }
+    }
+  }, [resource])
+
+  if (!resource) {
+    return null
+  }
+
+  const searchable = !resource.deleted && resource.published
+
   return (
     <>
       <SeoHeaders
         title={resource.name ?? undefined}
         description={resource.longtitle}
+        noindex={!searchable}
+        nofollow={!searchable}
       />
+
+      <SeoHeaders
+        title={resource.name || 'Post'}
+        description={resource.longtitle}
+      />
+      {blogPostingSchema && <JsonLd data={blogPostingSchema} />}
 
       {content}
     </>

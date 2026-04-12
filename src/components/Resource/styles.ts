@@ -33,11 +33,6 @@ export const ResourceTitleStyled = styled.h2<ResourceTitleStyledProps>`
     `}
 `
 
-export const ResourceDescriptionStyled = styled.p`
-  margin: 0 0 12px;
-  color: #666;
-`
-
 export const ResourceMetaStyled = styled.div`
   display: flex;
   align-items: center;

@@ -62,6 +62,9 @@ const ruleTree = {
     createMindLog: isActive,
     updateMindLog: isActive,
     singleUpload: isActive,
+
+    createResource: isSudo,
+    updateResource: isSudo,
   },
 } satisfies PermissionsRuleTree
 

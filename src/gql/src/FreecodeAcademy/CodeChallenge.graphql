@@ -70,7 +70,7 @@ fragment CodeChallenge_ on CodeChallenge {
   #   ...UserNoNesting
   # }
   Topic {
-    ...resource_
+    ...Resource_
   }
 }
 
