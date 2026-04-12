@@ -10,6 +10,7 @@ import {
   directivesPlugin,
   quotePlugin,
   linkPlugin,
+  linkDialogPlugin,
   codeBlockPlugin,
   codeMirrorPlugin,
   jsxPlugin,
@@ -23,6 +24,7 @@ import '@mdxeditor/editor/style.css'
 import { memo, useCallback, useMemo, useState } from 'react'
 import { MarkdownEditorStyled } from './styles'
 import { MarkdownEditorToolbar } from './Toolbar'
+import { useSingleUploadMutation } from 'src/gql/generated'
 
 type MarkdownEditorEditorProps = {
   value: string | null | undefined
@@ -35,6 +37,26 @@ const MarkdownEditorComponent: React.FC<MarkdownEditorEditorProps> = ({
   ...other
 }) => {
   const [editor, editorSetter] = useState<MDXEditorMethods | null>(null)
+  const [uploadFile] = useSingleUploadMutation()
+
+  const imageUploadHandler = useCallback(
+    async (file: File): Promise<string> => {
+      const result = await uploadFile({
+        variables: {
+          data: {
+            file,
+          },
+        },
+      })
+
+      if (result.data?.singleUpload?.path) {
+        return `/images/resized/middle/${result.data.singleUpload.path}`
+      }
+
+      throw new Error('Upload failed')
+    },
+    [uploadFile],
+  )
 
   const jsxComponentDescriptors = useMemo<JsxComponentDescriptor[]>(() => {
     return []
@@ -50,18 +72,34 @@ const MarkdownEditorComponent: React.FC<MarkdownEditorEditorProps> = ({
       listsPlugin(),
       thematicBreakPlugin(),
       imagePlugin({
-        imageUploadHandler: (_file) => {
-          // file upload to server, return URL
-          return Promise.resolve('https://picsum.photos/200/300')
-        },
+        imageUploadHandler,
         imageAutocompleteSuggestions: [],
       }),
       jsxPlugin({ jsxComponentDescriptors }),
 
       quotePlugin(),
       linkPlugin(),
+      linkDialogPlugin(),
       codeBlockPlugin({ defaultCodeBlockLanguage: 'text' }),
-      codeMirrorPlugin(),
+      codeMirrorPlugin({
+        codeBlockLanguages: {
+          '': 'Plain Text',
+          text: 'Plain Text',
+          js: 'JavaScript',
+          ts: 'TypeScript',
+          tsx: 'TypeScript (React)',
+          jsx: 'JavaScript (React)',
+          css: 'CSS',
+          html: 'HTML',
+          json: 'JSON',
+          bash: 'Bash',
+          sql: 'SQL',
+          gql: 'GraphQL',
+          python: 'Python',
+          markdown: 'Markdown',
+          django: 'Jinja/Django',
+        },
+      }),
 
       toolbarPlugin({
         toolbarContents: () => {
@@ -71,7 +109,7 @@ const MarkdownEditorComponent: React.FC<MarkdownEditorEditorProps> = ({
     ]
 
     return plugins
-  }, [editor, jsxComponentDescriptors])
+  }, [editor, imageUploadHandler, jsxComponentDescriptors])
 
   return (
     <MarkdownEditorStyled {...other}>
