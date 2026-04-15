@@ -1,4 +1,4 @@
-query team($where: TeamWhereUniqueInput!, $teamWithDetailes: Boolean = true) {
+query team($where: TeamWhereUniqueInput!) {
   team(where: $where) {
     ...Team_
   }
@@ -9,7 +9,6 @@ query teams(
   $orderBy: TeamOrderByInput
   $take: Int
   $skip: Int
-  $teamWithDetailes: Boolean = false
 ) {
   teams(where: $where, orderBy: $orderBy, take: $take, skip: $skip) {
     ...Team_
@@ -21,7 +20,6 @@ query teamsConnection(
   $orderBy: TeamOrderByInput
   $skip: Int
   $where: TeamWhereInput
-  $teamWithDetailes: Boolean = false
 ) {
   teamsCount(where: $where)
   teams(take: $take, orderBy: $orderBy, skip: $skip, where: $where) {
@@ -29,23 +27,29 @@ query teamsConnection(
   }
 }
 
-mutation createTeam(
-  $data: TeamCreateInput!
-  $teamWithDetailes: Boolean = true
-) {
+mutation createTeam($data: TeamCreateInput!) {
   response: createTeam(data: $data) {
     ...Team_
   }
 }
 
-mutation updateTeam(
-  $data: TeamUpdateInput!
-  $where: TeamWhereUniqueInput!
-  $teamWithDetailes: Boolean = true
-) {
+mutation updateTeam($data: TeamUpdateInput!, $where: TeamWhereUniqueInput!) {
   response: updateTeam(data: $data, where: $where) {
     ...Team_
   }
+}
+
+fragment TeamNoNesting on Team {
+  id
+  name
+  status
+  createdAt
+  updatedAt
+  website
+  address
+  email
+  phone
+  createdById
 }
 
 fragment Team_ on Team {
@@ -61,17 +65,8 @@ fragment Team_ on Team {
   }
 }
 
-fragment TeamNoNesting on Team {
-  id
-  name
-  status
-  createdAt
-  updatedAt
-  website
-  address
-  createdById
+fragment TeamDetailed on Team {
+  ...Team_
 
-  ... @include(if: $teamWithDetailes) {
-    content
-  }
+  content
 }

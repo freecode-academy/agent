@@ -1,3 +1,16 @@
+query files($first: Int, $skip: Int) {
+  files(take: $first, skip: $skip) {
+    ...File_
+  }
+}
+
+query filesConnection($first: Int, $skip: Int) {
+  filesCount
+  files(take: $first, skip: $skip) {
+    ...FileWithData
+  }
+}
+
 mutation singleUpload($data: SingleUploadInput!) {
   singleUpload(data: $data) {
     ...File_
@@ -14,4 +27,11 @@ fragment FileNoNesting on File {
 
 fragment File_ on File {
   ...FileNoNesting
+}
+
+fragment FileWithData on File {
+  ...File_
+  CreatedBy {
+    ...UserNoNesting
+  }
 }

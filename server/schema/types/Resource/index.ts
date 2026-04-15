@@ -49,8 +49,23 @@ builder.prismaObject('Resource', {
 
     // resourceId: t.exposeID('Resource'),
     // Resource: t.relation('Resource_Project_ResourceToResource'),
+
+    // imageId: t.exposeID(''),
+    Files: t.relation('Files'),
+
+    teamId: t.exposeID('Team'),
+    Team: t.relation('Team_ResourceToTeam'),
   }),
 })
+
+//     t.field('Image', {
+//       type: 'File',
+//       resolve({ id }, _, ctx) {
+//         return id
+//           ? ctx.prisma.file.findFirst({ where: { ImageResource: id } })
+//           : null
+//       },
+//     })
 
 // import { Prisma } from '@prisma/client'
 // import { enumType, extendType, objectType } from 'nexus'

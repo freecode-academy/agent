@@ -3,7 +3,7 @@ query resource(
   $resourceWithDetailes: Boolean = true
 ) {
   resource(where: $where) {
-    ...Resource_
+    ...ResourceDetailed
   }
 }
 
@@ -51,6 +51,40 @@ mutation updateResource(
   }
 }
 
+fragment ResourceNoNesting on Resource {
+  id
+  createdAt
+  updatedAt
+  type
+  name
+  longtitle
+  # content
+  intro
+  # components
+  # contentText
+  published
+  deleted
+  # hidemenu
+  searchable
+  uri
+  # isfolder
+  # rating
+  # positiveVotesCount
+  # negativeVotesCount
+  # neutralVotesCount
+  # oldID
+  # commentOldID
+  # class_key
+  # template
+  # mockUpdate
+
+  createdById
+
+  ... @include(if: $resourceWithDetailes) {
+    contentV2
+  }
+}
+
 fragment Resource_ on Resource {
   ...ResourceNoNesting
   CreatedBy {
@@ -91,37 +125,13 @@ fragment Resource_ on Resource {
   # }
 }
 
-fragment ResourceNoNesting on Resource {
-  id
-  createdAt
-  updatedAt
-  type
-  name
-  longtitle
-  # content
-  intro
-  # components
-  # contentText
-  published
-  deleted
-  # hidemenu
-  searchable
-  uri
-  # isfolder
-  # rating
-  # positiveVotesCount
-  # negativeVotesCount
-  # neutralVotesCount
-  # oldID
-  # commentOldID
-  # class_key
-  # template
-  # mockUpdate
-
-  createdById
-
-  ... @include(if: $resourceWithDetailes) {
-    contentV2
+fragment ResourceDetailed on Resource {
+  ...Resource_
+  Files {
+    ...FileNoNesting
+  }
+  Team {
+    ...TeamDetailed
   }
 }
 

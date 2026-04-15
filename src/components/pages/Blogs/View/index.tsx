@@ -14,13 +14,14 @@ export const ResourcesPageView: React.FC<ResourcesPageViewProps> = ({
   resources,
   count,
   page,
+  title,
 }) => {
   const totalPages = count ? Math.floor(count / 10) + 1 : 0
 
   return (
     <ResourcesPageViewStyled>
       <ResourcesPageViewToolbarStyled>
-        <ResourcesPageViewTitleStyled>Blogs</ResourcesPageViewTitleStyled>
+        <ResourcesPageViewTitleStyled>{title}</ResourcesPageViewTitleStyled>
 
         {/* <Link href="/resources/create">
           <Button>Create resource</Button>

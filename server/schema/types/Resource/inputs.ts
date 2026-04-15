@@ -6,6 +6,7 @@ export const ResourceOrderByInput = builder.inputType('ResourceOrderByInput', {
   fields: (t) => ({
     createdAt: t.field({ type: SortOrder }),
     updatedAt: t.field({ type: SortOrder }),
+    name: t.field({ type: SortOrder }),
   }),
 })
 

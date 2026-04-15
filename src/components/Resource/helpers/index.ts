@@ -1,21 +1,18 @@
-import {
-  ResourcesConnectionQueryVariables,
-  ResourceWhereInput,
-} from 'src/gql/generated'
+import { ResourcesConnectionQueryVariables } from 'src/gql/generated'
 
-type getResourcesConnectionQueryVariablesProps = {
-  where?: Partial<ResourceWhereInput>
-  page: number
-  first?: number
-}
+type getResourcesConnectionQueryVariablesProps =
+  Partial<ResourcesConnectionQueryVariables> & {
+    page: number
+    first?: number
+  }
 
 export function getResourcesConnectionQueryVariables({
-  where,
   page,
   first = 10,
+  ...other
 }: getResourcesConnectionQueryVariablesProps): ResourcesConnectionQueryVariables {
   return {
-    where: { ...where },
+    ...other,
     skip: (page - 1) * first,
     first,
   }

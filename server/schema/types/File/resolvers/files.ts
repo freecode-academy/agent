@@ -15,6 +15,11 @@ builder.queryField('files', (t) =>
         take: args.take ?? 10,
         skip: args.skip ?? 0,
         orderBy: { createdAt: 'desc' },
+        where: {
+          Resource: {
+            isNot: null,
+          },
+        },
       })
     },
   }),

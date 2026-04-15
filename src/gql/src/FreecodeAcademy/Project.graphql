@@ -188,7 +188,7 @@ fragment ProjectNoNesting on Project {
   content
   # contentText
   status
-  public
+  # public
   # oldID
   type
 

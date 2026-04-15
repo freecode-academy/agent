@@ -4,4 +4,5 @@ export type ResourcesPageViewProps = {
   resources: ResourceFragment[]
   count: number
   page: number
+  title: string
 }

@@ -1,5 +1,5 @@
-import { ResourceFragment } from 'src/gql/generated'
+import { ResourceDetailedFragment } from 'src/gql/generated'
 
 export type ResourceViewProps = {
-  resource: ResourceFragment
+  resource: ResourceDetailedFragment
 }

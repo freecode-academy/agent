@@ -131,7 +131,7 @@ export const generateSitemapResources = async (
   const resources = await prismaClient.resource.findMany({
     where: resourcesWhere,
     orderBy: {
-      createdAt: 'asc',
+      createdAt: 'desc',
     },
     take: SITEMAP_LIMIT,
     skip: (props.page - 1) * SITEMAP_LIMIT,
@@ -157,7 +157,7 @@ export const generateSitemapTags = async (
   const tags = await prismaClient.tag.findMany({
     where: tagsWhere,
     orderBy: {
-      createdAt: 'asc',
+      createdAt: 'desc',
     },
     take: SITEMAP_LIMIT,
     skip: (props.page - 1) * SITEMAP_LIMIT,
@@ -188,7 +188,7 @@ export const generateSitemapUsers = async (
   const users = await prismaClient.user.findMany({
     where: usersWhere,
     orderBy: {
-      createdAt: 'asc',
+      createdAt: 'desc',
     },
     take: SITEMAP_LIMIT,
     skip: (props.page - 1) * SITEMAP_LIMIT,

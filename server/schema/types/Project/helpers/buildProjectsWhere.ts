@@ -9,9 +9,9 @@ interface ProjectWhereInput {
 
 export function buildProjectsWhere(
   where: ProjectWhereInput | null | undefined,
-  ctx: PrismaContext | undefined,
+  _ctx: PrismaContext | undefined,
 ): Prisma.ProjectWhereInput {
-  const { currentUser } = ctx || {}
+  // const { currentUser } = ctx || {}
 
   const { id, pathname, ...other } = where || {}
 
@@ -54,18 +54,18 @@ export function buildProjectsWhere(
     }
   }
 
-  if (currentUser) {
-    result.OR = [
-      {
-        CreatedBy: currentUser.id,
-      },
-      {
-        public: true,
-      },
-    ]
-  } else {
-    result.public = true
-  }
+  // if (currentUser) {
+  //   result.OR = [
+  //     {
+  //       CreatedBy: currentUser.id,
+  //     },
+  //     {
+  //       public: true,
+  //     },
+  //   ]
+  // } else {
+  //   result.public = true
+  // }
 
   return result
 }

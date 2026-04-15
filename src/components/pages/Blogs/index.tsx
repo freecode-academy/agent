@@ -23,7 +23,12 @@ export const BlogsPage: Page<BlogsPageProps> = ({ page }) => {
     <>
       <SeoHeaders title="Blogs" />
 
-      <ResourcesPageView resources={resources} count={count} page={page || 1} />
+      <ResourcesPageView
+        resources={resources}
+        count={count}
+        page={page || 1}
+        title="Blogs"
+      />
     </>
   )
 }

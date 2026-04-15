@@ -1,5 +1,5 @@
-import { TeamFragment } from 'src/gql/generated'
+import { TeamDetailedFragment } from 'src/gql/generated'
 
 export interface TeamViewProps {
-  team: TeamFragment
+  team: TeamDetailedFragment
 }

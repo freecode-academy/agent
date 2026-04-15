@@ -14,7 +14,7 @@ builder.queryField('projects', (t) =>
       return await ctx.prisma.project.findMany({
         ...query,
         where: buildProjectsWhere(args.where, ctx),
-        orderBy: { createdAt: 'desc' },
+        orderBy: { updatedAt: 'desc' },
         skip: args.skip ?? undefined,
         take: args.take ?? undefined,
       })

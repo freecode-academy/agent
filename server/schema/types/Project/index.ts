@@ -17,7 +17,7 @@ builder.prismaObject('Project', {
     url: t.exposeString('url'),
     description: t.exposeString('description', { nullable: true }),
     content: t.exposeString('contentText', { nullable: true }),
-    public: t.exposeBoolean('public'),
+    // public: t.exposeBoolean('public'),
 
     createdById: t.exposeString('CreatedBy'),
     CreatedBy: t.relation('User_ProjectToUser'),

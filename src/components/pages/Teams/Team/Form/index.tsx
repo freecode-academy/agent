@@ -9,7 +9,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 
 import {
   TeamCreateInput,
-  TeamFragment,
+  TeamDetailedFragment,
   TeamStatus,
   useCreateTeamMutation,
   useUpdateTeamMutation,
@@ -61,7 +61,7 @@ function getDefaultValues(object: TeamFormProps['team']): FormData {
 }
 
 type TeamFormProps = {
-  team: TeamFragment | null | undefined
+  team: TeamDetailedFragment | null | undefined
   cancelHandler: (() => void) | undefined
 }
 

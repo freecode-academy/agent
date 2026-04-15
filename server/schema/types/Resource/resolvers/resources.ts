@@ -15,9 +15,13 @@ builder.queryField('resources', (t) =>
       return await ctx.prisma.resource.findMany({
         ...query,
         where: buildResourcesWhere(args.where, ctx),
-        orderBy: {
-          createdAt: args.orderBy?.createdAt ?? 'desc',
-        },
+        orderBy: args.orderBy?.name
+          ? {
+              name: args.orderBy?.name ?? undefined,
+            }
+          : {
+              createdAt: args.orderBy?.createdAt ?? 'desc',
+            },
         skip: args.skip ?? undefined,
         take: args.take ?? undefined,
       })

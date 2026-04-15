@@ -49,6 +49,8 @@ const ruleTree = {
     knowledgeSpaces: isSudo,
 
     teamMembers: isSudo,
+    filesCount: isSudo,
+    files: isSudo,
   },
   Mutation: {
     createResource: isSudo,

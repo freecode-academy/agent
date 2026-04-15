@@ -36,5 +36,7 @@ builder.prismaObject('Team', {
     }),
 
     Members: t.relation('TeamMembers'),
+    email: t.exposeString('email'),
+    phone: t.exposeString('phone'),
   }),
 })
