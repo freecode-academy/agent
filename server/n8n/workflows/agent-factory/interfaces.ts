@@ -25,8 +25,8 @@ export interface AgentFactoryConfig {
   credentialId: string
   /** Internal API credential display name */
   credentialName: string
-  /** Path to system message markdown file */
-  systemMessagePath: string | undefined
+  /** System message */
+  systemMessage: string | undefined
   /** Webhook endpoint ID */
   webhookId: string
   /** n8n instance identifier */
@@ -49,6 +49,8 @@ export interface AgentFactoryConfig {
   canAccessFileSystem?: boolean
   /** Enable HTTP fetch tool */
   canExecuteFetch?: boolean
+  /** Enable shell command execution tool */
+  canExecuteShell?: boolean
   /** Enable URL reading tool */
   canReadUrls?: boolean
   /** Authenticate user from JWT token */

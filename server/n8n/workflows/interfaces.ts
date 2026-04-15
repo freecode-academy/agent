@@ -33,6 +33,7 @@ export type WorkflowName =
   | 'Tool: Read File'
   | 'Tool: List Files'
   | 'Tool: Fetch Request'
+  | 'Tool: Shell Execute'
   | 'Tool: Parsing HTML'
   | 'Tool: Verify Token'
   | 'Tool: Get Config'
@@ -62,4 +63,5 @@ export type WorkflowName =
   | `Tool: Read Concepts (${string})`
   | `Tool: Update Concept (${string})`
   | `Tool: Delete Concept (${string})`
+  | `Tool: Update Profile (${string})`
   | `Tool: Exec Tool (${string})`

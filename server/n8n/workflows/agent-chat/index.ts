@@ -13,6 +13,7 @@ import { createToolCreateConcept } from './nodes/KB/KBConcept/createConcept'
 import { createToolReadConcepts } from './nodes/KB/KBConcept/readConcepts'
 import { createToolUpdateConcept } from './nodes/KB/KBConcept/updateConcept'
 import { createToolDeleteConcept } from './nodes/KB/KBConcept/deleteConcept'
+import { createToolUpdateProfile } from './nodes/KB/updateProfile'
 import { createToolExecTool } from '../tool-exec-tool/factory'
 import { getExecTools } from './nodes/execTool'
 
@@ -31,6 +32,7 @@ class ChatAgentWorkflow extends AgentWorkflowFactory {
       smtp: _smtp,
       agentName,
       model,
+      systemMessage,
       ...other
     } = agentCreds
 
@@ -47,12 +49,12 @@ class ChatAgentWorkflow extends AgentWorkflowFactory {
       versionId: 'agent-chat-v7',
       credentialId: 'internal-agent-chat-cred',
       credentialName: 'Internal API - agent-chat',
-      systemMessagePath: undefined,
       webhookId: 'agent-chat-webhook',
       instanceId: 'narasim-dev-agent-chat',
       agentNodeType: 'orchestrator',
       model: model || getModel(process.env.AGENT_CHAT_MODEL),
       memorySize,
+      systemMessage,
       ...other,
     }
   }
@@ -200,7 +202,7 @@ return {
       },
       [this.nodes['Prepare Agent Data'].name]: {
         main: [
-          [{ node: this.nodes['Merge Agents'].name, type: 'main', index: 2 }],
+          [{ node: this.nodes['Merge Agents'].name, type: 'main', index: 1 }],
         ],
       },
       ...(agentNodesFirst && {
@@ -227,7 +229,7 @@ return {
           main: [
             [
               {
-                node: 'Prepare Agent Input (chat-agent)',
+                node: 'Merge Agents',
                 type: 'main',
                 index: 0,
               },
@@ -235,7 +237,25 @@ return {
           ],
         },
       },
+
+      [this.nodes['Get Agent Data'].name]: {
+        main: [
+          [
+            {
+              node: this.nodes['Merge Agent Data'].name,
+              type: 'main',
+              index: 0,
+            },
+          ],
+        ],
+      },
     }
+
+    connections['Merge Trigger'].main[0]?.push({
+      node: 'Get Agent Data',
+      type: 'main',
+      index: 0,
+    })
 
     return {
       name: workflowName,
@@ -280,6 +300,9 @@ return {
 
     const deleteConceptWorkflow = createToolDeleteConcept(config)
     deleteConceptWorkflow && workflows.push(deleteConceptWorkflow)
+
+    const updateProfileWorkflow = createToolUpdateProfile(config)
+    updateProfileWorkflow && workflows.push(updateProfileWorkflow)
 
     const execToolWorkflow = createToolExecTool({
       agentName: config.agentName,

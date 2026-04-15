@@ -51,6 +51,9 @@ const ruleTree = {
     teamMembers: isSudo,
   },
   Mutation: {
+    createResource: isSudo,
+    updateResource: isSudo,
+
     // Example: require authentication for specific mutations
     // someProtectedMutation: isAuthenticated,
     updateUser: isSudo,
@@ -60,11 +63,24 @@ const ruleTree = {
     updateTask: isActive,
     createTaskWorkLog: isActive,
     createMindLog: isActive,
-    updateMindLog: isActive,
     singleUpload: isActive,
-
-    createResource: isSudo,
-    updateResource: isSudo,
+    createReferrerToken: isActive,
+    createConcept: isActive,
+    createConflict: isActive,
+    createConstraint: isActive,
+    createDecision: isActive,
+    createFact: isActive,
+    createFactParticipation: isActive,
+    createFactProjection: isActive,
+    createIdentityOperation: isActive,
+    createKnowledgeSpace: isActive,
+    createLabel: isActive,
+    createProposal: isActive,
+    createReaction: isActive,
+    createReflex: isActive,
+    deleteConcept: isActive,
+    signPost: isActive,
+    world3dObjectCreate: isActive,
   },
 } satisfies PermissionsRuleTree
 
