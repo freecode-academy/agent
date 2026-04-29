@@ -1,27 +1,29 @@
-import { FileWithDataFragment } from 'src/gql/generated'
+import { FileDetailedFragment } from 'src/gql/generated'
 import { FilesViewListStyled, FilesViewStyled } from './styles'
 import { FileItem } from './FileItem'
 import { Pagination } from 'src/components/Pagination'
 
 type FilesViewProps = {
-  files: FileWithDataFragment[]
+  files: FileDetailedFragment[]
   count: number
+  limit: number
   page: number
 }
 
 export const FilesView: React.FC<FilesViewProps> = ({
   files,
   count,
+  limit,
   page,
   ...other
 }) => {
-  const totalPages = count ? Math.floor(count / 10) + 1 : 0
+  const totalPages = count ? Math.floor(count / limit) + 1 : 0
 
   return (
     <FilesViewStyled {...other}>
       <FilesViewListStyled>
         {files.map((n) => {
-          return <FileItem key={n.id} file={n} />
+          return <FileItem key={n.id} file={n} variant="list" />
         })}
       </FilesViewListStyled>
 

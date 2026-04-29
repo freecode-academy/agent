@@ -1,19 +1,41 @@
-query files($first: Int, $skip: Int) {
-  files(take: $first, skip: $skip) {
+query file($where: FileWhereUniqueInput!) {
+  file(where: $where) {
+    ...FileDetailed
+  }
+}
+
+query files(
+  $take: Int
+  $skip: Int
+  $where: FileWhereInput
+  $orderBy: FileOrderByInput
+) {
+  files(take: $take, skip: $skip, where: $where, orderBy: $orderBy) {
     ...File_
   }
 }
 
-query filesConnection($first: Int, $skip: Int) {
-  filesCount
-  files(take: $first, skip: $skip) {
-    ...FileWithData
+query filesConnection(
+  $take: Int
+  $skip: Int
+  $where: FileWhereInput
+  $orderBy: FileOrderByInput
+) {
+  filesCount(where: $where)
+  files(take: $take, skip: $skip, where: $where, orderBy: $orderBy) {
+    ...FileDetailed
   }
 }
 
 mutation singleUpload($data: SingleUploadInput!) {
   singleUpload(data: $data) {
-    ...File_
+    ...FileDetailed
+  }
+}
+
+mutation updateFile($data: FileUpdateInput!, $where: FileWhereUniqueInput!) {
+  response: updateFile(data: $data, where: $where) {
+    ...FileDetailed
   }
 }
 
@@ -23,14 +45,17 @@ fragment FileNoNesting on File {
   path
   filename
   name
+  description
+  mimetype
 }
 
 fragment File_ on File {
   ...FileNoNesting
 }
 
-fragment FileWithData on File {
+fragment FileDetailed on File {
   ...File_
+  content
   CreatedBy {
     ...UserNoNesting
   }

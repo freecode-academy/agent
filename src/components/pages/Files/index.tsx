@@ -9,11 +9,16 @@ import { FilesView } from './View'
 export const FilesPage: Page<FilesPageProps> = ({ page = 1 }) => {
   const { user: currentUser } = useAppContext()
 
+  const limit = 12
+
+  const variables = getFilesConnectionQueryVariables({
+    page: page,
+    take: limit,
+  })
+
   const response = useFilesConnectionQuery({
     skip: !currentUser?.sudo,
-    variables: getFilesConnectionQueryVariables({
-      page: page,
-    }),
+    variables,
   })
 
   return (
@@ -24,6 +29,7 @@ export const FilesPage: Page<FilesPageProps> = ({ page = 1 }) => {
         files={response.data?.files ?? []}
         count={response.data?.filesCount ?? 0}
         page={page}
+        limit={variables.take ?? limit}
       />
     </>
   )

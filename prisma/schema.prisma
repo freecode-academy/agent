@@ -169,27 +169,61 @@ model TelegramAccount {
 }
 
 model File {
-  id            String    @id @default(cuid()) @db.VarChar(36)
-  path          String    @db.Text
-  name          String?   @db.Text
-  filename      String?   @db.Text
-  mimetype      String    @db.Text
-  encoding      String    @db.Text
-  hash          String?   @db.Text
-  size          Decimal?
-  ImageResource String?   @db.VarChar(36)
-  CreatedBy     String?   @db.VarChar(36)
-  rank          Int?
-  Gallery       String?   @db.VarChar(36)
-  createdAt     DateTime  @default(now()) @db.Timestamp(3)
-  updatedAt     DateTime  @default(now()) @updatedAt @db.Timestamp(3)
-  User          User?     @relation(fields: [CreatedBy], references: [id])
-  Resource      Resource? @relation(fields: [ImageResource], references: [id])
-  Projects      Project[]
+  id          String   @id @default(cuid()) @db.VarChar(36)
+  path        String   @unique @db.Text
+  name        String?  @db.Text
+  description String?  @db.Text
+  content     String?  @db.Text
+  filename    String?  @db.Text
+  mimetype    String   @db.Text
+  encoding    String   @db.Text
+  hash        String?  @db.Text
+  size        Decimal?
+  rank        Int?
+
+  // @deprecated
+  Gallery String? @db.VarChar(36)
+
+  createdAt DateTime @default(now()) @db.Timestamp(3)
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamp(3)
+
+  CreatedBy String? @db.VarChar(36)
+  User      User?   @relation(fields: [CreatedBy], references: [id])
+
+  KBConceptFile KBConceptFile[]
+
+  // ==============================================
+  // Custom
+  // ==============================================
+
+  Resource Resource? @relation(fields: [ImageResource], references: [id])
+  Projects Project[]
+
+  ImageResource String? @db.VarChar(36)
+
+  // ==============================================
+  // Eof Custom
+  // ==============================================
 
   @@index([CreatedBy], map: "File_CreatedBy")
   @@index([Gallery], map: "File_Gallery")
   @@index([ImageResource], map: "File_ImageResource")
+}
+
+model KBConceptFile {
+  id        String   @id @default(cuid()) @db.VarChar(36)
+  createdAt DateTime @default(now()) @db.Timestamp(3)
+
+  kBConceptId String    @db.VarChar(36)
+  KBConcept   KBConcept @relation(fields: [kBConceptId], references: [id])
+
+  fileId String @db.VarChar(36)
+  File   File   @relation(fields: [fileId], references: [id])
+
+  createdById String? @db.VarChar(36)
+
+  @@unique([kBConceptId, fileId])
+  @@index([createdById])
 }
 
 enum MindLogType {
@@ -347,6 +381,12 @@ model KBConcept {
 
   content String? @db.Text
 
+  // External code or identifier (e.g., "7.1" for topic, GUID for item)
+  code String? @db.VarChar(100)
+
+  // Additional structured data (e.g., grade levels [7,8,9], answer options)
+  data Json?
+
   createdById String @db.VarChar(36)
   CreatedBy   User   @relation(fields: [createdById], references: [id], onDelete: Cascade)
 
@@ -354,6 +394,24 @@ model KBConcept {
   FactParticipations KBFactParticipation[]
   IdentityInputs     KBIdentityOperation[] @relation(name: "IdentityInput")
   IdentityOutputs    KBIdentityOperation[] @relation(name: "IdentityOutput")
+
+  // Hierarchy
+  parentId String?     @db.VarChar(36)
+  Parent   KBConcept?  @relation("ConceptTree", fields: [parentId], references: [id])
+  Children KBConcept[] @relation("ConceptTree")
+
+  rootId      String?     @db.VarChar(36)
+  Root        KBConcept?  @relation("ConceptRoot", fields: [rootId], references: [id])
+  Descendants KBConcept[] @relation("ConceptRoot")
+
+  KBConceptFile KBConceptFile[]
+
+  @@unique([rootId, code])
+  @@unique([parentId, code])
+  @@index([parentId])
+  @@index([rootId])
+  @@index([type])
+  @@index([code])
 }
 
 // Label roles define how a name relates to its concept:

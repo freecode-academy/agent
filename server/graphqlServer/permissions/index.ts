@@ -51,6 +51,7 @@ const ruleTree = {
     teamMembers: isSudo,
     filesCount: isSudo,
     files: isSudo,
+    file: isSudo,
   },
   Mutation: {
     createResource: isSudo,
@@ -81,6 +82,8 @@ const ruleTree = {
     createReaction: isActive,
     createReflex: isActive,
     deleteConcept: isActive,
+    llmCompletion: isSudo,
+    llmChatCompletion: isSudo,
     signPost: isActive,
     world3dObjectCreate: isActive,
   },

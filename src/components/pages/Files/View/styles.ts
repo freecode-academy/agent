@@ -1,14 +1,29 @@
-import styled from 'styled-components'
+import { minWidth } from 'src/theme/helpers'
+import styled, { css } from 'styled-components'
 
 export const FilesViewListStyled = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: 1fr;
+  grid-template-rows: auto;
   gap: 16px;
+  max-width: 100%;
+  width: 100%;
 
-  @media (max-width: 640px) {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 12px;
-  }
+  ${minWidth.sm(css`
+    grid-template-columns: repeat(2, 1fr);
+  `)}
+
+  ${minWidth.md(css`
+    grid-template-columns: repeat(3, 1fr);
+  `)}
+
+  ${minWidth.lg(css`
+    grid-template-columns: repeat(4, 1fr);
+  `)}
+
+  ${minWidth.xl(css`
+    grid-template-columns: repeat(6, 1fr);
+  `)}
 `
 
 export const FilesViewStyled = styled.div`

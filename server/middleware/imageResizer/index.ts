@@ -1,8 +1,10 @@
-import sharp, { Metadata, Sharp } from 'sharp'
+import sharp from 'sharp'
 import fs from 'fs'
 import mime from 'mime-types'
 import { RequestHandler } from 'express'
 import { resolve } from 'path'
+import { parseBackgroundColor } from './helpers/parseBackgroundColor'
+import { resizeImg } from './helpers/resizeImg'
 
 /**
  * Ресайз картинок
@@ -19,7 +21,11 @@ export const imageResizerMiddleware: RequestHandler = async (
 
   const srcPath = decodeURIComponent(req.originalUrl)
 
-  if ((match = srcPath.match(/^\/images\/resized\/([^/]+)\/(.+)/))) {
+  const [pathPart, queryPart] = srcPath.split('?')
+  const queryParams = new URLSearchParams(queryPart || '')
+  const bgColor = queryParams.get('bg') // e.g. ?bg=white or ?bg=ff0000
+
+  if ((match = pathPart.match(/^\/images\/resized\/([^/]+)\/(.+)/))) {
     src = match[2].replace(/^\/?uploads\//, '')
     type = match[1]
   }
@@ -41,9 +47,18 @@ export const imageResizerMiddleware: RequestHandler = async (
           break
 
         default: {
-          const img = await sharp(absPath)
+          if (type === 'origin') {
+            break
+          }
+          let img = sharp(absPath)
 
           const metadata = await img.metadata()
+
+          // Flatten PNG with alpha channel to specified background color
+          if (metadata.hasAlpha && bgColor) {
+            const background = parseBackgroundColor(bgColor)
+            img = img.flatten({ background })
+          }
 
           data = await resizeImg(img, type, metadata)
             .then(async () => {
@@ -53,16 +68,28 @@ export const imageResizerMiddleware: RequestHandler = async (
                 return
               }
 
-              return await img
-                .withMetadata()
-                .jpeg({ quality: 95 })
-                .toBuffer()
-                .catch((e) => {
-                  console.error(e)
+              const pipeline = img.withMetadata()
 
-                  res.status(500)
-                  res.send(e.message)
-                })
+              switch (contentType) {
+                case 'image/png':
+                  pipeline.png()
+                  break
+                case 'image/webp':
+                  pipeline.webp({ quality: 95 })
+                  break
+                case 'image/gif':
+                  pipeline.gif()
+                  break
+                default:
+                  pipeline.jpeg({ quality: 95 })
+              }
+
+              return await pipeline.toBuffer().catch((e) => {
+                console.error(e)
+
+                res.status(500)
+                res.send(e.message)
+              })
             })
             .catch((error) => {
               res.status(500)
@@ -93,76 +120,4 @@ export const imageResizerMiddleware: RequestHandler = async (
   }
 
   res.status(404).send('File not found')
-}
-
-async function resizeImg(img: Sharp, type: string, metadata: Metadata) {
-  switch (type) {
-    case 'origin':
-      break
-
-    case 'avatar':
-      img.resize(200, 200)
-
-      break
-
-    case 'thumb':
-      img.resize({
-        width: 150,
-        height: 150,
-        fit: 'cover',
-        position: sharp.gravity.north,
-      })
-
-      break
-
-    case 'small':
-      img.resize({
-        width: 200,
-        height: 160,
-        fit: 'inside',
-      })
-
-      break
-
-    case 'middle':
-      img.resize({
-        width: 900,
-        height: 900,
-        fit: 'inside',
-      })
-
-      break
-
-    case 'big':
-      img.resize({ fit: 'inside' })
-
-      resizeMax(img, 1600, 1600, metadata)
-
-      break
-
-    default:
-      throw new Error('Wrong image type')
-  }
-
-  return img
-}
-
-function resizeMax(
-  img: Sharp,
-  width: number,
-  height: number,
-  metadata: Metadata,
-) {
-  const { width: originWidth, height: originHeight } = metadata
-
-  if (
-    originWidth &&
-    originHeight &&
-    (width < originWidth || height < originHeight)
-  ) {
-    img
-      .resize({ fit: 'inside' })
-      .resize(width, height)
-      .resize({ fit: 'inside' })
-  }
 }
