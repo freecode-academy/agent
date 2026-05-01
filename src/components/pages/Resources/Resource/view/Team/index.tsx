@@ -3,6 +3,7 @@ import { ResourceViewProps } from '../interfaces'
 import { TeamResourceViewStyled } from './styles'
 import { PhoneNumber } from 'src/components/PhoneNumber'
 import { EmailAddress } from 'src/components/EmailAddress'
+import Link from 'next/link'
 
 export const TeamResourceView: React.FC<ResourceViewProps> = ({ resource }) => {
   const { Team } = resource
@@ -19,13 +20,13 @@ export const TeamResourceView: React.FC<ResourceViewProps> = ({ resource }) => {
 
           {Team.website && (
             <div>
-              <a
+              <Link
                 href={Team.website}
                 target="_blank"
                 rel="noindex nofollow norefferer"
               >
                 {Team.website}
-              </a>
+              </Link>
             </div>
           )}
 

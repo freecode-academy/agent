@@ -1,4 +1,5 @@
 import { builder } from '../../builder'
+import { StringNullableFilter } from '../inputs'
 import { UserStatusEnum } from './types'
 
 export const UserWhereUniqueInput = builder.inputType('UserWhereUniqueInput', {
@@ -15,6 +16,15 @@ export const UserWhereInput = builder.inputType('UserWhereInput', {
     email: t.string(),
     username: t.string(),
     status: t.field({ type: UserStatusEnum, required: false }),
+    image: t.field({
+      type: StringNullableFilter,
+    }),
+    intro: t.field({
+      type: StringNullableFilter,
+    }),
+    content: t.field({
+      type: StringNullableFilter,
+    }),
   }),
 })
 

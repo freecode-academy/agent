@@ -6,7 +6,7 @@ import { buildUserWhere } from 'server/schema/types/User/helpers/buildUserWhere'
 
 const SITEMAP_LIMIT = 1000
 
-export type SitemapSection = 'main' | 'users' | 'resources' | 'tags'
+export type SitemapSection = 'main' | 'users' | 'resources' | 'tags' | 'offers'
 
 type UrlItem = {
   url: string
@@ -49,7 +49,9 @@ const getSectionCount = async (section: SitemapSection): Promise<number> => {
       return prismaClient.resource.count({ where: resourcesWhere })
     case 'tags':
       return prismaClient.tag.count({ where: tagsWhere })
-    default:
+    case 'offers':
+      return prismaClient.offer.count({ where: offersWhere })
+    case 'main':
       return 0
   }
 }
@@ -57,15 +59,18 @@ const getSectionCount = async (section: SitemapSection): Promise<number> => {
 export const generateSitemapIndex = async ({
   siteOrigin,
 }: SitemapGeneratorProps): Promise<string> => {
-  const [usersCount, resourcesCount, tagsCount] = await Promise.all([
-    getSectionCount('users'),
-    getSectionCount('resources'),
-    getSectionCount('tags'),
-  ])
+  const [usersCount, resourcesCount, tagsCount, offersCount] =
+    await Promise.all([
+      getSectionCount('users'),
+      getSectionCount('resources'),
+      getSectionCount('tags'),
+      getSectionCount('offers'),
+    ])
 
   const usersPages = Math.ceil(usersCount / SITEMAP_LIMIT)
   const resourcesPages = Math.ceil(resourcesCount / SITEMAP_LIMIT)
   const tagsPages = Math.ceil(tagsCount / SITEMAP_LIMIT)
+  const offersPages = Math.ceil(offersCount / SITEMAP_LIMIT)
 
   let xml = '<?xml version="1.0" encoding="UTF-8"?>\n'
   xml += '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
@@ -82,6 +87,10 @@ export const generateSitemapIndex = async ({
 
   for (let i = 1; i <= tagsPages; i++) {
     xml += `  <sitemap><loc>${siteOrigin}/sitemap.xml?section=tags&amp;page=${i}</loc></sitemap>\n`
+  }
+
+  for (let i = 1; i <= offersPages; i++) {
+    xml += `  <sitemap><loc>${siteOrigin}/sitemap.xml?section=offers&amp;page=${i}</loc></sitemap>\n`
   }
 
   xml += '</sitemapindex>'
@@ -175,6 +184,34 @@ export const generateSitemapTags = async (
   return generateSitemapXML(xmlData, props)
 }
 
+const offersWhere: Prisma.OfferWhereInput = {
+  published: true,
+}
+
+export const generateSitemapOffers = async (
+  props: SitemapGeneratorProps & { page: number },
+): Promise<string> => {
+  const offers = await prismaClient.offer.findMany({
+    where: offersWhere,
+    orderBy: {
+      updatedAt: 'desc',
+    },
+    take: SITEMAP_LIMIT,
+    skip: (props.page - 1) * SITEMAP_LIMIT,
+  })
+
+  const xmlData: UrlItem[] = offers.map((n) => {
+    const { id, updatedAt } = n
+
+    return {
+      url: `/offers/${id}`,
+      updatedAt: updatedAt.toISOString(),
+    }
+  })
+
+  return generateSitemapXML(xmlData, props)
+}
+
 const usersWhere = buildUserWhere(
   {
     status: UserStatus.active,
@@ -236,6 +273,9 @@ export const generateSitemap = async (req: Request, res: Response) => {
       break
     case 'tags':
       res.send(await generateSitemapTags({ siteOrigin, page }))
+      break
+    case 'offers':
+      res.send(await generateSitemapOffers({ siteOrigin, page }))
       break
     default:
       res.status(404).send('Not found')

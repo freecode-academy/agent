@@ -6,17 +6,25 @@ import {
 
 type getUsersQueryVariablesProps = {
   page: number
-  first?: number
   currentUser: MeUserFragment | null | undefined
 }
 
 export function getUsersQueryVariables({
   currentUser,
   page,
-  first = 10,
 }: getUsersQueryVariablesProps): UsersConnectionQueryVariables {
+  const first = 3
+
   return {
-    where: { status: currentUser ? undefined : UserStatusEnum.ACTIVE },
+    where: {
+      status: currentUser ? undefined : UserStatusEnum.ACTIVE,
+      image: {
+        not: {
+          equals: '',
+        },
+      },
+    },
     skip: (page - 1) * first,
+    first,
   }
 }

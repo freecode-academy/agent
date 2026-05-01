@@ -18,8 +18,8 @@ import { AppContextProvider } from 'src/components/AppContext'
 import { SnackbarProvider, Snackbar } from 'src/ui-kit/Snackbar'
 import { getInitialProps } from './getInitialProps'
 import { useScrollPage } from 'src/hooks/useScrollPage'
-import { Layout } from 'src/components/Layout'
 import { ChatProvider } from 'src/components/Chat/ChatWidget/context'
+import { LayoutV2 } from 'src/components/LayoutV2'
 
 export const App: MainApp<AppProps> = ({ Component, pageProps }) => {
   useScrollPage()
@@ -76,7 +76,7 @@ export const App: MainApp<AppProps> = ({ Component, pageProps }) => {
           <ApolloProvider client={apolloClient}>
             <AppContextProvider user={user} userLoading={userLoading}>
               <ChatProvider>
-                <Layout>{content}</Layout>
+                <LayoutV2>{content}</LayoutV2>
               </ChatProvider>
               <Snackbar />
             </AppContextProvider>

@@ -27,7 +27,9 @@
     "resolveJsonModule": true,
     "incremental": true,
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "@/*": ["./src/components/LayoutV2/*"]
+    }
   },
   "include": [
     "next-env.d.ts",

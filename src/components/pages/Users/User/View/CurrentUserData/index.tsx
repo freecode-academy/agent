@@ -4,6 +4,7 @@ import { MetaMaskAuth } from 'src/components/Auth/MetaMaskAuth'
 import { TelegramAuthForm } from 'src/components/TelegramAuthForm'
 import { Balance } from './Balance'
 import { Transactions } from './Transactions'
+import Link from 'next/link'
 
 type CurrentUserData = {
   currentUser: MeUserFragment
@@ -48,12 +49,12 @@ export const CurrentUserData: React.FC<CurrentUserData> = ({
             </g>
           </svg>
           {TelegramAccount ? (
-            <a
+            <Link
               href={`https://t.me/${TelegramAccount.username}`}
               target="_blank"
             >
               {TelegramAccount.username}
-            </a>
+            </Link>
           ) : (
             <TelegramAuthForm
               buttonSize="small"

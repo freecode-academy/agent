@@ -15,3 +15,4 @@ export * from '../UserTechnology'
 // Extended
 
 import './File'
+import './Offer'

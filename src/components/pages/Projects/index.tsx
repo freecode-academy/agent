@@ -13,7 +13,7 @@ import { Page } from '../_App/interfaces'
 import { useRouter } from 'next/router'
 import { ParsedUrlQuery } from 'querystring'
 
-const first = 10
+const first = 3
 
 const defaultVariables: ProjectsConnectionQueryVariables = {
   where: {
@@ -86,7 +86,7 @@ export const ProjectsPage: Page = () => {
       <View
         // {...queryResult}
         // data={response || null}
-        objects={response.data?.projects || []}
+        projects={response.data?.projects || []}
         count={response.data?.projectsCount || 0}
         loading={loading}
         variables={variables}

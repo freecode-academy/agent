@@ -14,9 +14,15 @@ builder.prismaObject('Team', {
     }),
     createdAt: t.expose('createdAt', { type: 'DateTime', nullable: false }),
     updatedAt: t.expose('updatedAt', { type: 'DateTime', nullable: false }),
-    name: t.exposeString('name', { nullable: false }),
+    title: t.exposeString('name', { nullable: false }),
     website: t.exposeString('website'),
     address: t.exposeString('address'),
+    description: t.exposeString('description'),
+    intro: t.exposeString('intro'),
+    image: t.exposeString('image'),
+    email: t.exposeString('email'),
+    phone: t.exposeString('phone'),
+
     // url: t.exposeString('url'),
     // description: t.exposeString('description', { nullable: true }),
     content: t.exposeString('content', { nullable: true }),
@@ -36,7 +42,10 @@ builder.prismaObject('Team', {
     }),
 
     Members: t.relation('TeamMembers'),
-    email: t.exposeString('email'),
-    phone: t.exposeString('phone'),
+
+    /**
+     * Нету там контента
+     */
+    // Resources: t.relation('Resources'),
   }),
 })

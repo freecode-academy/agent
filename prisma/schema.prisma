@@ -125,6 +125,8 @@ model User {
   ChatMessages                                 ChatMessage[]             @relation(name: "ChatMessageCreatedBy")
   IncomeChatMessages                           ChatMessage[]             @relation(name: "ChatMessageUserTo")
 
+  OffersCreated Offer[] @relation(name: "OfferCreatedBy")
+
   @@unique([email])
   @@unique([username])
   @@index([CreatedBy], map: "User_CreatedBy")
@@ -1508,6 +1510,9 @@ model Team {
   createdAt                DateTime     @default(now()) @db.Timestamp(3)
   updatedAt                DateTime     @default(now()) @updatedAt @db.Timestamp(3)
   name                     String       @db.Text
+  description              String?      @db.VarChar(3072)
+  intro                    String?      @db.Text
+  image                    String?      @db.VarChar(1024)
   status                   TeamStatus   @default(value: Active)
   oldID                    Int?         @unique
   address                  String?      @db.Text
@@ -1814,4 +1819,23 @@ model ChatMessage {
 
   toUserId String? @db.VarChar(36)
   ToUser   User?   @relation(fields: [toUserId], references: [id], onDelete: Cascade, name: "ChatMessageUserTo")
+}
+
+model Offer {
+  id        String   @id @default(cuid()) @db.VarChar(36)
+  createdAt DateTime @default(now()) @db.Timestamp(3)
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamp(3)
+
+  title       String  @db.VarChar(512)
+  description String? @db.VarChar(3072)
+  intro       String? @db.Text
+  content     String? @db.Text
+  image       String? @db.VarChar(1024)
+
+  published Boolean @default(true)
+
+  createdById String @db.VarChar(36)
+  CreatedBy   User   @relation(fields: [createdById], references: [id], name: "OfferCreatedBy", onDelete: Cascade)
+
+  @@index([createdById])
 }

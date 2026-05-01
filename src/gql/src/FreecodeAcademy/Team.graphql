@@ -1,6 +1,6 @@
 query team($where: TeamWhereUniqueInput!) {
   team(where: $where) {
-    ...Team_
+    ...TeamDetailed
   }
 }
 
@@ -41,7 +41,10 @@ mutation updateTeam($data: TeamUpdateInput!, $where: TeamWhereUniqueInput!) {
 
 fragment TeamNoNesting on Team {
   id
-  name
+  title
+  description
+  intro
+  image
   status
   createdAt
   updatedAt
@@ -50,6 +53,8 @@ fragment TeamNoNesting on Team {
   email
   phone
   createdById
+
+  content @include(if: false)
 }
 
 fragment Team_ on Team {

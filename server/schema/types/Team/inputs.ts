@@ -28,6 +28,9 @@ export const TeamCreateInput = builder.inputType('TeamCreateInput', {
     address: t.string({ required: false }),
     website: t.string({ required: false }),
     content: t.string({ required: false }),
+    description: t.string({ required: false }),
+    intro: t.string({ required: false }),
+    image: t.string({ required: false }),
     status: t.field({ type: TeamStatusEnum, required: true }),
   }),
 })
@@ -38,6 +41,9 @@ export const TeamUpdateInput = builder.inputType('TeamUpdateInput', {
     address: t.string({ required: false }),
     website: t.string({ required: false }),
     content: t.string({ required: false }),
+    description: t.string({ required: false }),
+    intro: t.string({ required: false }),
+    image: t.string({ required: false }),
     status: t.field({ type: TeamStatusEnum, required: false }),
   }),
 })

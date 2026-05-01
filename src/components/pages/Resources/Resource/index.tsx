@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { ResourceType, useResourceQuery } from 'src/gql/generated'
 import { Page } from '../../_App/interfaces'
 import { ResourcePageProps } from './interfaces'
@@ -25,8 +24,6 @@ export const ResourcePage: Page<ResourcePageProps> = (props) => {
   })
 
   const resource = response.data?.resource
-
-  console.log('resource', resource)
 
   let content: React.ReactNode | null
 

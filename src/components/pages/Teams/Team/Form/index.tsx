@@ -26,6 +26,7 @@ import { makeTeamLink } from 'src/components/Link/Team'
 
 import dynamic from 'next/dynamic'
 import { useApolloClient } from '@apollo/client/react'
+import { FileUploader, FileUploaderProps } from 'src/components/FileUploader'
 
 const MarkdownEditor = dynamic(
   () => import('src/components/Markdown/Editor').then((r) => r.MarkdownEditor),
@@ -43,6 +44,9 @@ export const schema: yup.ObjectSchema<FormData> = yup.object().shape({
   address: yup.string(),
   website: yup.string(),
   content: yup.string(),
+  description: yup.string(),
+  intro: yup.string(),
+  image: yup.string(),
   status: yup
     .mixed<TeamStatus>()
     .oneOf(Object.values(TeamStatus))
@@ -52,10 +56,13 @@ export const schema: yup.ObjectSchema<FormData> = yup.object().shape({
 
 function getDefaultValues(object: TeamFormProps['team']): FormData {
   return {
-    name: object?.name ?? '',
+    name: object?.title ?? '',
     address: object?.address ?? '',
     website: object?.website ?? '',
     content: object?.content ?? '',
+    description: object?.description ?? '',
+    intro: object?.intro ?? '',
+    image: object?.image ?? '',
     status: object?.status ?? TeamStatus.ACTIVE,
   }
 }
@@ -83,73 +90,113 @@ export const TeamForm: React.FC<TeamFormProps> = ({
     mode: 'all',
   })
 
+  const onChangeImage = useCallback<NonNullable<FileUploaderProps['onChange']>>(
+    (file) => {
+      if (file?.path) {
+        form.setValue('image', file.path, {
+          shouldValidate: true,
+        })
+      }
+    },
+    [form],
+  )
+
   const fieldRenderer = useCallback<
     ControllerProps<FormData, FieldName>['render']
-  >(({ field: { name, value, onChange, onBlur }, fieldState: { error } }) => {
-    let label: string
-    const helperText = undefined
-    let EditorComponent:
-      | typeof TextField
-      | typeof MarkdownEditor
-      | React.FC<React.HtmlHTMLAttributes<HTMLSelectElement>> = TextField
+  >(
+    ({ field: { name, value, onChange, onBlur }, fieldState: { error } }) => {
+      let label: string
+      const helperText = undefined
+      let EditorComponent:
+        | typeof TextField
+        | typeof MarkdownEditor
+        | React.FC<{
+            value: string
+          }>
+        | React.FC<React.HtmlHTMLAttributes<HTMLSelectElement>> = TextField
 
-    const type: TextFieldProps['type'] | undefined = undefined
+      const type: TextFieldProps['type'] | undefined = undefined
 
-    switch (name) {
-      case 'name':
-        label = 'Name'
-        break
+      switch (name) {
+        case 'name':
+          label = 'Name'
+          break
 
-      case 'address':
-        label = 'Address'
-        break
+        case 'description':
+          label = 'SEO description'
+          break
 
-      case 'website':
-        label = 'Website url'
-        break
+        case 'image':
+          label = 'Main image'
 
-      case 'status':
-        label = 'Status'
+          EditorComponent = ({ value }: { value: string }) => {
+            return (
+              <>
+                <FileUploader
+                  value={value ? `/images/resized/middle/${value}` : ''}
+                  onChange={onChangeImage}
+                />
+              </>
+            )
+          }
+          break
 
-        EditorComponent = (
-          props: React.HtmlHTMLAttributes<HTMLSelectElement>,
-        ) => {
-          return (
-            <select {...props}>
-              {Object.values(TeamStatus).map((n) => {
-                return (
-                  <option key={n} value={n}>
-                    {n}
-                  </option>
-                )
-              })}
-            </select>
-          )
-        }
-        break
+        case 'address':
+          label = 'Address'
+          break
 
-      case 'content':
-        label = 'Content'
-        EditorComponent = MarkdownEditor
-        break
-    }
+        case 'website':
+          label = 'Website url'
+          break
 
-    return (
-      <FormControl
-        key={name}
-        label={label}
-        helperText={error ? error.message : helperText}
-        error={!!error}
-      >
-        <EditorComponent
-          value={value?.toString() ?? ''}
-          onChange={onChange}
-          onBlur={onBlur}
-          type={type}
-        />
-      </FormControl>
-    )
-  }, [])
+        case 'status':
+          label = 'Status'
+
+          EditorComponent = (
+            props: React.HtmlHTMLAttributes<HTMLSelectElement>,
+          ) => {
+            return (
+              <select {...props}>
+                {Object.values(TeamStatus).map((n) => {
+                  return (
+                    <option key={n} value={n}>
+                      {n}
+                    </option>
+                  )
+                })}
+              </select>
+            )
+          }
+          break
+
+        case 'intro':
+          label = 'Intro'
+          EditorComponent = MarkdownEditor
+          break
+        case 'content':
+          label = 'Content'
+          EditorComponent = MarkdownEditor
+          break
+      }
+
+      return (
+        <FormControl
+          key={name}
+          label={label}
+          helperText={error ? error.message : helperText}
+          error={!!error}
+        >
+          <EditorComponent
+            value={value?.toString() ?? ''}
+            onChange={onChange}
+            onBlur={onBlur}
+            type={type}
+          />
+        </FormControl>
+      )
+    },
+    [onChangeImage],
+  )
 
   const [create, { loading: createLoading }] = useCreateTeamMutation()
   const [update, { loading: updateLoading }] = useUpdateTeamMutation()
@@ -244,8 +291,11 @@ export const TeamForm: React.FC<TeamFormProps> = ({
 
         <Controller name="status" render={fieldRenderer} />
         <Controller name="name" render={fieldRenderer} />
+        <Controller name="image" render={fieldRenderer} />
+        <Controller name="description" render={fieldRenderer} />
         <Controller name="address" render={fieldRenderer} />
         <Controller name="website" render={fieldRenderer} />
+        <Controller name="intro" render={fieldRenderer} />
         <Controller name="content" render={fieldRenderer} />
 
         <TeamFormButtonsStyled>

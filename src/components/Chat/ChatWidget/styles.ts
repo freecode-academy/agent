@@ -1,3 +1,4 @@
+import { theme } from 'src/theme'
 import styled, { css, keyframes } from 'styled-components'
 
 const fadeIn = keyframes`
@@ -53,8 +54,8 @@ export const ChatWindow = styled.div<{ $isExpanded?: boolean }>`
   right: 20px;
   width: ${({ $isExpanded }) => ($isExpanded ? '100vw' : '380px')};
   height: ${({ $isExpanded }) =>
-    $isExpanded ? '100%' : 'min(500px, calc(100vh - 80px))'};
-  max-height: calc(100vh - 80px);
+    $isExpanded ? '100%' : 'min(500px, calc(100dvh - 80px))'};
+  max-height: calc(100dvh - 80px);
   background: #ffffff;
   border-radius: ${({ $isExpanded }) => ($isExpanded ? '0' : '16px')};
   box-shadow:
@@ -84,7 +85,7 @@ export const ChatWindow = styled.div<{ $isExpanded?: boolean }>`
     bottom: 0;
     width: 100%;
     height: 100%;
-    max-height: 100vh;
+    max-height: 100dvh;
     border-radius: 0;
   }
 `
@@ -347,7 +348,7 @@ export const ChatButton = styled.button<{ $isOpen?: boolean }>`
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: #3b82f6;
+  background: ${theme.brand};
   border: none;
   cursor: pointer;
   display: ${({ $isOpen }) => ($isOpen ? 'none' : 'flex')};

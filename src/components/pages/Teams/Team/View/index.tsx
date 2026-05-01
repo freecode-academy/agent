@@ -8,11 +8,14 @@ import { ComponentSize } from 'src/ui-kit/interfaces'
 import { SeoHeaders } from 'src/components/seo/SeoHeaders'
 import { Markdown } from 'src/components/Markdown'
 import { TeamMembers } from './TeamMembers'
+import { getResizedImagePath } from 'src/helpers/getResizedImagePath'
 
 export const TeamView: React.FC<TeamViewProps> = ({ team }) => {
   const context = useAppContext()
 
   const { user: currentUser } = context
+
+  const { image } = team
 
   const canEdit = useMemo(() => {
     return currentUser?.sudo === true
@@ -49,7 +52,7 @@ export const TeamView: React.FC<TeamViewProps> = ({ team }) => {
   return (
     <>
       <SeoHeaders
-        title={team.name || ''}
+        title={team.title || ''}
         // description={
         //   team.description ||
         //   `${team.name} — find experts, learning resources, and community insights.`
@@ -63,7 +66,19 @@ export const TeamView: React.FC<TeamViewProps> = ({ team }) => {
           <TeamForm team={team} cancelHandler={editFormOpenedToggle} />
         ) : (
           <>
-            <h1>{team.name}</h1>
+            <h1>{team.title}</h1>
+
+            {image && (
+              <div>
+                <img
+                  src={getResizedImagePath({
+                    path: image,
+                    size: 'middle',
+                  })}
+                  alt={team.title}
+                />
+              </div>
+            )}
 
             <Markdown>{team.content}</Markdown>
           </>

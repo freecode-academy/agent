@@ -78,5 +78,6 @@ builder.prismaObject('User', {
     }),
 
     UserTechnologies: t.relation('UserTechnologies'),
+    Teams: t.relation('Teams'),
   }),
 })

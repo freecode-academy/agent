@@ -1,5 +1,5 @@
 import { Page } from '../_App/interfaces'
-import { TasksPageProps } from './interfaces'
+import { TasksPageProps, tasksPageSize } from './interfaces'
 import {
   TasksWithCountDocument,
   TasksWithCountQuery,
@@ -7,8 +7,6 @@ import {
   TaskStatusEnum,
 } from 'src/gql/generated'
 import { getTasksWithCountQueryVariables } from './helpers'
-
-const PAGE_SIZE = 20
 
 export const tasksPageGetInitialProps: Page<TasksPageProps>['getInitialProps'] =
   async ({ query, apolloClient }) => {
@@ -27,7 +25,7 @@ export const tasksPageGetInitialProps: Page<TasksPageProps>['getInitialProps'] =
     const variables = getTasksWithCountQueryVariables(
       selectedStatus,
       page,
-      PAGE_SIZE,
+      tasksPageSize,
     )
 
     await apolloClient.query<TasksWithCountQuery, TasksWithCountQueryVariables>(

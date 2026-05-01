@@ -1,0 +1,5 @@
+import './resolvers/getOne'
+import './resolvers/list'
+import './resolvers/count'
+import './resolvers/create'
+import './resolvers/update'

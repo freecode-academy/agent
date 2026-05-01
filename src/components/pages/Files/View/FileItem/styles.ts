@@ -1,5 +1,6 @@
 import styled, { css } from 'styled-components'
 import { FileItemVariant } from './interfaces'
+import Link from 'next/link'
 
 export const FileItemImgStyled = styled.img``
 
@@ -61,7 +62,7 @@ export const FileItemIconStyled = styled.div`
   }
 `
 
-export const FileItemDownloadStyled = styled.a`
+export const FileItemDownloadStyled = styled(Link)`
   display: block;
   margin-top: 8px;
   padding: 6px 12px;

@@ -4,14 +4,15 @@ import { TaskPageProps } from './interfaces'
 import { TaskCard } from 'src/components/TaskCard'
 import { SeoHeaders } from 'src/components/seo/SeoHeaders'
 import { TaskPageStyled } from './styles'
-import { getTaskQueryVariables } from '../helpers'
 import { taskPageGetInitialProps } from './taskPageGetInitialProps'
 
 export const TaskPage: Page<TaskPageProps> = ({ taskId }) => {
-  const variables = getTaskQueryVariables(taskId)
-
   const response = useTaskQuery({
-    variables,
+    variables: {
+      where: {
+        id: taskId,
+      },
+    },
     skip: !taskId,
   })
 

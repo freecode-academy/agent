@@ -13,8 +13,8 @@ type TeamLinkProps = {
 
 export const TeamLink: React.FC<TeamLinkProps> = ({ team, ...other }) => {
   return team ? (
-    <Link href={makeTeamLink(team)} title={team?.name || undefined} {...other}>
-      {team?.name}
+    <Link href={makeTeamLink(team)} title={team?.title || undefined} {...other}>
+      {team?.title}
     </Link>
   ) : undefined
 }

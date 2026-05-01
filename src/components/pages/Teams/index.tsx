@@ -1,7 +1,8 @@
-import { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 import {
   SortOrder,
   TeamsConnectionDocument,
+  TeamsConnectionQuery,
   TeamsConnectionQueryVariables,
   TeamStatus,
   useTeamsConnectionQuery,
@@ -12,11 +13,10 @@ import { TeamsView as View } from './View'
 import { Page } from '../_App/interfaces'
 import { useRouter } from 'next/router'
 import { ParsedUrlQuery } from 'querystring'
-import { useBoolean } from 'src/hooks/useBoolean'
 import { SeoHeaders } from 'src/components/seo/SeoHeaders'
 import { useAppContext } from 'src/components/AppContext'
 
-const first = 10
+const first = 3
 
 const defaultVariables: TeamsConnectionQueryVariables = {
   where: {
@@ -69,22 +69,16 @@ export const TeamsPage: Page = () => {
 
   const { variables } = response
 
-  const [inited, initedOn] = useBoolean(false)
-
-  useEffect(() => initedOn(), [initedOn])
-
   return (
     <>
       <SeoHeaders title="Teams" />
 
-      {inited && (
-        <View
-          objects={response.data?.teams || []}
-          count={response.data?.teamsCount ?? 0}
-          limit={variables?.take}
-          page={page}
-        />
-      )}
+      <View
+        teams={response.data?.teams || []}
+        count={response.data?.teamsCount ?? 0}
+        limit={variables?.take}
+        page={page}
+      />
     </>
   )
 }
@@ -92,14 +86,24 @@ export const TeamsPage: Page = () => {
 TeamsPage.getInitialProps = async (context) => {
   const { apolloClient } = context
 
-  await apolloClient.query({
-    query: TeamsConnectionDocument,
+  const params = getQueryParams(context.query)
 
-    variables: {
-      ...defaultVariables,
-      ...getQueryParams(context.query),
+  const variables: TeamsConnectionQueryVariables = {
+    ...defaultVariables,
+    where: {
+      ...defaultVariables.where,
+      // status: undefined,
     },
-  })
+    take: params.first,
+    skip: params.skip,
+  }
+
+  await apolloClient.query<TeamsConnectionQuery, TeamsConnectionQueryVariables>(
+    {
+      query: TeamsConnectionDocument,
+      variables,
+    },
+  )
 
   return {}
 }

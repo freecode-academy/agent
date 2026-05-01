@@ -103,4 +103,6 @@ fragment UserNoNesting on User {
   sudo
   status
   intro
+
+  title: fullname
 }

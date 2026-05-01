@@ -18,13 +18,10 @@ import { WorkLogCard } from '../WorkLogCard'
 
 type TaskCardProps = {
   task: TaskFragment
-  variant?: 'list' | 'full'
+  variant: 'list' | 'full'
 }
 
-export const TaskCard: React.FC<TaskCardProps> = ({
-  task,
-  variant = 'list',
-}) => {
+export const TaskCard: React.FC<TaskCardProps> = ({ task, variant }) => {
   const workLogsResponse = useTaskWorkLogsQuery({
     variables: {
       where: {
@@ -60,7 +57,9 @@ export const TaskCard: React.FC<TaskCardProps> = ({
       </TaskCardMeta>
 
       {task.description && (
-        <TaskCardDescription>{task.description}</TaskCardDescription>
+        <TaskCardDescription $variant={variant}>
+          {task.description}
+        </TaskCardDescription>
       )}
 
       {variant === 'full' && (

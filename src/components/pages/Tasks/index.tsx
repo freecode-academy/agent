@@ -1,18 +1,16 @@
 import { useTasksWithCountQuery } from 'src/gql/generated'
 import { Page } from '../_App/interfaces'
-import { TasksPageProps } from './interfaces'
+import { TasksPageProps, tasksPageSize } from './interfaces'
 import { TasksView } from './View'
 import { SeoHeaders } from 'src/components/seo/SeoHeaders'
 import { getTasksWithCountQueryVariables } from './helpers'
 import { tasksPageGetInitialProps } from './tasksPageGetInitialProps'
 
-const PAGE_SIZE = 20
-
 export const TasksPage: Page<TasksPageProps> = ({ selectedStatus, page }) => {
   const variables = getTasksWithCountQueryVariables(
     selectedStatus,
     page,
-    PAGE_SIZE,
+    tasksPageSize,
   )
 
   const response = useTasksWithCountQuery({
@@ -22,7 +20,7 @@ export const TasksPage: Page<TasksPageProps> = ({ selectedStatus, page }) => {
 
   const tasks = response.data?.tasks || []
   const totalCount = response.data?.tasksCount || 0
-  const totalPages = Math.ceil(totalCount / PAGE_SIZE)
+  const totalPages = Math.ceil(totalCount / tasksPageSize)
 
   return (
     <>

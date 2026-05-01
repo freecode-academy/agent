@@ -1,4 +1,4 @@
-import { Prisma, ProjectStatus } from '@prisma/client'
+import { Prisma, ProjectStatus, ProjectType } from '@prisma/client'
 import { PrismaContext } from 'server/context/interfaces'
 
 interface ProjectWhereInput {
@@ -17,22 +17,22 @@ export function buildProjectsWhere(
 
   const result: Prisma.ProjectWhereInput = {
     ...other,
-    // AND: [
-    //   {
-    //     OR: [
-    //       {
-    //         type: null,
-    //       },
-    //       {
-    //         type: {
-    //           not: {
-    //             equals: ProjectType.Education,
-    //           },
-    //         },
-    //       },
-    //     ],
-    //   },
-    // ],
+    AND: [
+      {
+        OR: [
+          {
+            type: null,
+          },
+          {
+            type: {
+              not: {
+                equals: ProjectType.Education,
+              },
+            },
+          },
+        ],
+      },
+    ],
   }
 
   if (id) {

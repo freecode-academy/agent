@@ -1,0 +1,51 @@
+query offersConnection($where: OfferWhereInput, $skip: Int, $take: Int = 10) {
+  offersCount(where: $where)
+  offers(where: $where, skip: $skip, take: $take) {
+    ...Offer_
+  }
+}
+
+query offer($where: OfferWhereUniqueInput!) {
+  offer(where: $where) {
+    ...Offer_
+  }
+}
+
+query offers($where: OfferWhereInput) {
+  offers(where: $where) {
+    ...Offer_
+  }
+}
+
+mutation createOffer($data: OfferCreateInput!) {
+  response: createOffer(data: $data) {
+    ...Offer_
+  }
+}
+
+mutation updateOffer($data: OfferUpdateInput!, $where: OfferWhereUniqueInput!) {
+  response: updateOffer(data: $data, where: $where) {
+    ...Offer_
+  }
+}
+
+fragment OfferNoNesting on Offer {
+  id
+  createdAt
+  updatedAt
+  title
+  description
+  intro
+  content
+  image
+  published
+  createdById
+}
+
+fragment Offer_ on Offer {
+  ...OfferNoNesting
+
+  CreatedBy {
+    ...UserNoNesting
+  }
+}
