@@ -1,77 +1,50 @@
-import { useMemo } from 'react'
 import {
+  MeUserFragment,
   ProjectsConnectionDocument,
   ProjectsConnectionQueryVariables,
-  // ProjectType,
   useProjectsConnectionQuery,
 } from 'src/gql/generated'
 
 import { ProjectsView as View } from './View'
 
-import { Page } from '../_App/interfaces'
-import { useRouter } from 'next/router'
-import { ParsedUrlQuery } from 'querystring'
+import { Page, PageProps } from '../_App/interfaces'
 import { SeoHeaders } from 'src/components/seo/SeoHeaders'
+import { getCurrentUser } from 'src/helpers/getCurrentUser'
+import { useAppContext } from 'src/components/AppContext'
 
-const first = 3
-
-const defaultVariables: ProjectsConnectionQueryVariables = {
-  where: {
-    /**
-     * Берем все проекты, кроме самообучения
-     */
-    // OR: [
-    //   {
-    //     type: null,
-    //   },
-    //   {
-    //     type: {
-    //       not: {
-    //         equals: ProjectType.EDUCATION,
-    //       },
-    //     },
-    //   },
-    // ],
-  },
-  first,
+type getVariablesProps = {
+  page: number
+  currentUser: MeUserFragment | null | undefined
 }
 
-function getQueryParams(query: ParsedUrlQuery) {
-  let skip: number | undefined
-
-  const page =
-    (query.page && typeof query.page === 'string' && parseInt(query.page)) || 0
-
-  if (page > 1) {
-    skip = (page - 1) * first
-  }
+export function getVariables({
+  page,
+}: getVariablesProps): ProjectsConnectionQueryVariables {
+  const shortSkip = 3
+  const first = page > 1 ? 6 : shortSkip
 
   return {
-    skip,
+    skip:
+      page > 2 ? (page - 2) * first + shortSkip : page === 2 ? shortSkip : 0,
     first,
-    page,
   }
 }
 
-export const ProjectsPage: Page = () => {
-  const router = useRouter()
+type ProjectsPageProps = PageProps & {
+  page: number
+}
 
-  const { query } = router
-
-  const { page, ...queryVariables } = useMemo(() => {
-    return {
-      ...defaultVariables,
-      ...getQueryParams(query),
-    }
-  }, [query])
+export const ProjectsPage: Page<ProjectsPageProps> = ({ page }) => {
+  const { user: currentUser } = useAppContext()
 
   const response = useProjectsConnectionQuery({
-    variables: queryVariables,
-    // fetchPolicy: 'cache-and-network',
-    // onError: console.error,
+    variables: getVariables({
+      page,
+      currentUser,
+    }),
   })
 
-  const { variables, loading } = response
+  const { variables } = response
 
   return (
     <>
@@ -83,33 +56,33 @@ export const ProjectsPage: Page = () => {
       />
 
       <View
-        // {...queryResult}
-        // data={response || null}
         projects={response.data?.projects || []}
         count={response.data?.projectsCount || 0}
-        loading={loading}
-        variables={variables}
+        limit={variables.first ?? 0}
         page={page}
       />
     </>
   )
 }
 
-ProjectsPage.getInitialProps = async (context) => {
-  const { apolloClient } = context
+ProjectsPage.getInitialProps = async ({ query, apolloClient }) => {
+  const currentUser = getCurrentUser(apolloClient)
+
+  const pageParam = query.page
+  const page =
+    typeof pageParam === 'string' && parseInt(pageParam, 10) > 0
+      ? parseInt(pageParam, 10)
+      : 1
 
   await apolloClient.query({
     query: ProjectsConnectionDocument,
-
-    /**
-     * Важно, чтобы все переменные запроса серверные и фронтовые совпадали,
-     * иначе при рендеринге не будут получены данные из кеша и рендер будет пустой.
-     */
-    variables: {
-      ...defaultVariables,
-      ...getQueryParams(context.query),
-    },
+    variables: getVariables({
+      currentUser,
+      page,
+    }),
   })
 
-  return {}
+  return {
+    page,
+  }
 }

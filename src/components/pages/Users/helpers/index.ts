@@ -13,18 +13,21 @@ export function getUsersQueryVariables({
   currentUser,
   page,
 }: getUsersQueryVariablesProps): UsersConnectionQueryVariables {
-  const first = 3
+  const shortSkip = 3
+
+  const first = page > 1 ? 6 : shortSkip
 
   return {
     where: {
-      status: currentUser ? undefined : UserStatusEnum.ACTIVE,
+      status: currentUser?.sudo ? undefined : UserStatusEnum.ACTIVE,
       image: {
         not: {
           equals: '',
         },
       },
     },
-    skip: (page - 1) * first,
+    skip:
+      page > 2 ? (page - 2) * first + shortSkip : page === 2 ? shortSkip : 0,
     first,
   }
 }

@@ -30,58 +30,75 @@ import {
 import { makeTeamLink } from 'src/components/Link/Team'
 import { getResizedImagePath } from 'src/helpers/getResizedImagePath'
 import { Markdown } from 'src/components/Markdown'
+import { Pagination } from 'src/components/Pagination'
 
 type TeamsViewProps = {
   teams: TeamFragment[]
   count: number | undefined
   page: number
-  limit: number | undefined | null
+  limit: number
 }
 
-export const TeamsView: React.FC<TeamsViewProps> = ({ teams }) => {
+export const TeamsView: React.FC<TeamsViewProps> = ({
+  teams,
+  count,
+  page,
+  limit,
+}) => {
+  const showContent = page < 2
+
+  const totalPages = count ? Math.floor(count / limit) + 1 : 0
+
   return (
     <>
-      <Hero>
-        <HeroInner>
-          <div>
-            <Eyebrow>Teams</Eyebrow>
-            <H1>One profile is a CV. A team is a company.</H1>
-            <Sub>
-              Teams let members combine portfolios, services and skills into a
-              single unit. Clients see a real delivery group. Investors see who
-              actually executes. You see who you can delegate to without
-              explaining context twice.
-            </Sub>
-          </div>
-          <WhyStrip>
-            <WhyItem>
-              <strong>Shared portfolio</strong>
-              <span>Show the full body of work, not fragments.</span>
-            </WhyItem>
-            <WhyItem>
-              <strong>Easier hiring</strong>
-              <span>Clients hire a team, not a stranger.</span>
-            </WhyItem>
-            <WhyItem>
-              <strong>Internal delegation</strong>
-              <span>Hand off tasks to people you trust.</span>
-            </WhyItem>
-          </WhyStrip>
-          <HeroImage
-            $src={teamsImg.src}
-            role="img"
-            aria-label="A working team"
-          />
-        </HeroInner>
-      </Hero>
+      {showContent && (
+        <Hero>
+          <HeroInner>
+            <div>
+              <Eyebrow>Teams</Eyebrow>
+              <H1>One profile is a CV. A team is a company.</H1>
+              <Sub>
+                Teams let members combine portfolios, services and skills into a
+                single unit. Clients see a real delivery group. Investors see
+                who actually executes. You see who you can delegate to without
+                explaining context twice.
+              </Sub>
+            </div>
+            <WhyStrip>
+              <WhyItem>
+                <strong>Shared portfolio</strong>
+                <span>Show the full body of work, not fragments.</span>
+              </WhyItem>
+              <WhyItem>
+                <strong>Easier hiring</strong>
+                <span>Clients hire a team, not a stranger.</span>
+              </WhyItem>
+              <WhyItem>
+                <strong>Internal delegation</strong>
+                <span>Hand off tasks to people you trust.</span>
+              </WhyItem>
+            </WhyStrip>
+            <HeroImage
+              $src={teamsImg.src}
+              role="img"
+              aria-label="A working team"
+            />
+          </HeroInner>
+        </Hero>
+      )}
 
       <Section>
         <Container>
-          <H2>Active teams</H2>
-          <SectionLede>
-            Each team is a real working unit with shared accountability — not a
-            logo collection.
-          </SectionLede>
+          {showContent && (
+            <>
+              <H2>Active teams</H2>
+              <SectionLede>
+                Each team is a real working unit with shared accountability —
+                not a logo collection.
+              </SectionLede>
+            </>
+          )}
+
           <Grid $cols={3}>
             {teams.map((n) => {
               const { id, title, intro, image } = n
@@ -122,27 +139,31 @@ export const TeamsView: React.FC<TeamsViewProps> = ({ teams }) => {
             })}
           </Grid>
 
-          <CrossLinks>
-            <CrossCard href="/people">
-              <strong>Find people for your team →</strong>
-              <span>
-                Browse verified members and invite them in (after access).
-              </span>
-              <em>See members</em>
-            </CrossCard>
-            <CrossCard href="/projects">
-              <strong>Run projects as a team →</strong>
-              <span>
-                Ship together, build a joint case study, attract investors.
-              </span>
-              <em>Explore projects</em>
-            </CrossCard>
-            <CrossCard href="/offers">
-              <strong>Publish a team offer →</strong>
-              <span>Sell a complete service, not freelance hours.</span>
-              <em>See offers</em>
-            </CrossCard>
-          </CrossLinks>
+          <Pagination currentPage={page} totalPages={totalPages} />
+
+          {showContent && (
+            <CrossLinks>
+              <CrossCard href="/people">
+                <strong>Find people for your team →</strong>
+                <span>
+                  Browse verified members and invite them in (after access).
+                </span>
+                <em>See members</em>
+              </CrossCard>
+              <CrossCard href="/projects">
+                <strong>Run projects as a team →</strong>
+                <span>
+                  Ship together, build a joint case study, attract investors.
+                </span>
+                <em>Explore projects</em>
+              </CrossCard>
+              <CrossCard href="/offers">
+                <strong>Publish a team offer →</strong>
+                <span>Sell a complete service, not freelance hours.</span>
+                <em>See offers</em>
+              </CrossCard>
+            </CrossLinks>
+          )}
         </Container>
       </Section>
     </>

@@ -1,9 +1,6 @@
 import React from 'react'
 
-import {
-  ProjectsConnectionProjectFragment,
-  ProjectsConnectionQueryVariables,
-} from 'src/gql/generated'
+import { ProjectsConnectionProjectFragment } from 'src/gql/generated'
 
 import projectsImg from '@/assets/projects.jpg'
 import {
@@ -39,59 +36,75 @@ import { UserLink } from 'src/components/Link/User'
 import Link from 'next/link'
 import { makeProjectLink } from 'src/components/Link/Project'
 import { Markdown } from 'src/components/Markdown'
+import { Pagination } from 'src/components/Pagination'
 
 export type ProjectsViewProps = {
   projects: ProjectsConnectionProjectFragment[]
-  variables?: ProjectsConnectionQueryVariables
-  page?: number
-  count?: number
-  loading: boolean
+  page: number
+  count: number
+  limit: number
 }
 
-export const ProjectsView: React.FC<ProjectsViewProps> = ({ projects }) => {
+export const ProjectsView: React.FC<ProjectsViewProps> = ({
+  projects,
+  count,
+  page,
+  limit,
+}) => {
+  const showContent = page < 2
+
+  const totalPages = count ? Math.floor(count / limit) + 1 : 0
+
   return (
     <>
-      <Hero>
-        <HeroInner>
-          <div>
-            <Eyebrow>Projects</Eyebrow>
-            <H1>Portfolio that works while you sleep.</H1>
-            <Sub>
-              A project here is more than a case study. It's a public surface to
-              attract partners, signal to investors, document how you solve real
-              problems, and hand out small, scoped tasks the network can pick
-              up.
-            </Sub>
-          </div>
-          <WhyStrip>
-            <WhyItem>
-              <strong>Find partners</strong>
-              <span>Open a project for co-builders, not just employees.</span>
-            </WhyItem>
-            <WhyItem>
-              <strong>Attract investors</strong>
-              <span>Show traction, not slides.</span>
-            </WhyItem>
-            <WhyItem>
-              <strong>Document your work</strong>
-              <span>Worklogs become case studies become inbound.</span>
-            </WhyItem>
-          </WhyStrip>
-          <HeroImage
-            $src={projectsImg.src}
-            role="img"
-            aria-label="Project plans"
-          />
-        </HeroInner>
-      </Hero>
+      {showContent && (
+        <Hero>
+          <HeroInner>
+            <div>
+              <Eyebrow>Projects</Eyebrow>
+              <H1>Portfolio that works while you sleep.</H1>
+              <Sub>
+                A project here is more than a case study. It's a public surface
+                to attract partners, signal to investors, document how you solve
+                real problems, and hand out small, scoped tasks the network can
+                pick up.
+              </Sub>
+            </div>
+            <WhyStrip>
+              <WhyItem>
+                <strong>Find partners</strong>
+                <span>Open a project for co-builders, not just employees.</span>
+              </WhyItem>
+              <WhyItem>
+                <strong>Attract investors</strong>
+                <span>Show traction, not slides.</span>
+              </WhyItem>
+              <WhyItem>
+                <strong>Document your work</strong>
+                <span>Worklogs become case studies become inbound.</span>
+              </WhyItem>
+            </WhyStrip>
+            <HeroImage
+              $src={projectsImg.src}
+              role="img"
+              aria-label="Project plans"
+            />
+          </HeroInner>
+        </Hero>
+      )}
 
       <Section>
         <Container>
-          <H2>What's being built</H2>
-          <SectionLede>
-            Each project shows clear intent — partners wanted, investor open,
-            help needed. No silent listings.
-          </SectionLede>
+          {showContent && (
+            <>
+              <H2>What's being built</H2>
+              <SectionLede>
+                Each project shows clear intent — partners wanted, investor
+                open, help needed. No silent listings.
+              </SectionLede>
+            </>
+          )}
+
           <Grid $cols={3}>
             {projects.map((n) => {
               const { id, name: title, description: intro, CreatedBy } = n
@@ -133,27 +146,32 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ projects }) => {
             })}
           </Grid>
 
-          <CrossLinks>
-            <CrossCard href="/tasks">
-              <strong>Pick up a project task →</strong>
-              <span>
-                Small, scoped pieces of real work. Build reputation by shipping.
-              </span>
-              <em>See tasks</em>
-            </CrossCard>
-            <CrossCard href="/teams">
-              <strong>Run projects as a team →</strong>
-              <span>Investors trust units, not individuals.</span>
-              <em>See teams</em>
-            </CrossCard>
-            <CrossCard href="/offers">
-              <strong>Looking for collaborators? →</strong>
-              <span>
-                Post an offer instead — it shows up in the public feed.
-              </span>
-              <em>Post an offer</em>
-            </CrossCard>
-          </CrossLinks>
+          <Pagination currentPage={page} totalPages={totalPages} />
+
+          {showContent && (
+            <CrossLinks>
+              <CrossCard href="/tasks">
+                <strong>Pick up a project task →</strong>
+                <span>
+                  Small, scoped pieces of real work. Build reputation by
+                  shipping.
+                </span>
+                <em>See tasks</em>
+              </CrossCard>
+              <CrossCard href="/teams">
+                <strong>Run projects as a team →</strong>
+                <span>Investors trust units, not individuals.</span>
+                <em>See teams</em>
+              </CrossCard>
+              <CrossCard href="/offers">
+                <strong>Looking for collaborators? →</strong>
+                <span>
+                  Post an offer instead — it shows up in the public feed.
+                </span>
+                <em>Post an offer</em>
+              </CrossCard>
+            </CrossLinks>
+          )}
         </Container>
       </Section>
     </>

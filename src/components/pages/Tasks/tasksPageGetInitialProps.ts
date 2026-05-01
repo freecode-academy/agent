@@ -1,5 +1,5 @@
 import { Page } from '../_App/interfaces'
-import { TasksPageProps, tasksPageSize } from './interfaces'
+import { TasksPageProps } from './interfaces'
 import {
   TasksWithCountDocument,
   TasksWithCountQuery,
@@ -22,11 +22,7 @@ export const tasksPageGetInitialProps: Page<TasksPageProps>['getInitialProps'] =
         ? parseInt(pageParam, 10)
         : 1
 
-    const variables = getTasksWithCountQueryVariables(
-      selectedStatus,
-      page,
-      tasksPageSize,
-    )
+    const variables = getTasksWithCountQueryVariables(selectedStatus, page)
 
     await apolloClient.query<TasksWithCountQuery, TasksWithCountQueryVariables>(
       {

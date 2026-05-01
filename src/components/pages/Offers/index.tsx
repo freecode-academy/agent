@@ -1,27 +1,50 @@
-import { Page } from '../_App/interfaces'
+import { Page, PageProps } from '../_App/interfaces'
 import { OffersPageView } from './View'
 import {
+  MeUserFragment,
   OffersConnectionDocument,
   OffersConnectionQuery,
   OffersConnectionQueryVariables,
   useOffersConnectionQuery,
 } from 'src/gql/generated'
 import { SeoHeaders } from 'src/components/seo/SeoHeaders'
-import { useParams } from 'next/navigation'
+import { useAppContext } from 'src/components/AppContext'
+import { getCurrentUser } from 'src/helpers/getCurrentUser'
 
-export const OffersPage: Page = () => {
-  const params = useParams()
+type getVariablesProps = {
+  page: number
+  currentUser: MeUserFragment | null | undefined
+}
 
-  const page =
-    typeof params.page === 'string' ? parseInt(params.page) : undefined
+export function getVariables({
+  currentUser,
+  page,
+}: getVariablesProps): OffersConnectionQueryVariables {
+  const shortSkip = 3
+  const first = page > 1 ? 6 : shortSkip
+
+  return {
+    where: {
+      published: currentUser?.sudo ? undefined : true,
+    },
+    skip:
+      page > 2 ? (page - 2) * first + shortSkip : page === 2 ? shortSkip : 0,
+    take: first,
+  }
+}
+
+type OffersPageProps = PageProps & {
+  page: number
+}
+
+export const OffersPage: Page<OffersPageProps> = ({ page }) => {
+  const { user: currentUser } = useAppContext()
 
   const offersResponse = useOffersConnectionQuery({
-    variables: {
-      where: {
-        published: true,
-      },
-      take: 3,
-    },
+    variables: getVariables({
+      page,
+      currentUser,
+    }),
   })
 
   const offers = offersResponse.data?.offers
@@ -30,25 +53,37 @@ export const OffersPage: Page = () => {
   return (
     <>
       <SeoHeaders title="Offers" />
-      <OffersPageView offers={offers ?? []} count={count} page={page || 1} />
+      <OffersPageView
+        offers={offers ?? []}
+        count={count}
+        page={page || 1}
+        limit={offersResponse.variables.take ?? 0}
+      />
     </>
   )
 }
 
-OffersPage.getInitialProps = async ({ apolloClient }) => {
+OffersPage.getInitialProps = async ({ query, apolloClient }) => {
+  const currentUser = getCurrentUser(apolloClient)
+
+  const pageParam = query.page
+  const page =
+    typeof pageParam === 'string' && parseInt(pageParam, 10) > 0
+      ? parseInt(pageParam, 10)
+      : 1
+
   await apolloClient.query<
     OffersConnectionQuery,
     OffersConnectionQueryVariables
   >({
     query: OffersConnectionDocument,
-    // TODO Add dynamic variables
-    variables: {
-      where: {
-        published: true,
-      },
-      take: 3,
-    },
+    variables: getVariables({
+      currentUser,
+      page,
+    }),
   })
 
-  return {}
+  return {
+    page,
+  }
 }

@@ -1,5 +1,5 @@
-import { useMemo } from 'react'
 import {
+  MeUserFragment,
   SortOrder,
   TeamsConnectionDocument,
   TeamsConnectionQuery,
@@ -10,61 +10,48 @@ import {
 
 import { TeamsView as View } from './View'
 
-import { Page } from '../_App/interfaces'
-import { useRouter } from 'next/router'
-import { ParsedUrlQuery } from 'querystring'
+import { Page, PageProps } from '../_App/interfaces'
 import { SeoHeaders } from 'src/components/seo/SeoHeaders'
 import { useAppContext } from 'src/components/AppContext'
+import { getCurrentUser } from 'src/helpers/getCurrentUser'
 
-const first = 3
-
-const defaultVariables: TeamsConnectionQueryVariables = {
-  where: {
-    status: TeamStatus.ACTIVE,
-  },
-  orderBy: {
-    updatedAt: SortOrder.DESC,
-  },
-  take: first,
+type getVariablesProps = {
+  page: number
+  currentUser: MeUserFragment | null | undefined
 }
 
-function getQueryParams(query: ParsedUrlQuery) {
-  let skip: number | undefined
-
-  const page =
-    (query.page && typeof query.page === 'string' && parseInt(query.page)) || 0
-
-  if (page > 1) {
-    skip = (page - 1) * first
-  }
+export function getVariables({
+  currentUser,
+  page,
+}: getVariablesProps): TeamsConnectionQueryVariables {
+  const shortSkip = 3
+  const first = page > 1 ? 6 : shortSkip
 
   return {
-    skip,
-    first,
-    page,
+    where: {
+      status: currentUser?.sudo ? undefined : TeamStatus.ACTIVE,
+    },
+    orderBy: {
+      updatedAt: SortOrder.DESC,
+    },
+    skip:
+      page > 2 ? (page - 2) * first + shortSkip : page === 2 ? shortSkip : 0,
+    take: first,
   }
 }
 
-export const TeamsPage: Page = () => {
-  const { user: currenUser } = useAppContext()
+type TeamsPageProps = PageProps & {
+  page: number
+}
 
-  const router = useRouter()
-
-  const { query } = router
-
-  const { page, ...queryVariables } = useMemo(() => {
-    return {
-      ...defaultVariables,
-      ...getQueryParams(query),
-      where: {
-        ...defaultVariables.where,
-        status: currenUser?.sudo ? undefined : defaultVariables.where?.status,
-      },
-    }
-  }, [currenUser?.sudo, query])
+export const TeamsPage: Page<TeamsPageProps> = ({ page }) => {
+  const { user: currentUser } = useAppContext()
 
   const response = useTeamsConnectionQuery({
-    variables: queryVariables,
+    variables: getVariables({
+      page,
+      currentUser,
+    }),
   })
 
   const { variables } = response
@@ -76,34 +63,33 @@ export const TeamsPage: Page = () => {
       <View
         teams={response.data?.teams || []}
         count={response.data?.teamsCount ?? 0}
-        limit={variables?.take}
+        limit={variables?.take || 0}
         page={page}
       />
     </>
   )
 }
 
-TeamsPage.getInitialProps = async (context) => {
-  const { apolloClient } = context
+TeamsPage.getInitialProps = async ({ apolloClient, query }) => {
+  const currentUser = getCurrentUser(apolloClient)
 
-  const params = getQueryParams(context.query)
-
-  const variables: TeamsConnectionQueryVariables = {
-    ...defaultVariables,
-    where: {
-      ...defaultVariables.where,
-      // status: undefined,
-    },
-    take: params.first,
-    skip: params.skip,
-  }
+  const pageParam = query.page
+  const page =
+    typeof pageParam === 'string' && parseInt(pageParam, 10) > 0
+      ? parseInt(pageParam, 10)
+      : 1
 
   await apolloClient.query<TeamsConnectionQuery, TeamsConnectionQueryVariables>(
     {
       query: TeamsConnectionDocument,
-      variables,
+      variables: getVariables({
+        currentUser,
+        page,
+      }),
     },
   )
 
-  return {}
+  return {
+    page,
+  }
 }
