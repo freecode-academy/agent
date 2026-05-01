@@ -1,4 +1,3 @@
-import Head from 'next/head'
 import { useMemo } from 'react'
 import {
   ProjectsConnectionDocument,
@@ -12,6 +11,7 @@ import { ProjectsView as View } from './View'
 import { Page } from '../_App/interfaces'
 import { useRouter } from 'next/router'
 import { ParsedUrlQuery } from 'querystring'
+import { SeoHeaders } from 'src/components/seo/SeoHeaders'
 
 const first = 3
 
@@ -75,13 +75,12 @@ export const ProjectsPage: Page = () => {
 
   return (
     <>
-      <Head>
-        <title>Projects — Real-World Development Work</title>
-        <meta
-          name="description"
-          content="Explore projects built by our community. Find open-source work, case studies, and collaboration opportunities."
-        />
-      </Head>
+      <SeoHeaders
+        title="Projects — Real-World Development Work"
+        description={
+          'Explore projects built by our community. Find open-source work, case studies, and collaboration opportunities.'
+        }
+      />
 
       <View
         // {...queryResult}

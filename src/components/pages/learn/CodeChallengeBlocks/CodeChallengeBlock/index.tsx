@@ -1,4 +1,3 @@
-import Head from 'next/head'
 import { useMemo } from 'react'
 
 import { Page, NextPageContextCustom } from '../../../_App/interfaces'
@@ -10,6 +9,7 @@ import {
   CodeChallengeBlockQueryVariables,
   useCodeChallengeBlockQuery,
 } from 'src/gql/generated'
+import { SeoHeaders } from 'src/components/seo/SeoHeaders'
 
 function getVariables(router: NextRouter | NextPageContextCustom) {
   return {
@@ -41,13 +41,10 @@ export const CodeChallengeBlockPage: Page = () => {
 
   return (
     <>
-      <Head>
-        <title>{object.name}</title>
-        <meta
-          name="description"
-          content={`${object.name} — coding exercises and challenges to improve your skills.`}
-        />
-      </Head>
+      <SeoHeaders
+        title={object.name ?? undefined}
+        description={`${object.name} — coding exercises and challenges to improve your skills.`}
+      />
 
       <CodeChallengeBlocksPageBlockView object={object} opened={true} />
     </>

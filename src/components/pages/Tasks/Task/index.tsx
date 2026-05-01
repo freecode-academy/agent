@@ -18,28 +18,14 @@ export const TaskPage: Page<TaskPageProps> = ({ taskId }) => {
 
   const task = response.data?.response
 
-  if (response.loading) {
-    return (
-      <TaskPageStyled>
-        <p>Loading...</p>
-      </TaskPageStyled>
-    )
-  }
-
-  if (!task) {
-    return (
-      <TaskPageStyled>
-        <p>Task not found</p>
-      </TaskPageStyled>
-    )
-  }
-
   return (
     <>
-      <SeoHeaders title={task.title || 'Task'} />
-      <TaskPageStyled>
-        <TaskCard task={task} variant="full" />
-      </TaskPageStyled>
+      <SeoHeaders title={task?.title || 'Task'} />
+      {task && (
+        <TaskPageStyled>
+          <TaskCard task={task} variant="full" />
+        </TaskPageStyled>
+      )}
     </>
   )
 }

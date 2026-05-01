@@ -11,6 +11,7 @@ import { TechnologyView } from './View'
 import { Page } from '../../_App/interfaces'
 import { useRouter } from 'next/router'
 import { ParsedUrlQuery } from 'querystring'
+import { SeoHeaders } from 'src/components/seo/SeoHeaders'
 
 function getQueryParams(query: ParsedUrlQuery): TechnologyQueryVariables {
   const id = query.id
@@ -39,13 +40,18 @@ export const TechnologyPage: Page = () => {
     // onError: console.error,
   })
 
-  if (!response.data?.object) {
-    return null
-  }
+  const technology = response.data?.object
 
   return (
     <>
-      <TechnologyView technology={response.data?.object} />
+      <SeoHeaders
+        title={technology?.name ?? undefined}
+        description={technology?.description}
+        noindex={!technology}
+        nofollow={!technology}
+      />
+
+      {technology && <TechnologyView technology={technology} />}
     </>
   )
 }

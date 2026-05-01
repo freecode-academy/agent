@@ -71,14 +71,6 @@ export const TagPage: Page = () => {
 
   return (
     <>
-      {/* <Head>
-        <title>{object.name}</title>
-        <meta
-          name="description"
-          content={`Browse all articles tagged with "${object.name}" — tutorials, discussions, and insights.`}
-        />
-      </Head> */}
-
       <SeoHeaders
         title={object.name || undefined}
         description={

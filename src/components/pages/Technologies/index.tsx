@@ -1,4 +1,3 @@
-import Head from 'next/head'
 import { useEffect, useMemo } from 'react'
 import {
   TechnologiesConnectionDocument,
@@ -13,6 +12,7 @@ import { Page } from '../_App/interfaces'
 import { useRouter } from 'next/router'
 import { ParsedUrlQuery } from 'querystring'
 import { useBoolean } from 'src/hooks/useBoolean'
+import { SeoHeaders } from 'src/components/seo/SeoHeaders'
 
 const first = 10
 
@@ -80,13 +80,12 @@ export const TechnologiesPage: Page = () => {
 
   return (
     <>
-      <Head>
-        <title>Technologies — Skills & Expert Directory</title>
-        <meta
-          name="description"
-          content="Explore technologies used by our experts. Find specialists in React, Node.js, TypeScript, Python, and more."
-        />
-      </Head>
+      <SeoHeaders
+        title="Technologies — Skills & Expert Directory"
+        description={
+          'Explore technologies used by our experts. Find specialists in React, Node.js, TypeScript, Python, and more.'
+        }
+      />
 
       {inited && (
         <View

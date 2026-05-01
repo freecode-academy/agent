@@ -2,6 +2,7 @@ import { useRouter } from 'next/router'
 import { useCallback } from 'react'
 import { SignInForm } from 'src/components/Auth/SignInForm'
 import { SignInPageStyled } from './styles'
+import { SeoHeaders } from 'src/components/seo/SeoHeaders'
 
 export const SignInPage: React.FC = () => {
   const router = useRouter()
@@ -12,6 +13,8 @@ export const SignInPage: React.FC = () => {
 
   return (
     <SignInPageStyled>
+      <SeoHeaders title={'Sign in'} noindex nofollow />
+
       <h1>Sign In</h1>
       <SignInForm onSuccessHandler={handleSuccess} />
     </SignInPageStyled>

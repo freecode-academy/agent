@@ -1,4 +1,3 @@
-import Head from 'next/head'
 import React from 'react'
 import { CodeChallengePageFragment } from 'src/gql/generated'
 
@@ -22,14 +21,6 @@ export const CodeChallengePageInitial: React.FC<
 
   return (
     <>
-      <Head>
-        <title>Challenge: {object.name}</title>
-        <meta
-          name="description"
-          content={`Practice coding with "${object.name}" — interactive exercise with instant feedback.`}
-        />
-      </Head>
-
       <SeoHeaders
         title={`Challenge: ${object.name}`}
         description={`Practice coding with "${object.name}" — interactive exercise with instant feedback.`}

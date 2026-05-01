@@ -11,6 +11,7 @@ import { TeamView } from './View'
 import { Page } from '../../_App/interfaces'
 import { useRouter } from 'next/router'
 import { ParsedUrlQuery } from 'querystring'
+import { SeoHeaders } from 'src/components/seo/SeoHeaders'
 
 function getQueryParams(query: ParsedUrlQuery): TeamQueryVariables {
   const id = query.id
@@ -38,13 +39,18 @@ export const TeamPage: Page = () => {
     // onError: console.error,
   })
 
-  if (!response.data?.team) {
-    return null
-  }
+  const team = response.data?.team
 
   return (
     <>
-      <TeamView team={response.data?.team} />
+      <SeoHeaders
+        title={team?.title}
+        description={team?.description}
+        noindex={!team}
+        nofollow={!team}
+      />
+
+      {team && <TeamView team={team} />}
     </>
   )
 }

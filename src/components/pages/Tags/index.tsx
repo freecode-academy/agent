@@ -1,4 +1,3 @@
-import Head from 'next/head'
 import { useMemo } from 'react'
 import {
   TagsConnectionDocument,
@@ -12,6 +11,7 @@ import { TagsView as View } from './View'
 import { Page } from '../_App/interfaces'
 import { useRouter } from 'next/router'
 import { ParsedUrlQuery } from 'querystring'
+import { SeoHeaders } from 'src/components/seo/SeoHeaders'
 
 const first = 20
 
@@ -58,13 +58,12 @@ export const TagsPage: Page = () => {
 
   return (
     <>
-      <Head>
-        <title>Tags — Browse Topics by Category</title>
-        <meta
-          name="description"
-          content="Explore content by tags. Find articles, tutorials, and discussions organized by technology and topic."
-        />
-      </Head>
+      <SeoHeaders
+        title="Tags — Browse Topics by Category"
+        description={
+          'Explore content by tags. Find articles, tutorials, and discussions organized by technology and topic.'
+        }
+      />
 
       <View
         // {...queryResult}

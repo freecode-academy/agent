@@ -32,12 +32,13 @@ export const UserPage: Page<UserPageProps> = ({ userId, username }) => {
     })
   }, [user])
 
-  return user ? (
+  return (
     <>
       <SeoHeaders
         title={
-          [user.fullname, user.username].filter((n) => !!n).join(' | ') ||
-          'Anonim'
+          (user &&
+            [user.fullname, user.username].filter((n) => !!n).join(' | ')) ||
+          undefined
         }
         noindex={!searchable}
         nofollow={!searchable}
@@ -45,7 +46,7 @@ export const UserPage: Page<UserPageProps> = ({ userId, username }) => {
       {personSchema && <JsonLd data={personSchema} />}
       {user && <UserPageView user={user} />}
     </>
-  ) : null
+  )
 }
 
 UserPage.getInitialProps = userPageGetInitialProps

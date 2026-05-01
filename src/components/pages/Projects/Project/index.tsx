@@ -10,6 +10,7 @@ import { ProjectView as View } from './View'
 
 import { Page, NextPageContextCustom } from '../../_App/interfaces'
 import { useRouter, NextRouter } from 'next/router'
+import { SeoHeaders } from 'src/components/seo/SeoHeaders'
 
 const getProjectVariables = (router: NextRouter | NextPageContextCustom) => {
   const variables: ProjectsQueryVariables = {
@@ -89,6 +90,7 @@ export const ProjectPage: Page = () => {
 
   return (
     <>
+      <SeoHeaders title={Project.name} description={Project.description} />
       <View project={Project} />
     </>
   )

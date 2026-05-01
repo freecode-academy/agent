@@ -1,4 +1,5 @@
 import Head from 'next/head'
+import { useRouter } from 'next/router'
 
 export interface SeoHeadersProps {
   title?: string
@@ -13,6 +14,15 @@ export const SeoHeaders: React.FC<SeoHeadersProps> = ({
   noindex = false,
   nofollow = false,
 }) => {
+  const router = useRouter()
+
+  /**
+   * Запрещаем индексацию любых страниц с гет-параметрами.
+   * А то гугл почему-то проигнорировал инструкции в robots.txt просканировал очень много
+   * ненужных страниц.
+   */
+  const hasGetParams = router.asPath.includes('?')
+
   return (
     <Head>
       {title && <title>{title}</title>}
@@ -21,8 +31,8 @@ export const SeoHeaders: React.FC<SeoHeadersProps> = ({
       <meta
         name="robots"
         content={[
-          noindex ? 'noindex' : 'index',
-          nofollow ? 'nofollow' : 'follow',
+          hasGetParams || noindex ? 'noindex' : 'index',
+          hasGetParams || nofollow ? 'nofollow' : 'follow',
         ].join(', ')}
       />
     </Head>
