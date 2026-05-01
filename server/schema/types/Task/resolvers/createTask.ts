@@ -15,14 +15,13 @@ builder.mutationField('createTask', (t) =>
       }
 
       const {
-        data: { assigneeId, ...other },
+        data: { assigneeId, name, ...other },
       } = args
 
       return prisma.task.create({
         ...query,
         data: {
-          name: args.data.title,
-          // title: args.data.title,
+          name,
           description: args.data.description ?? undefined,
           content: args.data.content ?? undefined,
           startDatePlaning: args.data.startDatePlaning ?? undefined,

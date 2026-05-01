@@ -42,6 +42,7 @@ type TasksViewProps = {
   page: number
   count: number
   limit: number
+  showContent: boolean
 }
 
 export const TasksView: React.FC<TasksViewProps> = ({
@@ -49,9 +50,8 @@ export const TasksView: React.FC<TasksViewProps> = ({
   count,
   limit,
   page,
+  showContent,
 }) => {
-  const showContent = page < 2
-
   const totalPages = count ? Math.floor(count / limit) + 1 : 0
 
   return (

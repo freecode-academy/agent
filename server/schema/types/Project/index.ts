@@ -34,6 +34,7 @@ builder.prismaObject('Project', {
 
     resourceId: t.exposeID('Resource'),
     Resource: t.relation('Resource_Project_ResourceToResource'),
+    Tasks: t.relation('Tasks'),
   }),
 })
 

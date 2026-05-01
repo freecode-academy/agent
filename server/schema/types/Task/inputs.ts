@@ -30,13 +30,16 @@ export const TaskWhereInput = builder.inputType('TaskWhereInput', {
       type: StringNullableFilter,
     }),
     status: t.field({ type: TaskStatusEnum }),
+    projectId: t.field({
+      type: StringNullableFilter,
+    }),
     incompletedOnly: t.boolean({ defaultValue: true }),
   }),
 })
 
 export const TaskCreateInput = builder.inputType('TaskCreateInput', {
   fields: (t) => ({
-    title: t.string({ required: true }),
+    name: t.string({ required: true }),
     description: t.string(),
     content: t.string(),
     startDatePlaning: t.field({ type: 'DateTime' }),
@@ -51,7 +54,7 @@ export const TaskCreateInput = builder.inputType('TaskCreateInput', {
 // Parent can only be set at task creation time.
 export const TaskUpdateInput = builder.inputType('TaskUpdateInput', {
   fields: (t) => ({
-    title: t.string(),
+    name: t.string(),
     description: t.string(),
     content: t.string(),
     status: t.field({ type: TaskStatusEnum }),

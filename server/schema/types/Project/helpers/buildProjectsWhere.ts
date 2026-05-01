@@ -1,22 +1,27 @@
-import { Prisma, ProjectStatus, ProjectType } from '@prisma/client'
+import { Prisma, ProjectType } from '@prisma/client'
 import { PrismaContext } from 'server/context/interfaces'
+import { ProjectWhereInput } from '../inputs'
+import { buildStringFilterWhere } from '../../helpers/buildStringNullableFilterWhere'
 
-interface ProjectWhereInput {
-  status?: ProjectStatus | null
-  id?: string | null
-  pathname?: string | null
-}
+// interface ProjectWhereInput {
+//   status?: ProjectStatus | null
+//   id?: string | null
+//   pathname?: string | null
+// }
+
+type WhereArgs = typeof ProjectWhereInput.$inferInput
 
 export function buildProjectsWhere(
-  where: ProjectWhereInput | null | undefined,
+  where: WhereArgs | null | undefined,
   _ctx: PrismaContext | undefined,
 ): Prisma.ProjectWhereInput {
   // const { currentUser } = ctx || {}
 
-  const { id, pathname, ...other } = where || {}
+  const { id, pathname, createdById, ...other } = where || {}
 
   const result: Prisma.ProjectWhereInput = {
     ...other,
+    CreatedBy: createdById ? buildStringFilterWhere(createdById) : undefined,
     AND: [
       {
         OR: [
@@ -36,7 +41,7 @@ export function buildProjectsWhere(
   }
 
   if (id) {
-    result.id = id
+    result.id = buildStringFilterWhere(id)
   } else if (pathname) {
     result.Resource_Project_ResourceToResource = {
       OR: [

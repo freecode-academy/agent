@@ -49,7 +49,7 @@ builder.mutationField('updateTask', (t) =>
         },
         data: {
           ...other,
-          title: args.data.title ?? undefined,
+          name: args.data.name ?? undefined,
           status: args.data.status ?? undefined,
         },
       })

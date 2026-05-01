@@ -24,6 +24,7 @@ export const TasksPage: Page<TasksPageProps> = ({ selectedStatus, page }) => {
         page={page}
         limit={response.variables.take ?? 0}
         count={response.data?.tasksCount ?? 0}
+        showContent={page < 2}
       />
     </>
   )

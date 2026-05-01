@@ -4,7 +4,7 @@ import * as yup from 'yup'
 export const createTaskSchema: yup.ObjectSchema<CreateTaskMutationVariables> =
   yup.object().shape({
     data: yup.object().shape({
-      title: yup.string().required().label('Task title'),
+      name: yup.string().required().label('Task name'),
       description: yup.string().label('Task description'),
       content: yup.string().label('Detailed task content'),
       startDatePlaning: yup.date().label('Planned start date (ISO format)'),

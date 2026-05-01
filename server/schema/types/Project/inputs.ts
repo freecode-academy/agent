@@ -1,15 +1,31 @@
 import { builder } from '../../builder'
+import { StringNullableFilter } from '../inputs'
 import { ProjectStatusEnum } from './types'
 
 export const ProjectWhereInput = builder.inputType('ProjectWhereInput', {
   fields: (t) => ({
-    status: t.field({ type: ProjectStatusEnum }),
-    // rootId: t.id(),
-    // parentId: t.id(),
-    id: t.id(),
+    id: t.field({
+      type: StringNullableFilter,
+    }),
     pathname: t.string(),
+    status: t.field({ type: ProjectStatusEnum }),
+    createdById: t.field({
+      type: StringNullableFilter,
+    }),
   }),
 })
+
+// parentId: t.field({
+//   type: StringNullableFilter,
+// }),
+// assigneeId: t.field({
+//   type: StringNullableFilter,
+// }),
+// status: t.field({ type: TaskStatusEnum }),
+// projectId: t.field({
+//   type: StringNullableFilter,
+// }),
+// incompletedOnly: t.boolean({ defaultValue: true }),
 
 export const ProjectWhereUniqueInput = builder.inputType(
   'ProjectWhereUniqueInput',

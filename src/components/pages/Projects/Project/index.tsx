@@ -21,10 +21,9 @@ const getProjectVariables = (router: NextRouter | NextPageContextCustom) => {
 
   if (id && typeof id === 'string') {
     variables.where = {
-      // id: {
-      //   equals: id,
-      // },
-      id,
+      id: {
+        equals: id,
+      },
     }
   } else {
     const uri = new URL(

@@ -6,7 +6,7 @@ const taskStatusValues = Object.values(TaskStatusEnum)
 
 type SchemaWhereInput = Omit<
   NonNullable<MyTasksQueryVariables['where']>,
-  'assigneeId' | 'createdById' | 'id' | 'parentId'
+  'assigneeId' | 'createdById' | 'id' | 'parentId' | 'projectId'
 >
 
 const where: yup.ObjectSchema<SchemaWhereInput> = yup.object().shape({

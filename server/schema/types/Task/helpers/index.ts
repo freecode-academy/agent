@@ -24,6 +24,7 @@ export function buildTaskWhere(
     parentId,
     createdById,
     assigneeId,
+    projectId,
     incompletedOnly = false,
     ...other
   } = args || {}
@@ -34,6 +35,7 @@ export function buildTaskWhere(
     createdById: buildStringFilterWhere(createdById),
     parentId: buildStringNullableFilterWhere(parentId),
     assigneeId: buildStringNullableFilterWhere(assigneeId),
+    projectId: buildStringNullableFilterWhere(projectId),
     status:
       args?.status ??
       (incompletedOnly ? { notIn: COMPLETED_STATUSES } : undefined),

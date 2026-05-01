@@ -26,7 +26,7 @@ builder.prismaObject('Task', {
     id: t.exposeID('id'),
     createdAt: t.expose('createdAt', { type: 'DateTime' }),
     updatedAt: t.expose('updatedAt', { type: 'DateTime' }),
-    title: t.exposeString('title'),
+    title: t.exposeString('name'),
     description: t.exposeString('description', { nullable: true }),
     content: t.exposeString('content', { nullable: true }),
     status: t.expose('status', { type: TaskStatusEnum }),

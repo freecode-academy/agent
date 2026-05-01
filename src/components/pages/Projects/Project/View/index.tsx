@@ -1,10 +1,15 @@
 import React from 'react'
 import { ProjectViewStyled } from './styles'
-import { ProjectFragment } from 'src/gql/generated'
+import {
+  ProjectFragment,
+  SortOrder,
+  useTasksWithCountQuery,
+} from 'src/gql/generated'
 // import { useRouter } from 'next/router'
 import { SeoHeaders } from 'src/components/seo/SeoHeaders'
 import { H2 } from 'src/components/LayoutV2/styles'
 import { Markdown } from 'src/components/Markdown'
+import { TasksView } from 'src/components/pages/Tasks/View'
 // import { TasksView } from 'src/components/pages/Tasks/View'
 // import { useTasksFilter } from 'src/hooks/useTasksFilter'
 
@@ -41,18 +46,22 @@ export const ProjectView: React.FC<ProjectViewProps> = ({
   //   },
   // })
 
-  // const tasksResponse = useTasksWithCountQuery({
-  //   variables: {
-  //     // orderBy: {
-  //     //   updatedAt: SortOrder.DESC,
-  //     // },
-  //     // where,
-  //     take: TASKS_PER_PAGE,
-  //     skip,
-  //   },
-  // })
+  const tasksResponse = useTasksWithCountQuery({
+    variables: {
+      orderBy: {
+        createdAt: SortOrder.DESC,
+      },
+      where: {
+        projectId: {
+          equals: project.id,
+        },
+      },
+      take: 3,
+      skip: 0,
+    },
+  })
 
-  // const tasks = tasksResponse.data?.tasks ?? []
+  const tasks = tasksResponse.data?.tasks ?? []
   // const total = tasksResponse.data?.tasksCount ?? 0
 
   // const totalPages = total ? Math.floor(total / TASKS_PER_PAGE) + 1 : 0
@@ -73,7 +82,16 @@ export const ProjectView: React.FC<ProjectViewProps> = ({
 
         {content && <Markdown>{content}</Markdown>}
 
-        {/* <TasksView tasks={tasks} currentPage={page} totalPages={totalPages} /> */}
+        {tasks.length > 0 && (
+          <TasksView
+            tasks={tasks}
+            // count={tasksResponse.data?.tasksCount ?? 0}
+            count={0}
+            limit={tasksResponse.variables.take ?? 3}
+            page={1}
+            showContent={false}
+          />
+        )}
       </ProjectViewStyled>
     </>
   )
