@@ -14,7 +14,7 @@ const statusColors: Record<TaskStatusEnum, { bg: string; text: string }> = {
   [TaskStatusEnum.REVISIONSREQUIRED]: { bg: '#ffebee', text: '#c62828' },
 }
 
-export const TaskStatusBadgeStyled = styled.span<{
+export const TaskStatusBadgeStyled = styled.button<{
   $status: TaskStatusEnum
   $active?: boolean
 }>`
@@ -23,8 +23,9 @@ export const TaskStatusBadgeStyled = styled.span<{
   border-radius: 4px;
   font-size: 0.75rem;
   font-weight: 500;
-  cursor: pointer;
+  /* cursor: pointer; */
   transition: opacity 0.2s;
+  border: none;
 
   ${({ $status }) => {
     const colors = statusColors[$status] || { bg: '#f5f5f5', text: '#666' }
@@ -33,10 +34,9 @@ export const TaskStatusBadgeStyled = styled.span<{
       color: ${colors.text};
     `
   }}
-
   ${({ $active }) =>
     $active === false &&
     css`
       opacity: 0.5;
-    `}
+    `};
 `

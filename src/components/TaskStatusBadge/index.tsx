@@ -1,8 +1,12 @@
-import { TaskStatusEnum } from 'src/gql/generated'
+import { TaskNoNestingFragment, TaskStatusEnum } from 'src/gql/generated'
 import { TaskStatusBadgeStyled } from './styles'
+import { useBoolean } from 'src/hooks/useBoolean'
+import { TaskStatusUpdater } from './StatusUpdater'
+import { useAppContext } from '../AppContext'
 
-type TaskStatusBadgeProps = {
+type TaskStatusBadgeProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   status: TaskStatusEnum
+  task: TaskNoNestingFragment | undefined
   active?: boolean
 }
 
@@ -21,11 +25,29 @@ const statusLabels: Record<TaskStatusEnum, string> = {
 
 export const TaskStatusBadge: React.FC<TaskStatusBadgeProps> = ({
   status,
+  task,
   active,
+  ...other
 }) => {
+  const { user: currentUser } = useAppContext()
+
+  const [inEditMode, , , toggle] = useBoolean()
+
+  const editable = !!task?.id && !!currentUser
+
   return (
-    <TaskStatusBadgeStyled $status={status} $active={active}>
-      {statusLabels[status] || status}
-    </TaskStatusBadgeStyled>
+    <>
+      <TaskStatusBadgeStyled
+        $status={status}
+        $active={active}
+        onClick={toggle}
+        disabled={!editable}
+        {...other}
+      >
+        {statusLabels[status] || status}
+      </TaskStatusBadgeStyled>
+
+      {task && inEditMode && <TaskStatusUpdater task={task} />}
+    </>
   )
 }

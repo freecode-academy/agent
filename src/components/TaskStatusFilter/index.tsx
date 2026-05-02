@@ -85,6 +85,7 @@ export const TaskStatusFilter: React.FC = () => {
             <TaskStatusBadge
               status={status}
               active={selectedStatus === status}
+              task={undefined}
             />
           </Link>
         ))}

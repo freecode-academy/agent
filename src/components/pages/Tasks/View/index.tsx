@@ -39,6 +39,8 @@ import { Markdown } from 'src/components/Markdown'
 import { Pagination } from 'src/components/Pagination'
 import { UserLink } from 'src/components/Link/User'
 import Link from 'next/link'
+import { BadgeRow } from '@/components/Badge'
+import { TaskStatusBadge } from 'src/components/TaskStatusBadge'
 
 type TasksViewProps = {
   tasks: TaskFragment[]
@@ -104,17 +106,21 @@ export const TasksView: React.FC<TasksViewProps> = ({
 
           <Grid $cols={3}>
             {tasks.map((n) => {
-              const { id, title, description: intro, CreatedBy } = n
+              const { id, title, description: intro, status, CreatedBy } = n
 
               // const project = projectBySlug(projectSlug)
               return (
                 <Card key={id}>
                   <CardImg $src={tasksImg.src} />
                   <CardBody>
-                    {/* <BadgeRow>
-                      <Badge tone={stateTone(state)}>{state}</Badge>
-                      <Badge>{effort}</Badge>
-                    </BadgeRow> */}
+                    {status && (
+                      <BadgeRow>
+                        {/* <Badge tone={stateTone(state)}>{state}</Badge>
+                      <Badge>{effort}</Badge> */}
+                        <TaskStatusBadge status={status} task={n} />
+                      </BadgeRow>
+                    )}
+
                     <Link href={makeTaskLink(n)} title={n.title ?? undefined}>
                       <CardTitle>{title}</CardTitle>
                     </Link>

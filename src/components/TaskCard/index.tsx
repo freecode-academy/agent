@@ -45,7 +45,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, variant }) => {
       </TaskCardTitle>
 
       <TaskCardStatus>
-        {task.status && <TaskStatusBadge status={task.status} />}
+        {task.status && <TaskStatusBadge status={task.status} task={task} />}
       </TaskCardStatus>
 
       <TaskCardMeta>

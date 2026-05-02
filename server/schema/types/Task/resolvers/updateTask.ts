@@ -24,7 +24,6 @@ builder.mutationField('updateTask', (t) =>
       const existing = await ctx.prisma.task.findFirst({
         where: {
           id: taskId,
-          assigneeId: currentUser.id,
         },
       })
 
@@ -33,7 +32,10 @@ builder.mutationField('updateTask', (t) =>
       }
 
       if (!currentUser.sudo) {
-        if (existing.createdById !== currentUser.id) {
+        if (
+          existing.createdById !== currentUser.id &&
+          existing.assigneeId !== currentUser.id
+        ) {
           throw new Error('Access denied')
         }
       }

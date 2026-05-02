@@ -46,6 +46,10 @@ export const BadgeRow = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
+
+  &:empty {
+    display: none;
+  }
 `
 
 export const badgeTone = (b: string) =>
