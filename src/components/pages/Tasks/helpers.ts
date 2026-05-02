@@ -8,6 +8,7 @@ import {
 export function getTasksWithCountQueryVariables(
   status: TaskStatusEnum | null,
   page: number,
+  projectId: string | undefined,
 ): TasksWithCountQueryVariables {
   const shortSkip = 3
   const first = page > 1 ? 6 : shortSkip
@@ -16,6 +17,11 @@ export function getTasksWithCountQueryVariables(
     where: {
       status: status ?? undefined,
       incompletedOnly: status === null,
+      projectId: projectId
+        ? {
+            equals: projectId,
+          }
+        : undefined,
     },
     skip:
       page > 2 ? (page - 2) * first + shortSkip : page === 2 ? shortSkip : 0,

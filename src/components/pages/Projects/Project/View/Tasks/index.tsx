@@ -6,7 +6,7 @@ import {
 
 import { TasksView } from 'src/components/pages/Tasks/View'
 import Link from 'next/link'
-import { PrimaryBtn } from '@/styles'
+import { Buttons, PrimaryBtn } from '@/styles'
 
 type ProjectTasksProps = {
   project: ProjectFragment
@@ -30,26 +30,35 @@ export const ProjectTasks: React.FC<ProjectTasksProps> = ({ project }) => {
 
   const tasks = tasksResponse.data?.tasks ?? []
 
+  const count = tasksResponse.data?.tasksCount ?? 0
+
   return (
     <>
       {tasks.length > 0 && (
         <TasksView
           tasks={tasks}
-          count={0}
+          count={tasks.length}
           limit={tasksResponse.variables.take ?? 3}
           page={1}
           showContent={false}
         />
       )}
 
-      <div>
+      <Buttons>
+        {count > 3 && (
+          <div>
+            <Link href={`/tasks?projectId=${project.id}`}>
+              View all {count} tasks
+            </Link>
+          </div>
+        )}
         <Link
           href={`/tasks/create?projectId=${project.id}`}
           rel="noindex nofollow"
         >
           <PrimaryBtn>Create task</PrimaryBtn>
         </Link>
-      </div>
+      </Buttons>
     </>
   )
 }

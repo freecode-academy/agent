@@ -1,8 +1,9 @@
 import Link from 'next/link'
 import { theme } from 'src/theme'
-import styled, { keyframes } from 'styled-components'
+import styled, { css, keyframes } from 'styled-components'
 
 import heroImg from '@/assets/hero.jpg'
+import { minWidth } from 'src/theme/helpers'
 
 const fadeUp = keyframes`
   from { opacity: 0; transform: translateY(14px); }
@@ -381,4 +382,20 @@ export const LockedNotice = styled.div`
   &::before {
     content: '🔒';
   }
+`
+
+export const Buttons = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 16px;
+  flex-direction: column;
+
+  &:empty {
+    display: none;
+  }
+
+  ${minWidth.sm(css`
+    flex-direction: row;
+  `)}
 `

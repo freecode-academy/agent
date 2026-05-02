@@ -1,9 +1,9 @@
 import React from 'react'
 import { WhyItem, WhyStrip } from 'src/components/LayoutV2/components/WhyStrip'
 import {
+  Card,
   CardBody,
   CardImg,
-  CardLink,
   CardMeta,
   // CardMeta,
   // CardText,
@@ -38,6 +38,7 @@ import { makeTaskLink } from 'src/components/Link/Task'
 import { Markdown } from 'src/components/Markdown'
 import { Pagination } from 'src/components/Pagination'
 import { UserLink } from 'src/components/Link/User'
+import Link from 'next/link'
 
 type TasksViewProps = {
   tasks: TaskFragment[]
@@ -54,7 +55,7 @@ export const TasksView: React.FC<TasksViewProps> = ({
   page,
   showContent,
 }) => {
-  const totalPages = count ? Math.floor(count / limit) + 1 : 0
+  const totalPages = count ? Math.floor(count / limit) : 0
 
   return (
     <>
@@ -107,14 +108,16 @@ export const TasksView: React.FC<TasksViewProps> = ({
 
               // const project = projectBySlug(projectSlug)
               return (
-                <CardLink key={id} href={makeTaskLink(n)}>
+                <Card key={id}>
                   <CardImg $src={tasksImg.src} />
                   <CardBody>
                     {/* <BadgeRow>
                       <Badge tone={stateTone(state)}>{state}</Badge>
                       <Badge>{effort}</Badge>
                     </BadgeRow> */}
-                    <CardTitle>{title}</CardTitle>
+                    <Link href={makeTaskLink(n)} title={n.title ?? undefined}>
+                      <CardTitle>{title}</CardTitle>
+                    </Link>
                     <Markdown>{intro}</Markdown>
                     {/* {project && <CardMeta>Project: {project.title}</CardMeta>} */}
 
@@ -124,7 +127,7 @@ export const TasksView: React.FC<TasksViewProps> = ({
                       </CardMeta>
                     )}
                   </CardBody>
-                </CardLink>
+                </Card>
               )
             })}
           </Grid>

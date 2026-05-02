@@ -6,8 +6,16 @@ import { SeoHeaders } from 'src/components/seo/SeoHeaders'
 import { getTasksWithCountQueryVariables } from './helpers'
 import { tasksPageGetInitialProps } from './tasksPageGetInitialProps'
 
-export const TasksPage: Page<TasksPageProps> = ({ selectedStatus, page }) => {
-  const variables = getTasksWithCountQueryVariables(selectedStatus, page)
+export const TasksPage: Page<TasksPageProps> = ({
+  selectedStatus,
+  page,
+  projectId,
+}) => {
+  const variables = getTasksWithCountQueryVariables(
+    selectedStatus,
+    page,
+    projectId,
+  )
 
   const response = useTasksWithCountQuery({
     variables,

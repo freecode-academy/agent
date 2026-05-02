@@ -47,7 +47,7 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
 }) => {
   const showContent = page < 2
 
-  const totalPages = count ? Math.floor(count / limit) + 1 : 0
+  const totalPages = count ? Math.floor(count / limit) : 0
 
   return (
     <>
