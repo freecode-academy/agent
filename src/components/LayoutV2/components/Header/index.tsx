@@ -57,6 +57,7 @@ export const Header: React.FC = () => {
             <Link href="/offers">Offers</Link>
             <Link href="/projects">Projects</Link>
             <Link href="/tasks">Tasks</Link>
+            <Link href="/topics">Topics</Link>
           </NavLinks>
           <Authority>Get Access</Authority>
         </MobileMenu>

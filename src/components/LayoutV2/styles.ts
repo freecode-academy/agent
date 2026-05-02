@@ -57,7 +57,7 @@ export const NavInner = styled(Container)`
 
 export const NavLinks = styled.nav`
   display: none;
-  gap: 28px;
+  gap: 24px;
   font-size: 14px;
   color: ${theme.ink2};
   @media (min-width: 880px) {
