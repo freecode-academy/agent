@@ -33,6 +33,7 @@ import Link from 'next/link'
 import { Markdown } from 'src/components/Markdown'
 import { Pagination } from 'src/components/Pagination'
 import { makeOfferLink } from 'src/components/Link/Offer'
+import { useAppContext } from 'src/components/AppContext'
 
 export const OffersPageView: React.FC<OffersPageViewProps> = ({
   offers,
@@ -40,46 +41,57 @@ export const OffersPageView: React.FC<OffersPageViewProps> = ({
   page,
   limit,
 }) => {
-  const showContent = page < 2
+  const { user: currentUser } = useAppContext()
+
+  const showContent = page < 2 && !currentUser
 
   const totalPages = count ? Math.floor(count / limit) : 0
 
   return (
     <>
-      {showContent && (
-        <Hero>
-          <HeroInner>
-            <div>
-              <Eyebrow>Offers</Eyebrow>
-              <H1>Anything you want to propose. In one format.</H1>
-              <Sub>
-                An offer is a free-form proposal from a member. A service, a
-                collaboration, a research partnership, a hiring intent — same
-                simple structure: what it is, who it's from, why it exists.
-              </Sub>
-            </div>
-            <WhyStrip>
-              <WhyItem>
-                <strong>Service</strong>
-                <span>Sell what you do, with a clear scope.</span>
-              </WhyItem>
-              <WhyItem>
-                <strong>Collaboration</strong>
-                <span>Find a co-founder or build something together.</span>
-              </WhyItem>
-              <WhyItem>
-                <strong>Research / Hiring</strong>
-                <span>Joint study, contract role, anything in between.</span>
-              </WhyItem>
-            </WhyStrip>
-            <HeroImage
-              $src={offersImg.src}
-              role="img"
-              aria-label="Offers and proposals"
-            />
-          </HeroInner>
-        </Hero>
-      )}
+      <Hero>
+        <HeroInner>
+          <div>
+            <Eyebrow>Offers</Eyebrow>
+
+            {showContent && (
+              <>
+                <H1>Anything you want to propose. In one format.</H1>
+                <Sub>
+                  An offer is a free-form proposal from a member. A service, a
+                  collaboration, a research partnership, a hiring intent — same
+                  simple structure: what it is, who it's from, why it exists.
+                </Sub>
+              </>
+            )}
+          </div>
+
+          {showContent && (
+            <>
+              <WhyStrip>
+                <WhyItem>
+                  <strong>Service</strong>
+                  <span>Sell what you do, with a clear scope.</span>
+                </WhyItem>
+                <WhyItem>
+                  <strong>Collaboration</strong>
+                  <span>Find a co-founder or build something together.</span>
+                </WhyItem>
+                <WhyItem>
+                  <strong>Research / Hiring</strong>
+                  <span>Joint study, contract role, anything in between.</span>
+                </WhyItem>
+              </WhyStrip>
+              <HeroImage
+                $src={offersImg.src}
+                role="img"
+                aria-label="Offers and proposals"
+              />
+            </>
+          )}
+        </HeroInner>
+      </Hero>
+
       <Section>
         <Container>
           {showContent && (

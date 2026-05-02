@@ -56,55 +56,64 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
   limit,
   currentUser,
 }) => {
-  const showContent = page < 2
+  const showContent = page < 2 && !currentUser
 
   const totalPages = count ? Math.floor(count / limit) : 0
 
   return (
     <>
-      {showContent && (
-        <Hero>
-          <HeroInner>
-            <div>
-              <Eyebrow>
-                Projects{' '}
-                {currentUser && (
-                  <Link href={`/projects/create`} rel="noindex nofollow">
-                    <em>Create</em>
-                  </Link>
-                )}
-              </Eyebrow>
+      <Hero>
+        <HeroInner>
+          <div>
+            <Eyebrow>
+              Projects{' '}
+              {currentUser && (
+                <Link href={`/projects/create`} rel="noindex nofollow">
+                  <em>Create</em>
+                </Link>
+              )}
+            </Eyebrow>
 
-              <H1>Portfolio that works while you sleep.</H1>
-              <Sub>
-                A project here is more than a case study. It's a public surface
-                to attract partners, signal to investors, document how you solve
-                real problems, and hand out small, scoped tasks the network can
-                pick up.
-              </Sub>
-            </div>
-            <WhyStrip>
-              <WhyItem>
-                <strong>Find partners</strong>
-                <span>Open a project for co-builders, not just employees.</span>
-              </WhyItem>
-              <WhyItem>
-                <strong>Attract investors</strong>
-                <span>Show traction, not slides.</span>
-              </WhyItem>
-              <WhyItem>
-                <strong>Document your work</strong>
-                <span>Worklogs become case studies become inbound.</span>
-              </WhyItem>
-            </WhyStrip>
-            <HeroImage
-              $src={projectsImg.src}
-              role="img"
-              aria-label="Project plans"
-            />
-          </HeroInner>
-        </Hero>
-      )}
+            {showContent && (
+              <>
+                <H1>Portfolio that works while you sleep.</H1>
+                <Sub>
+                  A project here is more than a case study. It's a public
+                  surface to attract partners, signal to investors, document how
+                  you solve real problems, and hand out small, scoped tasks the
+                  network can pick up.
+                </Sub>
+              </>
+            )}
+          </div>
+
+          {showContent && (
+            <>
+              <WhyStrip>
+                <WhyItem>
+                  <strong>Find partners</strong>
+                  <span>
+                    Open a project for co-builders, not just employees.
+                  </span>
+                </WhyItem>
+                <WhyItem>
+                  <strong>Attract investors</strong>
+                  <span>Show traction, not slides.</span>
+                </WhyItem>
+                <WhyItem>
+                  <strong>Document your work</strong>
+                  <span>Worklogs become case studies become inbound.</span>
+                </WhyItem>
+              </WhyStrip>
+              <HeroImage
+                $src={projectsImg.src}
+                role="img"
+                aria-label="Project plans"
+              />
+            </>
+          )}
+        </HeroInner>
+      </Hero>
 
       <Section>
         <Container>

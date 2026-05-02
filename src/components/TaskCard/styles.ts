@@ -1,14 +1,18 @@
 import styled, { css } from 'styled-components'
 import { Markdown } from '../Markdown'
+import { minWidth } from 'src/theme/helpers'
 
-export const TaskCardStyled = styled.div`
-  background: ${({ theme }) => theme.backgrounds.paper};
-  border: 1px solid ${({ theme }) => theme.colors.border};
-  border-radius: ${({ theme }) => theme.radii.md};
-  padding: ${({ theme }) => theme.spacing.md};
+export const TaskCardCardTitleStyled = styled.span`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing.sm};
+  flex-wrap: wrap;
+  gap: 8px;
+
+  ${minWidth.sm(css`
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  `)}
 `
 
 export const TaskCardTitle = styled.h3`
@@ -51,4 +55,14 @@ export const TaskCardDescription = styled(Markdown)<TaskCardDescriptionProps>`
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
     `}
+`
+
+export const TaskCardStyled = styled.div`
+  background: ${({ theme }) => theme.backgrounds.paper};
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: ${({ theme }) => theme.radii.md};
+  padding: ${({ theme }) => theme.spacing.md};
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing.sm};
 `

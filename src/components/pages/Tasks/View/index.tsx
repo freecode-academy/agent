@@ -61,37 +61,48 @@ export const TasksView: React.FC<TasksViewProps> = ({
 
   return (
     <>
-      {showContent && (
-        <Hero>
-          <HeroInner>
-            <div>
-              <Eyebrow>Tasks</Eyebrow>
-              <H1>Ship small. In public. Get hired.</H1>
-              <Sub>
-                Tasks are the smallest unit of work in the network. Owners scope
-                them inside projects; anyone with access can claim one. The
-                result becomes a public worklog — the most honest portfolio that
-                exists.
-              </Sub>
-            </div>
-            <WhyStrip>
-              <WhyItem>
-                <strong>Real scope</strong>
-                <span>Effort, deliverable, owner — visible upfront.</span>
-              </WhyItem>
-              <WhyItem>
-                <strong>Public worklog</strong>
-                <span>How you solved it, not just that you did.</span>
-              </WhyItem>
-              <WhyItem>
-                <strong>Reputation</strong>
-                <span>Closed tasks compound into trust.</span>
-              </WhyItem>
-            </WhyStrip>
-            <HeroImage $src={tasksImg.src} role="img" aria-label="Task board" />
-          </HeroInner>
-        </Hero>
-      )}
+      <Hero>
+        <HeroInner>
+          <div>
+            <Eyebrow>Tasks</Eyebrow>
+            {showContent && (
+              <>
+                <H1>Ship small. In public. Get hired.</H1>
+                <Sub>
+                  Tasks are the smallest unit of work in the network. Owners
+                  scope them inside projects; anyone with access can claim one.
+                  The result becomes a public worklog — the most honest
+                  portfolio that exists.
+                </Sub>
+              </>
+            )}
+          </div>
+
+          {showContent && (
+            <>
+              <WhyStrip>
+                <WhyItem>
+                  <strong>Real scope</strong>
+                  <span>Effort, deliverable, owner — visible upfront.</span>
+                </WhyItem>
+                <WhyItem>
+                  <strong>Public worklog</strong>
+                  <span>How you solved it, not just that you did.</span>
+                </WhyItem>
+                <WhyItem>
+                  <strong>Reputation</strong>
+                  <span>Closed tasks compound into trust.</span>
+                </WhyItem>
+              </WhyStrip>
+              <HeroImage
+                $src={tasksImg.src}
+                role="img"
+                aria-label="Task board"
+              />
+            </>
+          )}
+        </HeroInner>
+      </Hero>
 
       <Section>
         <Container>

@@ -72,7 +72,7 @@ export const NavLinks = styled.nav`
 export const Hero = styled.section`
   position: relative;
   overflow: hidden;
-  padding: 60px 0;
+  padding: 30px 0;
 `
 export const HeroBg = styled.div`
   position: absolute;
@@ -196,8 +196,11 @@ export const GhostBtn = styled(Link)`
 `
 
 /* SECTION primitives */
-export const Section = styled.section<{ $tone?: 'cream' | 'white' | 'bg' }>`
-  padding: 96px 0;
+
+type SectionProps = { $tone?: 'cream' | 'white' | 'bg' }
+
+export const Section = styled.section<SectionProps>`
+  padding: 48px 0;
   background: ${(p) =>
     p.$tone === 'cream'
       ? theme.cream

@@ -49,55 +49,60 @@ export const UsersView: React.FC<UsersViewProps> = ({
 }) => {
   const { user: currentUser } = useAppContext()
 
-  const showContent = page < 2
+  const showContent = page < 2 && !currentUser
 
   const totalPages = count ? Math.floor(count / limit) : 0
 
   return (
     <>
-      {showContent && (
-        <Hero>
-          <HeroInner>
-            <div>
-              <Eyebrow>Members</Eyebrow>
-              <H1>People you can actually reach.</H1>
-              <Sub>
-                Every profile is a real, verified human — vetted before they get
-                in. Browsing is open. Writing to anyone, joining a team, or
-                proposing work requires an invite.
-              </Sub>
-            </div>
+      <Hero>
+        <HeroInner>
+          <div>
+            <Eyebrow>Members</Eyebrow>
 
-            <WhyStrip>
-              <WhyItem>
-                <strong>Read everything</strong>
-                <span>Profiles, work, history — public.</span>
-              </WhyItem>
-              <WhyItem>
-                <strong>Contact = invite-only</strong>
-                <span>No spam. No cold outreach inflation.</span>
-              </WhyItem>
-              <WhyItem>
-                <strong>Form teams</strong>
-                <span>Once inside, build a unit and publish it.</span>
-              </WhyItem>
-            </WhyStrip>
+            {showContent && (
+              <>
+                <H1>People you can actually reach.</H1>
+                <Sub>
+                  Every profile is a real, verified human — vetted before they
+                  get in. Browsing is open. Writing to anyone, joining a team,
+                  or proposing work requires an invite.
+                </Sub>
+              </>
+            )}
+          </div>
 
-            {!currentUser && (
+          {showContent && (
+            <>
+              <WhyStrip>
+                <WhyItem>
+                  <strong>Read everything</strong>
+                  <span>Profiles, work, history — public.</span>
+                </WhyItem>
+                <WhyItem>
+                  <strong>Contact = invite-only</strong>
+                  <span>No spam. No cold outreach inflation.</span>
+                </WhyItem>
+                <WhyItem>
+                  <strong>Form teams</strong>
+                  <span>Once inside, build a unit and publish it.</span>
+                </WhyItem>
+              </WhyStrip>
+
               <LockedNotice>
                 Contact details are hidden until you have access. Request an
                 invite to unlock direct messaging.
               </LockedNotice>
-            )}
 
-            <HeroImage
-              $src={membersImg.src}
-              role="img"
-              aria-label="Freecode Academy members"
-            />
-          </HeroInner>
-        </Hero>
-      )}
+              <HeroImage
+                $src={membersImg.src}
+                role="img"
+                aria-label="Freecode Academy members"
+              />
+            </>
+          )}
+        </HeroInner>
+      </Hero>
 
       <Section>
         <Container>

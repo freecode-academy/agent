@@ -11,11 +11,13 @@ import {
   TaskCardStatus,
   TaskCardMeta,
   TaskCardDescription,
+  TaskCardCardTitleStyled,
 } from './styles'
 import { TaskStatusBadge } from '../TaskStatusBadge'
 import Link from 'next/link'
 import { Markdown } from '../Markdown'
 import { TaskWorkLogs } from './WorkLogs'
+import { ProjectLink } from '../Link/Project'
 
 type TaskCardProps = {
   task: TaskFragment | TaskDetailedFragment
@@ -35,13 +37,19 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, variant }) => {
   //   skip: !task.id || variant !== 'full',
   // })
 
+  const Project = 'Project' in task ? task.Project : undefined
+
   return (
     <TaskCardStyled>
       <TaskCardTitle>
         {variant === 'list' ? (
           <Link href={`/tasks/${task.id}`}>{task.title}</Link>
         ) : (
-          task.title
+          <TaskCardCardTitleStyled>
+            {task.title}
+
+            {Project && <ProjectLink object={Project} />}
+          </TaskCardCardTitleStyled>
         )}
       </TaskCardTitle>
 

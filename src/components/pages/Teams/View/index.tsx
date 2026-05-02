@@ -31,6 +31,7 @@ import { makeTeamLink } from 'src/components/Link/Team'
 import { getResizedImagePath } from 'src/helpers/getResizedImagePath'
 import { Markdown } from 'src/components/Markdown'
 import { Pagination } from 'src/components/Pagination'
+import { useAppContext } from 'src/components/AppContext'
 
 type TeamsViewProps = {
   teams: TeamFragment[]
@@ -45,47 +46,57 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
   page,
   limit,
 }) => {
-  const showContent = page < 2
+  const { user: currentUser } = useAppContext()
+
+  const showContent = page < 2 && !currentUser
 
   const totalPages = count ? Math.floor(count / limit) : 0
 
   return (
     <>
-      {showContent && (
-        <Hero>
-          <HeroInner>
-            <div>
-              <Eyebrow>Teams</Eyebrow>
-              <H1>One profile is a CV. A team is a company.</H1>
-              <Sub>
-                Teams let members combine portfolios, services and skills into a
-                single unit. Clients see a real delivery group. Investors see
-                who actually executes. You see who you can delegate to without
-                explaining context twice.
-              </Sub>
-            </div>
-            <WhyStrip>
-              <WhyItem>
-                <strong>Shared portfolio</strong>
-                <span>Show the full body of work, not fragments.</span>
-              </WhyItem>
-              <WhyItem>
-                <strong>Easier hiring</strong>
-                <span>Clients hire a team, not a stranger.</span>
-              </WhyItem>
-              <WhyItem>
-                <strong>Internal delegation</strong>
-                <span>Hand off tasks to people you trust.</span>
-              </WhyItem>
-            </WhyStrip>
-            <HeroImage
-              $src={teamsImg.src}
-              role="img"
-              aria-label="A working team"
-            />
-          </HeroInner>
-        </Hero>
-      )}
+      <Hero>
+        <HeroInner>
+          <div>
+            <Eyebrow>Teams</Eyebrow>
+
+            {showContent && (
+              <>
+                <H1>One profile is a CV. A team is a company.</H1>
+                <Sub>
+                  Teams let members combine portfolios, services and skills into
+                  a single unit. Clients see a real delivery group. Investors
+                  see who actually executes. You see who you can delegate to
+                  without explaining context twice.
+                </Sub>
+              </>
+            )}
+          </div>
+
+          {showContent && (
+            <>
+              <WhyStrip>
+                <WhyItem>
+                  <strong>Shared portfolio</strong>
+                  <span>Show the full body of work, not fragments.</span>
+                </WhyItem>
+                <WhyItem>
+                  <strong>Easier hiring</strong>
+                  <span>Clients hire a team, not a stranger.</span>
+                </WhyItem>
+                <WhyItem>
+                  <strong>Internal delegation</strong>
+                  <span>Hand off tasks to people you trust.</span>
+                </WhyItem>
+              </WhyStrip>
+              <HeroImage
+                $src={teamsImg.src}
+                role="img"
+                aria-label="A working team"
+              />
+            </>
+          )}
+        </HeroInner>
+      </Hero>
 
       <Section>
         <Container>
