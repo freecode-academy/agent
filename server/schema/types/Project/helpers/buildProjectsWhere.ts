@@ -22,22 +22,6 @@ export function buildProjectsWhere(
   const result: Prisma.ProjectWhereInput = {
     ...other,
     CreatedBy: createdById ? buildStringFilterWhere(createdById) : undefined,
-    AND: [
-      {
-        OR: [
-          {
-            type: null,
-          },
-          {
-            type: {
-              not: {
-                equals: ProjectType.Education,
-              },
-            },
-          },
-        ],
-      },
-    ],
   }
 
   if (id) {
@@ -57,6 +41,27 @@ export function buildProjectsWhere(
         },
       ],
     }
+  } else {
+    /**
+     * По умолчанию отфильтровываем проекты, которые были
+     * созданы в рамках выполнения учебных заданий
+     */
+    result.AND = [
+      {
+        OR: [
+          {
+            type: null,
+          },
+          {
+            type: {
+              not: {
+                equals: ProjectType.Education,
+              },
+            },
+          },
+        ],
+      },
+    ]
   }
 
   // if (currentUser) {
