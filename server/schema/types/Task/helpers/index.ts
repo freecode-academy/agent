@@ -6,7 +6,11 @@ import {
   buildStringNullableFilterWhere,
 } from '../../helpers/buildStringNullableFilterWhere'
 
-const COMPLETED_STATUSES = [TaskStatus.Done, TaskStatus.Rejected]
+const COMPLETED_STATUSES = [
+  TaskStatus.Done,
+  TaskStatus.Rejected,
+  TaskStatus.Completed,
+]
 
 type TaskWhereArgs = typeof TaskWhereInput.$inferInput
 
