@@ -17,9 +17,11 @@ export const WorkLogPage: Page<WorkLogPageProps> = ({ workLogId }) => {
 
   const workLog = response.data?.response
 
+  const task = workLog?.Task
+
   return (
     <>
-      <SeoHeaders title="Work Log" />
+      <SeoHeaders title={`Work Log.${task && ` Task: ${task.title}`}`} />
       {workLog && (
         <WorkLogPageStyled>
           <WorkLogCard workLog={workLog} variant="full" />

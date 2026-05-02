@@ -91,4 +91,12 @@ fragment TaskDetailed on Task {
   Project {
     ...ProjectNoNesting
   }
+
+  WorkLogs {
+    ...TaskWorkLogNoNesting
+
+    CreatedBy {
+      ...UserNoNesting
+    }
+  }
 }

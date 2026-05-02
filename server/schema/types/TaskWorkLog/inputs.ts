@@ -37,3 +37,12 @@ export const TaskWorkLogCreateInput = builder.inputType(
     }),
   },
 )
+
+export const TaskWorkLogUpdateInput = builder.inputType(
+  'TaskWorkLogUpdateInput',
+  {
+    fields: (t) => ({
+      content: t.string({ required: false }),
+    }),
+  },
+)

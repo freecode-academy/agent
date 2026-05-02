@@ -8,14 +8,15 @@ builder.mutationField('createTaskWorkLog', (t) =>
       data: t.arg({ type: TaskWorkLogCreateInput, required: true }),
     },
     resolve: async (query, _root, args, ctx) => {
-      if (!ctx.currentUser) {
+      const { currentUser, prisma } = ctx
+
+      if (!currentUser) {
         throw new Error('Not authenticated')
       }
 
-      const task = await ctx.prisma.task.findFirst({
+      const task = await prisma.task.findFirst({
         where: {
           id: args.data.taskId,
-          assigneeId: ctx.currentUser.id,
         },
       })
 
@@ -23,12 +24,23 @@ builder.mutationField('createTaskWorkLog', (t) =>
         throw new Error('Task not found')
       }
 
-      return ctx.prisma.taskWorkLog.create({
+      if (!currentUser.sudo) {
+        if (
+          !(
+            task.createdById === currentUser.id ||
+            task.assigneeId === currentUser.id
+          )
+        ) {
+          throw new Error('Access denied')
+        }
+      }
+
+      return prisma.taskWorkLog.create({
         ...query,
         data: {
           taskId: args.data.taskId,
           content: args.data.content,
-          createdById: ctx.currentUser.id,
+          createdById: currentUser.id,
         },
       })
     },

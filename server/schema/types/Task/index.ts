@@ -23,13 +23,17 @@ export const TaskStatusEnum = builder.enumType('TaskStatusEnum', {
 // Task object type
 builder.prismaObject('Task', {
   fields: (t) => ({
-    id: t.exposeID('id'),
-    createdAt: t.expose('createdAt', { type: 'DateTime' }),
-    updatedAt: t.expose('updatedAt', { type: 'DateTime' }),
-    title: t.exposeString('name'),
+    id: t.exposeID('id', {
+      nullable: false,
+    }),
+    createdAt: t.expose('createdAt', { type: 'DateTime', nullable: false }),
+    updatedAt: t.expose('updatedAt', { type: 'DateTime', nullable: false }),
+    title: t.exposeString('name', {
+      nullable: false,
+    }),
     description: t.exposeString('description', { nullable: true }),
     content: t.exposeString('content', { nullable: true }),
-    status: t.expose('status', { type: TaskStatusEnum }),
+    status: t.expose('status', { type: TaskStatusEnum, nullable: false }),
     startDatePlaning: t.expose('startDatePlaning', {
       type: 'DateTime',
       nullable: true,
@@ -40,7 +44,7 @@ builder.prismaObject('Task', {
     }),
     startDate: t.expose('startDate', { type: 'DateTime', nullable: true }),
     endDate: t.expose('endDate', { type: 'DateTime', nullable: true }),
-    createdById: t.exposeID('createdById'),
+    createdById: t.exposeID('createdById', { nullable: false }),
     CreatedBy: t.relation('CreatedBy'),
     assigneeId: t.exposeID('assigneeId', { nullable: true }),
     Assignee: t.relation('Assignee', { nullable: true }),

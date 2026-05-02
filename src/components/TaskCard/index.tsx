@@ -1,7 +1,8 @@
 import {
-  SortOrder,
+  TaskDetailedFragment,
+  // SortOrder,
   TaskFragment,
-  useTaskWorkLogsQuery,
+  // useTaskWorkLogsQuery,
 } from 'src/gql/generated'
 import { FormattedDate } from 'src/ui-kit/format/FormattedDate'
 import {
@@ -14,25 +15,25 @@ import {
 import { TaskStatusBadge } from '../TaskStatusBadge'
 import Link from 'next/link'
 import { Markdown } from '../Markdown'
-import { WorkLogCard } from '../WorkLogCard'
+import { TaskWorkLogs } from './WorkLogs'
 
 type TaskCardProps = {
-  task: TaskFragment
+  task: TaskFragment | TaskDetailedFragment
   variant: 'list' | 'full'
 }
 
 export const TaskCard: React.FC<TaskCardProps> = ({ task, variant }) => {
-  const workLogsResponse = useTaskWorkLogsQuery({
-    variables: {
-      where: {
-        taskId: task.id,
-      },
-      orderBy: {
-        createdAt: SortOrder.ASC,
-      },
-    },
-    skip: !task.id || variant !== 'full',
-  })
+  // const workLogsResponse = useTaskWorkLogsQuery({
+  //   variables: {
+  //     where: {
+  //       taskId: task.id,
+  //     },
+  //     orderBy: {
+  //       createdAt: SortOrder.ASC,
+  //     },
+  //   },
+  //   skip: !task.id || variant !== 'full',
+  // })
 
   return (
     <TaskCardStyled>
@@ -66,9 +67,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, variant }) => {
         <>
           {task.content && <Markdown>{task.content}</Markdown>}
 
-          {workLogsResponse.data?.response?.map((n) => (
-            <WorkLogCard key={n.id} workLog={n} variant="list" />
-          ))}
+          <TaskWorkLogs task={task} />
         </>
       )}
     </TaskCardStyled>
