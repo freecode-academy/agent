@@ -5,7 +5,7 @@ import { OfferEditForm } from '../Form'
 export const OfferCreatePage: Page = () => {
   return (
     <>
-      <SeoHeaders title="Создать предложение" noindex nofollow />
+      <SeoHeaders title="Create offer" noindex nofollow />
 
       <OfferEditForm offer={undefined} cancelHandler={undefined} />
     </>

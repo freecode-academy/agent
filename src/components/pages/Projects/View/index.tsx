@@ -1,6 +1,9 @@
 import React from 'react'
 
-import { ProjectsConnectionProjectFragment } from 'src/gql/generated'
+import {
+  MeUserFragment,
+  ProjectsConnectionProjectFragment,
+} from 'src/gql/generated'
 
 import projectsImg from '@/assets/projects.jpg'
 import {
@@ -43,6 +46,7 @@ export type ProjectsViewProps = {
   page: number
   count: number
   limit: number
+  currentUser: MeUserFragment | null | undefined
 }
 
 export const ProjectsView: React.FC<ProjectsViewProps> = ({
@@ -50,6 +54,7 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
   count,
   page,
   limit,
+  currentUser,
 }) => {
   const showContent = page < 2
 
@@ -61,7 +66,15 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
         <Hero>
           <HeroInner>
             <div>
-              <Eyebrow>Projects</Eyebrow>
+              <Eyebrow>
+                Projects{' '}
+                {currentUser && (
+                  <Link href={`/projects/create`} rel="noindex nofollow">
+                    <em>Create</em>
+                  </Link>
+                )}
+              </Eyebrow>
+
               <H1>Portfolio that works while you sleep.</H1>
               <Sub>
                 A project here is more than a case study. It's a public surface

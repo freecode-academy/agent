@@ -60,6 +60,7 @@ export const ProjectsPage: Page<ProjectsPageProps> = ({ page }) => {
         count={response.data?.projectsCount || 0}
         limit={variables.first ?? 0}
         page={page}
+        currentUser={currentUser}
       />
     </>
   )

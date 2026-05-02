@@ -4,6 +4,7 @@ import {
   CardBody,
   CardImg,
   CardLink,
+  CardMeta,
   // CardMeta,
   // CardText,
   CardTitle,
@@ -36,6 +37,7 @@ import {
 import { makeTaskLink } from 'src/components/Link/Task'
 import { Markdown } from 'src/components/Markdown'
 import { Pagination } from 'src/components/Pagination'
+import { UserLink } from 'src/components/Link/User'
 
 type TasksViewProps = {
   tasks: TaskFragment[]
@@ -101,7 +103,7 @@ export const TasksView: React.FC<TasksViewProps> = ({
 
           <Grid $cols={3}>
             {tasks.map((n) => {
-              const { id, title, description: intro } = n
+              const { id, title, description: intro, CreatedBy } = n
 
               // const project = projectBySlug(projectSlug)
               return (
@@ -115,6 +117,12 @@ export const TasksView: React.FC<TasksViewProps> = ({
                     <CardTitle>{title}</CardTitle>
                     <Markdown>{intro}</Markdown>
                     {/* {project && <CardMeta>Project: {project.title}</CardMeta>} */}
+
+                    {CreatedBy && (
+                      <CardMeta>
+                        By <UserLink user={CreatedBy} />
+                      </CardMeta>
+                    )}
                   </CardBody>
                 </CardLink>
               )

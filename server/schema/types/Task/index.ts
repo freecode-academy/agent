@@ -48,5 +48,7 @@ builder.prismaObject('Task', {
     Parent: t.relation('Parent', { nullable: true }),
     Children: t.relation('Children'),
     WorkLogs: t.relation('WorkLogs'),
+    projectId: t.exposeID('projectId', { nullable: true }),
+    Project: t.relation('Project', { nullable: true }),
   }),
 })

@@ -36,25 +36,25 @@ export const ProjectWhereUniqueInput = builder.inputType(
   },
 )
 
-// export const ProjectCreateInput = builder.inputType('ProjectCreateInput', {
-//   fields: (t) => ({
-//     title: t.string({ required: false }),
-//     description: t.string({ required: false }),
-//     intro: t.string({ required: false }),
-//     content: t.string({ required: true }),
-//     status: t.field({ type: ProjectStatusEnum, required: false }),
-//     parentId: t.id({
-//       description: 'Reply',
-//     }),
-//   }),
-// })
+export const ProjectCreateInput = builder.inputType('ProjectCreateInput', {
+  fields: (t) => ({
+    title: t.string({ required: true }),
+    description: t.string({ required: false }),
+    // intro: t.string({ required: false }),
+    content: t.string({ required: true }),
+    status: t.field({ type: ProjectStatusEnum, required: false }),
+    parentId: t.id({
+      description: 'Reply',
+    }),
+  }),
+})
 
-// export const ProjectUpdateDataInput = builder.inputType('ProjectUpdateDataInput', {
-//   fields: (t) => ({
-//     title: t.string({ required: false }),
-//     description: t.string({ required: false }),
-//     intro: t.string({ required: false }),
-//     content: t.string({ required: false }),
-//     status: t.field({ type: ProjectStatusEnum, required: false }),
-//   }),
-// })
+export const ProjectUpdateInput = builder.inputType('ProjectUpdateInput', {
+  fields: (t) => ({
+    title: t.string({ required: false }),
+    description: t.string({ required: false }),
+    // intro: t.string({ required: false }),
+    content: t.string({ required: false }),
+    status: t.field({ type: ProjectStatusEnum, required: false }),
+  }),
+})

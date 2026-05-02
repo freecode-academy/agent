@@ -4,6 +4,8 @@ import { ProjectStatusEnum, ProjectTypeEnum } from './types'
 import './resolvers/project'
 import './resolvers/projects'
 import './resolvers/projectsCount'
+import './resolvers/create'
+import './resolvers/update'
 
 builder.prismaObject('Project', {
   fields: (t) => ({

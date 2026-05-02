@@ -1,15 +1,11 @@
 import React from 'react'
 import { ProjectViewStyled } from './styles'
-import {
-  ProjectFragment,
-  SortOrder,
-  useTasksWithCountQuery,
-} from 'src/gql/generated'
+import { ProjectFragment } from 'src/gql/generated'
 // import { useRouter } from 'next/router'
 import { SeoHeaders } from 'src/components/seo/SeoHeaders'
 import { H2 } from 'src/components/LayoutV2/styles'
 import { Markdown } from 'src/components/Markdown'
-import { TasksView } from 'src/components/pages/Tasks/View'
+import { ProjectTasks } from './Tasks'
 // import { TasksView } from 'src/components/pages/Tasks/View'
 // import { useTasksFilter } from 'src/hooks/useTasksFilter'
 
@@ -38,34 +34,6 @@ export const ProjectView: React.FC<ProjectViewProps> = ({
       typeof Resource.contentV2 === 'string' &&
       Resource.contentV2)
 
-  // const { where } = useTasksFilter({
-  //   baseWhere: {
-  //     projectId: {
-  //       equals: project.id,
-  //     },
-  //   },
-  // })
-
-  const tasksResponse = useTasksWithCountQuery({
-    variables: {
-      orderBy: {
-        createdAt: SortOrder.DESC,
-      },
-      where: {
-        projectId: {
-          equals: project.id,
-        },
-      },
-      take: 3,
-      skip: 0,
-    },
-  })
-
-  const tasks = tasksResponse.data?.tasks ?? []
-  // const total = tasksResponse.data?.tasksCount ?? 0
-
-  // const totalPages = total ? Math.floor(total / TASKS_PER_PAGE) + 1 : 0
-
   return (
     <>
       <SeoHeaders
@@ -82,16 +50,7 @@ export const ProjectView: React.FC<ProjectViewProps> = ({
 
         {content && <Markdown>{content}</Markdown>}
 
-        {tasks.length > 0 && (
-          <TasksView
-            tasks={tasks}
-            // count={tasksResponse.data?.tasksCount ?? 0}
-            count={0}
-            limit={tasksResponse.variables.take ?? 3}
-            page={1}
-            showContent={false}
-          />
-        )}
+        <ProjectTasks project={project} />
       </ProjectViewStyled>
     </>
   )
