@@ -17,7 +17,7 @@ export function getFetchRequestNodes(
       name: 'fetch_request',
       toolName: 'Fetch Request Tool',
       description:
-        'Execute HTTP request using fetch. Only external URLs allowed (no localhost/internal IPs). Returns status, statusText and body (JSON is auto-parsed when Content-Type is JSON, otherwise returns raw text).',
+        'Execute HTTP request using fetch. Returns status, statusText and body.',
       workflowName: 'Tool: Fetch Request',
       nodeId: `${agentId}-tool-fetch`,
       position: getNodeCoordinates('tool-fetch'),
@@ -39,13 +39,13 @@ export function getFetchRequestNodes(
         {
           name: 'headers',
           description:
-            'Request headers as JSON string, e.g. {"Content-Type": "application/json", "Authorization": "Bearer token"}',
+            'Request headers as object. Could be empty, e.g. {"Content-Type": "application/json", "Authorization": "Bearer token"}',
           type: 'string',
         },
         {
           name: 'body',
           description:
-            'Request body as JSON string for POST/PUT/PATCH requests',
+            'Request body as object for POST/PUT/PATCH requests. Could be empty',
           type: 'string',
         },
       ]),

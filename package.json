@@ -1,18 +1,18 @@
 {
   "name": "site-boilerplate",
   "description": "Base template for narasim.dev website projects",
-  "version": "1.9.0",
+  "version": "1.10.0",
   "private": true,
   "scripts": {
     "dev": "cross-env NODE_ENV=development tsx watch server/index.ts",
     "dev:n8n": "cross-env N8N_ENABLED=true NODE_ENV=development tsx server/index.ts",
     "build__": "npm run clean && npm run build:front && npm run build:server",
     "build": "npm run clean && npm run build:front && npm run build:custom-nodes && npm run build:server",
-    "build:front": "next build",
+    "build:front": "next build --webpack",
     "build:server": "cross-env N8N_ENABLED=true tsc --project tsconfig.server.json && npm run copy-statics",
     "build:custom-nodes": "npm run build --prefix server/n8n/custom-nodes",
     "watch:custom-nodes": "npm run watch --prefix server/n8n/custom-nodes",
-    "build:analyze": "cross-env ANALYZE=true npm run build",
+    "build:analyze": "cross-env ANALYZE=true npx next build --webpack",
     "copy-statics": "npm run copy-statics:server && npm run copy-statics:src",
     "copy-statics:server": "copyfiles -u 1 \"server/**/*.graphql\" \"server/**/*.md\" \"server/n8n/**/*.js\" \"server/n8n/**/*.json\" dist/server/server/",
     "copy-statics:src": "copyfiles -u 1 \"src/**/*.graphql\" dist/server/src/",
@@ -43,7 +43,25 @@
     "test:server": "dotenv -e .env.test -- cross-env API_ONLY=true tsx watch server/index.ts",
     "test:api": "dotenv -e .env.test -- vitest run -c vitest.api.config.ts",
     "test:api:watch": "dotenv -e .env.test -- vitest -c vitest.api.config.ts",
-    "prepare": "husky"
+    "prepare": "husky",
+    "check:bundle": "npx es-check es2019 '.next/static/**/*.js'",
+    "e2e": "playwright test",
+    "e2e:webkit": "playwright test --project=webkit",
+    "e2e:report": "playwright show-report"
+  },
+  "browserslist": {
+    "production": [
+      "Safari >= 13",
+      "iOS >= 13",
+      "Chrome >= 80",
+      "Firefox >= 78",
+      "Edge >= 80"
+    ],
+    "development": [
+      "last 2 chrome version",
+      "last 2 firefox version",
+      "last 2 safari version"
+    ]
   },
   "lint-staged": {
     "**/*.{ts,tsx}": [
@@ -55,6 +73,7 @@
     "@apollo/client": "^4.0.10",
     "@apollo/server": "^5.2.0",
     "@as-integrations/express4": "^1.1.2",
+    "@betterlytics/tracker": "^0.2.2",
     "@hookform/resolvers": "^5.2.2",
     "@mdxeditor/editor": "^3.52.1",
     "@pothos/core": "^4.3.0",
@@ -116,6 +135,8 @@
     "@graphql-codegen/typescript-apollo-client-helpers": "^3.0.1",
     "@graphql-codegen/typescript-operations": "^5.0.6",
     "@graphql-codegen/typescript-react-apollo": "^4.3.2",
+    "@next/bundle-analyzer": "^16.2.6",
+    "@playwright/test": "^1.59.1",
     "@storybook/addon-docs": "^10.1.7",
     "@storybook/addon-links": "^10.1.7",
     "@storybook/nextjs-vite": "^10.1.7",
