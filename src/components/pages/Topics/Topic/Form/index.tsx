@@ -30,6 +30,7 @@ import { ComponentVariant } from 'src/ui-kit/interfaces'
 import { ResourceBannerStyled } from 'src/components/Resource/styles'
 import { useAppContext } from 'src/components/AppContext'
 import { makeResourceLink } from 'src/components/Link/Resource'
+import { FileUploader, FileUploaderProps } from 'src/components/FileUploader'
 
 const MarkdownEditor = dynamic(
   () => import('src/components/Markdown/Editor').then((r) => r.MarkdownEditor),
@@ -72,6 +73,7 @@ export const schema: yup.ObjectSchema<FormData> = yup.object().shape({
     .mixed<ResourceType>()
     .oneOf(Object.values(ResourceType))
     .label('Status'),
+  image: yup.string(),
 })
 
 type ResourceEditFormProps = {
@@ -196,69 +198,101 @@ export const ResourceEditForm: React.FC<ResourceEditFormProps> = ({
     ],
   )
 
+  const onChangeImage = useCallback<NonNullable<FileUploaderProps['onChange']>>(
+    (file) => {
+      if (file?.path) {
+        form.setValue('image', file.path, {
+          shouldValidate: true,
+        })
+      }
+    },
+    [form],
+  )
+
   const fieldRenderer = useCallback<
     ControllerProps<
       FormData,
-      'content' | 'description' | 'intro' | 'title'
+      'content' | 'description' | 'intro' | 'title' | 'image'
     >['render']
-  >(({ field: { name, value, onChange, onBlur }, fieldState: { error } }) => {
-    let label: string
-    const helperText = undefined
-    let EditorComponent:
-      | typeof TextField
-      | typeof MarkdownEditor
-      | React.FC<React.HtmlHTMLAttributes<HTMLSelectElement>> = TextField
+  >(
+    ({ field: { name, value, onChange, onBlur }, fieldState: { error } }) => {
+      let label: string
+      const helperText = undefined
+      let EditorComponent:
+        | typeof TextField
+        | typeof MarkdownEditor
+        | React.FC<{
+            value: string
+          }>
+        | React.FC<React.HtmlHTMLAttributes<HTMLSelectElement>> = TextField
 
-    switch (name) {
-      case 'title':
-        label = 'Title'
-        break
-      case 'description':
-        label = 'SEO description'
-        break
-      case 'intro':
-        label = 'Intro'
-        EditorComponent = MarkdownEditor
-        break
-      // case 'status':
-      //   label = 'Status'
+      switch (name) {
+        case 'image':
+          label = 'Image'
 
-      //   EditorComponent = (
-      //     props: React.HtmlHTMLAttributes<HTMLSelectElement>,
-      //   ) => {
-      //     return (
-      //       <select {...props}>
-      //         {Object.values(ResourceStatus).map((n) => {
-      //           return (
-      //             <option key={n} value={n}>
-      //               {n}
-      //             </option>
-      //           )
-      //         })}
-      //       </select>
-      //     )
-      //   }
-      //   break
-      case 'content':
-        label = 'Content'
-        EditorComponent = MarkdownEditor
-        break
-    }
+          EditorComponent = ({ value }: { value: string }) => {
+            return (
+              <>
+                <FileUploader
+                  value={value ? `/images/resized/middle/${value}` : ''}
+                  onChange={onChangeImage}
+                />
+              </>
+            )
+          }
 
-    return (
-      <FormControl
-        label={label}
-        helperText={error ? error.message : helperText}
-        error={!!error}
-      >
-        <EditorComponent
-          value={value || ''}
-          onChange={onChange}
-          onBlur={onBlur}
-        />
-      </FormControl>
-    )
-  }, [])
+          break
+        case 'title':
+          label = 'Title'
+          break
+        case 'description':
+          label = 'SEO description'
+          break
+        case 'intro':
+          label = 'Intro'
+          EditorComponent = MarkdownEditor
+          break
+        // case 'status':
+        //   label = 'Status'
+
+        //   EditorComponent = (
+        //     props: React.HtmlHTMLAttributes<HTMLSelectElement>,
+        //   ) => {
+        //     return (
+        //       <select {...props}>
+        //         {Object.values(ResourceStatus).map((n) => {
+        //           return (
+        //             <option key={n} value={n}>
+        //               {n}
+        //             </option>
+        //           )
+        //         })}
+        //       </select>
+        //     )
+        //   }
+        //   break
+        case 'content':
+          label = 'Content'
+          EditorComponent = MarkdownEditor
+          break
+      }
+
+      return (
+        <FormControl
+          label={label}
+          helperText={error ? error.message : helperText}
+          error={!!error}
+        >
+          <EditorComponent
+            value={value || ''}
+            onChange={onChange}
+            onBlur={onBlur}
+          />
+        </FormControl>
+      )
+    },
+    [onChangeImage],
+  )
 
   const isActive = currentUser && currentUser.status === UserStatusEnum.ACTIVE
 
@@ -271,6 +305,7 @@ export const ResourceEditForm: React.FC<ResourceEditFormProps> = ({
           </ResourceBannerStyled>
         )}
 
+        <Controller name="image" render={fieldRenderer} />
         <Controller name="title" render={fieldRenderer} />
         <Controller name="description" render={fieldRenderer} />
         {/* {resource?.id && <Controller name="status" render={fieldRenderer} />} */}

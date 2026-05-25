@@ -1356,6 +1356,8 @@ model Resource {
   ResourceTags                              ResourceTag[]
   Votes                                     Vote[]
 
+  image String? @db.Text
+
   @@unique([uri])
   @@index([Blog], map: "Resource_Blog")
   @@index([CreatedBy], map: "Resource_CreatedBy")

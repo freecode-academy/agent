@@ -55,6 +55,8 @@ builder.prismaObject('Resource', {
 
     teamId: t.exposeID('Team'),
     Team: t.relation('Team_ResourceToTeam'),
+
+    image: t.exposeString('image'),
   }),
 })
 

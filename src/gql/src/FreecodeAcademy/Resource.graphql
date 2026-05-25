@@ -80,6 +80,8 @@ fragment ResourceNoNesting on Resource {
 
   createdById
 
+  image
+
   ... @include(if: $resourceWithDetailes) {
     contentV2
   }
