@@ -1,9 +1,28 @@
 import Web3 from 'web3'
 
-export const ARBITRUM_CHAIN_ID = 42161
-export const ARBITRUM_RPC_URL = 'https://arb1.arbitrum.io/rpc'
-export const USDT_CONTRACT_ADDRESS =
-  '0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9'
+export function getChainId(): number {
+  const chainId = process.env.CRYPTO_CHAIN_ID
+  if (!chainId) {
+    throw new Error('CRYPTO_CHAIN_ID env is empty')
+  }
+  return parseInt(chainId, 10)
+}
+
+export function getRpcUrl(): string {
+  const rpcUrl = process.env.CRYPTO_RPC_URL
+  if (!rpcUrl) {
+    throw new Error('CRYPTO_RPC_URL env is empty')
+  }
+  return rpcUrl
+}
+
+export function getUsdtContractAddress(): string {
+  const address = process.env.CRYPTO_USDT_CONTRACT_ADDRESS
+  if (!address) {
+    throw new Error('CRYPTO_USDT_CONTRACT_ADDRESS env is empty')
+  }
+  return address
+}
 
 export function getRecipientAddress(): string {
   const address = process.env.PAYMENT_RECIPIENT_ADDRESS
@@ -13,15 +32,15 @@ export function getRecipientAddress(): string {
   return address
 }
 
-const TOP_UP_OFFER_MESSAGE = `Соглашение о пополнении баланса
+const TOP_UP_OFFER_MESSAGE = `Balance Top-Up Agreement
 
-Подписывая это сообщение, вы соглашаетесь со следующими условиями:
+By signing this message, you agree to the following terms:
 
-1. Вы покупаете внутреннюю валюту платформы (Coins) по курсу 1:1 USDT.
-2. Оплата должна быть произведена в USDT в сети Arbitrum.
-3. Монеты будут зачислены на ваш счёт после верификации транзакции.
-4. Монеты могут использоваться только в рамках платформы и не подлежат возврату.
-5. Это односторонняя транзакция, которая не может быть отменена.`
+1. You are purchasing the platform's internal currency (Coins) at a 1:1 USDT rate.
+2. Payment must be made in USDT on the Arbitrum network.
+3. Coins will be credited to your account after transaction verification.
+4. Coins can only be used within the platform and are non-refundable.
+5. This is a one-way transaction that cannot be cancelled.`
 
 export function createTopUpOffer(): string {
   return TOP_UP_OFFER_MESSAGE
@@ -58,7 +77,7 @@ export async function verifyUsdtTransaction(
   expectedRecipient: string,
 ): Promise<TransactionVerificationResult> {
   try {
-    const web3 = new Web3(ARBITRUM_RPC_URL)
+    const web3 = new Web3(getRpcUrl())
 
     // Throttling: wait some seconds before proceeding
     await new Promise((resolve) => setTimeout(resolve, 5000))
@@ -79,7 +98,7 @@ export async function verifyUsdtTransaction(
     const transferLog = receipt.logs.find(
       (log) =>
         log.address &&
-        log.address.toLowerCase() === USDT_CONTRACT_ADDRESS.toLowerCase() &&
+        log.address.toLowerCase() === getUsdtContractAddress().toLowerCase() &&
         log.topics &&
         log.topics[0] === transferTopic,
     )

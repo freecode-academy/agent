@@ -82,11 +82,12 @@ const ruleTree = {
     createReaction: isActive,
     createReflex: isActive,
     deleteConcept: isActive,
-    llmCompletion: isSudo,
-    llmChatCompletion: isSudo,
-    llmImageGeneration: isSudo,
+    llmCompletion: isActive,
+    llmChatCompletion: isActive,
+    llmImageGeneration: isActive,
     signPost: isActive,
     world3dObjectCreate: isActive,
+    sendMail: isSudo,
   },
 } satisfies PermissionsRuleTree
 

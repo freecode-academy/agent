@@ -18,7 +18,8 @@ import { ComponentVariant } from 'src/ui-kit/interfaces'
 import { transactionsRefreshQueriesList } from '../Transactions/interfaces'
 import { MetaMaskAuth } from 'src/components/Auth/MetaMaskAuth'
 
-const ARBITRUM_CHAIN_ID = 42161
+const CRYPTO_CHAIN_ID = process.env.NEXT_PUBLIC_CRYPTO_CHAIN_ID
+const CRYPTO_CHAIN_ID_HEX = process.env.NEXT_PUBLIC_CRYPTO_CHAIN_ID_HEX
 
 type BalanceProps = {
   currentUser: MeUserFragment
@@ -39,13 +40,13 @@ export const Balance: React.FC<BalanceProps> = ({ currentUser }) => {
 
   const handleTopUp = useCallback(async () => {
     if (!window.ethereum?.isMetaMask) {
-      addMessage?.('MetaMask не установлен', { variant: 'error' })
+      addMessage?.('MetaMask is not installed', { variant: 'error' })
       return
     }
 
     const amountNum = parseFloat(amount)
     if (!amountNum || amountNum <= 0) {
-      addMessage?.('Введите корректную сумму', { variant: 'error' })
+      addMessage?.('Enter a valid amount', { variant: 'error' })
       return
     }
 
@@ -70,10 +71,14 @@ export const Balance: React.FC<BalanceProps> = ({ currentUser }) => {
         method: 'eth_chainId',
       })) as string
 
-      if (parseInt(chainId, 16) !== ARBITRUM_CHAIN_ID) {
+      if (
+        CRYPTO_CHAIN_ID &&
+        CRYPTO_CHAIN_ID_HEX &&
+        parseInt(chainId, 16) !== parseInt(CRYPTO_CHAIN_ID, 10)
+      ) {
         await window.ethereum.request({
           method: 'wallet_switchEthereumChain',
-          params: [{ chainId: '0xa4b1' }],
+          params: [{ chainId: CRYPTO_CHAIN_ID_HEX }],
         })
       }
 
@@ -105,7 +110,7 @@ export const Balance: React.FC<BalanceProps> = ({ currentUser }) => {
         ],
       })) as string
 
-      setStatus('Проверка транзакции в блокчейне...')
+      setStatus('Verifying transaction in blockchain...')
 
       const result = await topUpBalance({
         variables: {
@@ -118,12 +123,12 @@ export const Balance: React.FC<BalanceProps> = ({ currentUser }) => {
       })
 
       if (result.data?.topUpBalance) {
-        addMessage?.('Баланс успешно пополнен!', { variant: 'success' })
+        addMessage?.('Balance successfully topped up!', { variant: 'success' })
         setAmount('')
         setStatus(null)
       }
     } catch (error) {
-      addMessage?.((error as Error).message || 'Пополнение не удалось', {
+      addMessage?.((error as Error).message || 'Top-up failed', {
         variant: 'error',
       })
       setStatus(null)
@@ -146,13 +151,13 @@ export const Balance: React.FC<BalanceProps> = ({ currentUser }) => {
           <BalanceAddressStyled>{ethAccount.address}</BalanceAddressStyled>
         )}
         <BalanceAmountStyled>
-          Ваш баланс: {currentUser.Balance?.amount ?? 0} Монет
+          Your balance: {currentUser.Balance?.amount ?? 0} Coins
         </BalanceAmountStyled>
         {ethAccount ? (
           <BalanceFormStyled>
             <BalanceInputStyled
               type="number"
-              placeholder="Сумма USDT"
+              placeholder="USDT amount"
               value={amount}
               onChange={onChangeAmount}
               disabled={loading}
@@ -165,12 +170,12 @@ export const Balance: React.FC<BalanceProps> = ({ currentUser }) => {
               disabled={loading || !amount}
               variant={ComponentVariant.PRIMARY}
             >
-              {loading ? 'Обработка...' : 'Пополнить'}
+              {loading ? 'Processing...' : 'Top up'}
             </Button>
           </BalanceFormStyled>
         ) : (
           <>
-            Привяжите MetaMask, чтобы иметь возможность пополнить баланс
+            Connect MetaMask to be able to top up your balance
             <MetaMaskAuth referrerToken={null} />
           </>
         )}
