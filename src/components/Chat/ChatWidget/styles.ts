@@ -31,6 +31,12 @@ export const ChatContentContainer = styled.div<ChatContentContainerProps>`
   width: 100%;
   max-width: 100%;
 
+  /* 
+    Это для того, чтобы скролл внутри контейнера был, а не всего вью
+  */
+  height: 100%;
+  overflow: auto;
+
   ${({ $hasMessages }) =>
     $hasMessages
       ? css`
@@ -148,7 +154,7 @@ export const ChatMessages = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
-  max-width: 800px;
+  max-width: 1200px;
   margin: 0 auto;
   width: 100%;
 
@@ -205,7 +211,7 @@ export const ChatForm = styled.form`
   display: flex;
   gap: 12px;
   align-items: center;
-  max-width: 800px;
+  max-width: 1200px;
   margin: 0 auto;
   background: #ffffff;
   border-radius: 24px;

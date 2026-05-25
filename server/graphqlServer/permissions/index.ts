@@ -84,6 +84,7 @@ const ruleTree = {
     deleteConcept: isActive,
     llmCompletion: isSudo,
     llmChatCompletion: isSudo,
+    llmImageGeneration: isSudo,
     signPost: isActive,
     world3dObjectCreate: isActive,
   },

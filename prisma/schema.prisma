@@ -192,7 +192,7 @@ model File {
   CreatedBy String? @db.VarChar(36)
   User      User?   @relation(fields: [CreatedBy], references: [id])
 
-  KBConceptFile KBConceptFile[]
+  KBConceptFiles KBConceptFile[]
 
   // ==============================================
   // Custom
@@ -383,6 +383,8 @@ model KBConcept {
 
   content String? @db.Text
 
+  image String? @db.Text
+
   // External code or identifier (e.g., "7.1" for topic, GUID for item)
   code String? @db.VarChar(100)
 
@@ -406,7 +408,7 @@ model KBConcept {
   Root        KBConcept?  @relation("ConceptRoot", fields: [rootId], references: [id])
   Descendants KBConcept[] @relation("ConceptRoot")
 
-  KBConceptFile KBConceptFile[]
+  KBConceptFiles KBConceptFile[]
 
   @@unique([rootId, code])
   @@unique([parentId, code])
@@ -996,6 +998,7 @@ model Post {
   Revisions   PostRevision[]
 
   // -- Shared content fields (keep in sync with PostRevision) --
+  image       String?    @db.Text
   status      PostStatus @default(draft)
   title       String?    @db.VarChar(512)
   description String?    @db.VarChar(3072)
@@ -1019,6 +1022,7 @@ model PostRevision {
   Post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
 
   // -- Shared content fields (keep in sync with Post) --
+  image       String?    @db.Text
   status      PostStatus
   title       String?    @db.VarChar(512)
   description String?    @db.VarChar(3072)
