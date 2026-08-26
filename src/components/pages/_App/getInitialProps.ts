@@ -78,8 +78,8 @@ export const getInitialProps: MainApp['getInitialProps'] = async (
   }
 
   if (
-    statusCode !== undefined &&
-    statusCode !== 200 &&
+    // statusCode !== undefined &&
+    // statusCode !== 200 &&
     ctx.req?.url &&
     ctx.res
   ) {
@@ -94,6 +94,10 @@ export const getInitialProps: MainApp['getInitialProps'] = async (
     ].includes(url)
 
     if (!skip) {
+      const isError = statusCode && statusCode !== 200 ? true : false
+      const siteOrigin = getSiteOrigin(req)
+      const fullUrl = siteOrigin ? `${siteOrigin}${url}` : url
+
       // eslint-disable-next-line @typescript-eslint/no-deprecated
       const response = await apolloClient.mutate<
         CreateSystemLogMutation,
@@ -102,12 +106,12 @@ export const getInitialProps: MainApp['getInitialProps'] = async (
         mutation: CreateSystemLogDocument,
         variables: {
           data: {
-            level: SystemLogLevel.ERROR,
+            level: isError ? SystemLogLevel.ERROR : SystemLogLevel.INFO,
             source: SystemLogSource.CLIENT,
-            message: `HTTP ${statusCode}: ${path}`,
-            url,
+            message: `HTTP ${statusCode ?? 200}: ${path}`,
+            url: fullUrl,
             path,
-            statusCode,
+            statusCode: statusCode ?? 200,
             method: req.method,
             userAgent: req.headers['user-agent'],
             referer: req.headers.referer,
