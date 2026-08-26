@@ -27,11 +27,7 @@ export const Footer: React.FC = () => {
         <div>
           © {new Date().getFullYear()} Freecode Academy Network. All rights
           shared. {' · '}
-          <Link
-            href="https://fi1osof.ru"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <Link href="https://fi1osof.ru" target="_blank">
             By 𝕱
           </Link>
         </div>
