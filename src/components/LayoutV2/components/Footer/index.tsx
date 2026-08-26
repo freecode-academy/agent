@@ -2,6 +2,7 @@ import styled from 'styled-components'
 import { theme } from 'src/theme'
 
 import { Container, Logo } from '../../styles'
+import Link from 'next/link'
 
 /* FOOTER */
 const FooterStyled = styled.footer`
@@ -25,7 +26,14 @@ export const Footer: React.FC = () => {
         <Logo href="/">Freecode Academy</Logo>
         <div>
           © {new Date().getFullYear()} Freecode Academy Network. All rights
-          shared.
+          shared. {' · '}
+          <Link
+            href="https://fi1osof.ru"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            By 𝕱
+          </Link>
         </div>
       </FootInner>
     </FooterStyled>
