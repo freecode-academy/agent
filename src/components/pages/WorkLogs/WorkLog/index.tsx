@@ -6,8 +6,12 @@ import { WorkLogPageStyled } from './styles'
 import { getWorkLogQueryVariables } from '../helpers'
 import { workLogPageGetInitialProps } from './workLogPageGetInitialProps'
 import { WorkLogCard } from 'src/components/WorkLogCard'
+import { createWorkLogLink } from 'src/components/Link/WorkLog'
 
-export const WorkLogPage: Page<WorkLogPageProps> = ({ workLogId }) => {
+export const WorkLogPage: Page<WorkLogPageProps> = ({
+  workLogId,
+  siteOrigin,
+}) => {
   const variables = getWorkLogQueryVariables(workLogId)
 
   const response = useTaskWorkLogQuery({
@@ -20,14 +24,18 @@ export const WorkLogPage: Page<WorkLogPageProps> = ({ workLogId }) => {
   const task = workLog?.Task
 
   return (
-    <>
-      <SeoHeaders title={`Work Log.${task && ` Task: ${task.title}`}`} />
-      {workLog && (
+    workLog && (
+      <>
+        <SeoHeaders
+          title={`Work Log.${task && ` Task: ${task.title}`}`}
+          siteOrigin={siteOrigin}
+          canonical={workLog && createWorkLogLink(workLog)}
+        />
         <WorkLogPageStyled>
           <WorkLogCard workLog={workLog} variant="full" />
         </WorkLogPageStyled>
-      )}
-    </>
+      </>
+    )
   )
 }
 

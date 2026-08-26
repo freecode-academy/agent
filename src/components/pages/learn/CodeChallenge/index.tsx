@@ -92,7 +92,8 @@ CodeChallengePage.getInitialProps = async (context) => {
   const { variables, tabIndex, topicId } = getCodeChallengeVariables(context)
 
   const result = variables?.where.id
-    ? await apolloClient.query<CodeChallengeQuery>({
+    ? // eslint-disable-next-line @typescript-eslint/no-deprecated
+      await apolloClient.query<CodeChallengeQuery>({
         query: CodeChallengeDocument,
 
         /**

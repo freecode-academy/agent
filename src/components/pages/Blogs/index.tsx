@@ -6,7 +6,7 @@ import { BlogsPageProps } from './interfaces'
 import { getResourcesConnectionQueryVariables } from 'src/components/Resource/helpers'
 import { resourcesPageGetInitialProps } from 'src/components/Resource/resourcesPageGetInitialProps'
 
-export const BlogsPage: Page<BlogsPageProps> = ({ page }) => {
+export const BlogsPage: Page<BlogsPageProps> = ({ page, siteOrigin }) => {
   const response = useResourcesConnectionQuery({
     variables: getResourcesConnectionQueryVariables({
       page: page || 1,
@@ -21,7 +21,7 @@ export const BlogsPage: Page<BlogsPageProps> = ({ page }) => {
 
   return (
     <>
-      <SeoHeaders title="Blogs" />
+      <SeoHeaders title="Blogs" canonical={'/blogs'} siteOrigin={siteOrigin} />
 
       <ResourcesPageView
         resources={resources}

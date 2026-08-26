@@ -1,4 +1,4 @@
-import { builder } from '../../../builder'
+import { builder } from 'server/schema/builder'
 import { FileUpdateInput, FileWhereUniqueInput } from '../inputs'
 
 builder.mutationField('updateFile', (t) =>
@@ -17,7 +17,7 @@ builder.mutationField('updateFile', (t) =>
 
       const { id, path } = args.where
 
-      const existingFile = await prisma.file.findFirst({
+      const existingFile = await prisma.file.findUnique({
         where: {
           id: id ?? undefined,
           path: path ?? undefined,
@@ -28,7 +28,7 @@ builder.mutationField('updateFile', (t) =>
         throw new Error('File not found')
       }
 
-      if (existingFile.CreatedBy !== currentUser.id && !currentUser.sudo) {
+      if (existingFile.createdById !== currentUser.id && !currentUser.sudo) {
         throw new Error('Can not edit alien file')
       }
 

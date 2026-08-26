@@ -19,18 +19,58 @@ export enum LlmModel {
   // Qwen3_5_122B_A10B = 'qwen/qwen3.5-122b-a10b',
   // Qwen3_5_397B_A17B = 'qwen/qwen3.5-397b-a17b',
 
-  // Gemini 3.x models
-  Gemini3_1_Flash_Lite_Preview = 'google/gemini-3.1-flash-lite-preview',
-  Gemini3_Flash_Preview = 'google/gemini-3-flash-preview',
-
   // Gemini 2.5 models
+  // Google: Nano Banana
   Gemini2_5_Flash = 'google/gemini-2.5-flash',
   Gemini2_5_Flash_Lite = 'google/gemini-2.5-flash-lite',
-
-  // Image generation models
-  Gemini3_1_Flash_Image = 'google/gemini-3.1-flash-image-preview',
+  // $2.50per 1M
   Gemini2_5_Flash_Image = 'google/gemini-2.5-flash-image',
+
+  // Gemini 3.x models
+  // Google: Nano Banana 2
+  Gemini3_1_Flash_Lite_Preview = 'google/gemini-3.1-flash-lite-preview',
+  Gemini3_1_Flash_Lite = 'google/gemini-3.1-flash-lite',
+  Gemini3_Flash_Preview = 'google/gemini-3-flash-preview',
+
+  GEMINI_3_5_FLASH = 'google/gemini-3.5-flash',
+  GEMINI_3_5_FLASH_LITE = 'google/gemini-3.5-flash-lite',
+
+  // $3per 1M
+  Gemini3_1_Flash_Image = 'google/gemini-3.1-flash-image-preview',
+
+  // $12per 1M
+  GOOGLE_GEMINI_3_PRO_IMAGE_PREVIEW = 'google/gemini-3-pro-image-preview',
+
+  // $0.04/image
+  BYTEDANCE_SEED_SEEDREAM_4_5 = 'bytedance-seed/seedream-4.5',
+
+  // $8 / $15per 1M
+  OPENAI_GPT_5_4_IMAGE_2 = 'openai/gpt-5.4-image-2',
+
+  // Black Forest Labs
+  // $0.014/megapixel
+  BLACK_FOREST_LABS_FLUX_2_KLEIN_4B = 'black-forest-labs/flux.2-klein-4b',
+  // $0.03/megapixel
+  BLACK_FOREST_LABS_FLUX_2_PRO = 'black-forest-labs/flux.2-pro',
+  // $0.07/megapixel
+  BLACK_FOREST_LABS_FLUX_2_MAX = 'black-forest-labs/flux.2-max',
+
+  PERPLEXITY_SONAR_REASONING_PRO = 'perplexity/sonar-reasoning-pro',
+
+  // Anthropic models
+  // ANTHROPIC_CLAUDE_3_7_SONNET = 'anthropic/claude-3.7-sonnet',
+  // ANTHROPIC_CLAUDE_3_5_SONNET = 'anthropic/claude-3.5-sonnet',
+  // ANTHROPIC_CLAUDE_3_5_HAIKU = 'anthropic/claude-3.5-haiku',
+  // ANTHROPIC_CLAUDE_3_OPUS = 'anthropic/claude-3-opus',
+  ANTHROPIC_CLAUDE_HAIKU_4_5 = 'anthropic/claude-haiku-4.5',
 }
+
+export const LLM_TOP_MODELS: LlmModel[] = [
+  LlmModel.GOOGLE_GEMINI_3_PRO_IMAGE_PREVIEW,
+  LlmModel.OPENAI_GPT_5_4_IMAGE_2,
+  LlmModel.BLACK_FOREST_LABS_FLUX_2_PRO,
+  LlmModel.BLACK_FOREST_LABS_FLUX_2_MAX,
+]
 
 export interface LLMClientOptions {
   provider: LlmProvider
@@ -86,12 +126,19 @@ export interface LLMClientCompletionRequest {
   stop?: string[]
 }
 
+export interface LLMClientTool {
+  type: string
+  parameters?: unknown
+}
+
 export interface LLMClientChatCompletionRequest {
   messages: LLMClientChatMessage[]
+  tools?: LLMClientTool[]
   max_tokens?: number
   temperature?: number
   top_p?: number
   stop?: string[]
+  providerOptions?: unknown
 }
 
 // Raw API response types (snake_case)
@@ -114,6 +161,12 @@ export interface LLMClientRawUsageCompletionTokensDetails {
   audio_tokens?: number
 }
 
+export interface LLMClientRawUsageServerToolUseDetails {
+  web_search_requests?: number
+  tool_calls_requested?: number
+  tool_calls_executed?: number
+}
+
 export interface LLMClientRawUsage {
   prompt_tokens: number
   completion_tokens: number
@@ -123,6 +176,7 @@ export interface LLMClientRawUsage {
   prompt_tokens_details?: LLMClientRawUsagePromptTokensDetails
   cost_details?: LLMClientRawUsageCostDetails
   completion_tokens_details?: LLMClientRawUsageCompletionTokensDetails
+  server_tool_use_details?: LLMClientRawUsageServerToolUseDetails
 }
 
 export interface LLMClientRawCompletionResponse {
@@ -202,6 +256,12 @@ export interface LLMUsageCompletionTokensDetails {
   audioTokens?: number
 }
 
+export interface LLMUsageServerToolUseDetails {
+  webSearchRequests?: number
+  toolCallsRequested?: number
+  toolCallsExecuted?: number
+}
+
 export interface LLMUsage {
   promptTokens: number
   completionTokens: number
@@ -211,6 +271,7 @@ export interface LLMUsage {
   promptTokensDetails?: LLMUsagePromptTokensDetails
   costDetails?: LLMUsageCostDetails
   completionTokensDetails?: LLMUsageCompletionTokensDetails
+  serverToolUseDetails?: LLMUsageServerToolUseDetails
 }
 
 export interface LLMChoiceMessage {

@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { TaskNoNestingFragment } from 'src/gql/generated'
 
-export function makeTaskLink(task: TaskNoNestingFragment) {
+export function createTaskLink(task: TaskNoNestingFragment) {
   const { id } = task
 
   return `/tasks/${id}`
@@ -13,7 +13,11 @@ type TaskLinkProps = {
 
 export const TaskLink: React.FC<TaskLinkProps> = ({ task, ...other }) => {
   return task ? (
-    <Link href={makeTaskLink(task)} title={task?.title || undefined} {...other}>
+    <Link
+      href={createTaskLink(task)}
+      title={task?.title || undefined}
+      {...other}
+    >
       {task?.title}
     </Link>
   ) : undefined

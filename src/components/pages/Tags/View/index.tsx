@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import React from 'react'
+import { createTagLink } from 'src/components/Link/Tag'
 import { Pagination } from 'src/components/Pagination'
 import { TagFragment, TagsConnectionQueryVariables } from 'src/gql/generated'
 
@@ -26,7 +27,7 @@ export const TagsView: React.FC<TagsViewProps> = ({
       {tags.map((n) => {
         return (
           <div key={n.id}>
-            <Link href={`/tag/${encodeURIComponent(n.name)}`}>{n.name}</Link>
+            <Link href={createTagLink(n)}>{n.name}</Link>
           </div>
         )
       })}

@@ -1,11 +1,11 @@
 import { PrimaryBtn } from '@/styles'
-import { TaskWorkLogEditForm } from 'src/components/pages/WorkLogs/WorkLog/Form'
 import { WorkLogCard } from 'src/components/WorkLogCard'
 import { TaskDetailedFragment } from 'src/gql/generated'
 import { useBoolean } from 'src/hooks/useBoolean'
 import { TaskWorkLogsStyled } from './styles'
 import { useCallback } from 'react'
 import { useApolloClient } from '@apollo/client/react'
+import { WorkLogForm } from 'src/components/pages/WorkLogs/WorkLog/Form'
 
 type TaskWorkLogsProps = {
   task: TaskDetailedFragment
@@ -27,9 +27,9 @@ export const TaskWorkLogs: React.FC<TaskWorkLogsProps> = ({ task }) => {
       ))}
 
       {inEditMode ? (
-        <TaskWorkLogEditForm
+        <WorkLogForm
           taskId={task.id}
-          taskWorkLog={undefined}
+          workLog={undefined}
           cancelHandler={stopEdit}
           onSuccess={onSuccess}
         />

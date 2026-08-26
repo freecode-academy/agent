@@ -73,11 +73,7 @@ export const deleteFactSchema = yup.object().shape({
 })
 
 export type FactOperation =
-  | 'myFacts'
-  | 'myFact'
-  | 'createFact'
-  | 'updateFact'
-  | 'deleteFact'
+  'myFacts' | 'myFact' | 'createFact' | 'updateFact' | 'deleteFact'
 
 export const factOperations: FactOperation[] = [
   'myFacts',

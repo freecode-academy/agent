@@ -1,4 +1,4 @@
-import { builder } from '../../../builder'
+import { builder } from 'server/schema/builder'
 import { MindLogWhereUniqueInput } from '../inputs'
 
 builder.mutationField('deleteMindLog', (t) =>
@@ -16,7 +16,7 @@ builder.mutationField('deleteMindLog', (t) =>
         throw new Error('MindLog id is empty')
       }
 
-      const existing = await ctx.prisma.mindLog.findFirst({
+      const existing = await ctx.prisma.mindLog.findUnique({
         where: {
           id: args.where.id,
           createdById: ctx.currentUser.id,

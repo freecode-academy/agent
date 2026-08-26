@@ -3,10 +3,7 @@ import dynamic from 'next/dynamic'
 
 import * as yup from 'yup'
 
-import {
-  TaskWorkLogEditFormStyled,
-  TaskWorkLogEditFormToolbarStyled,
-} from './styles'
+import { WorkLogFormStyled, WorkLogFormToolbarStyled } from './styles'
 
 import {
   Controller,
@@ -16,8 +13,8 @@ import {
 } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import {
-  TaskWorkLogCreateInput,
   TaskWorkLogFragment,
+  TaskWorkLogsDocument,
   useCreateTaskWorkLogMutation,
   UserStatusEnum,
   useUpdateTaskWorkLogMutation,
@@ -27,7 +24,6 @@ import { FormControl } from 'src/ui-kit/FormControl'
 import { Button } from 'src/ui-kit/Button'
 import { ComponentVariant } from 'src/ui-kit/interfaces'
 import { useAppContext } from 'src/components/AppContext'
-import { OfferBannerStyled } from 'src/components/Offer/styles'
 
 const MarkdownEditor = dynamic(
   () => import('src/components/Markdown/Editor').then((r) => r.MarkdownEditor),
@@ -36,38 +32,30 @@ const MarkdownEditor = dynamic(
   },
 )
 
-type FormData = TaskWorkLogCreateInput
-
-type getDefaultValuesProps = {
-  taskWorkLog: TaskWorkLogEditFormProps['taskWorkLog']
-  taskId: string
+type FormData = {
+  content: string
 }
 
-function getDefaultValues({
-  taskWorkLog,
-  taskId,
-}: getDefaultValuesProps): FormData {
+function getDefaultValues(workLog: WorkLogFormProps['workLog']): FormData {
   return {
-    content: taskWorkLog?.content ?? '',
-    taskId: taskWorkLog?.taskId ?? taskId,
+    content: workLog?.content ?? '',
   }
 }
 
 export const schema: yup.ObjectSchema<FormData> = yup.object().shape({
   content: yup.string().required(),
-  taskId: yup.string().required(),
 })
 
-type TaskWorkLogEditFormProps = {
+type WorkLogFormProps = {
+  workLog: TaskWorkLogFragment | undefined
   taskId: string
-  taskWorkLog: TaskWorkLogFragment | undefined
   cancelHandler: (() => void) | undefined
-  onSuccess?: (taskWorkLog: TaskWorkLogFragment) => void
+  onSuccess?: () => void
 }
 
-export const TaskWorkLogEditForm: React.FC<TaskWorkLogEditFormProps> = ({
+export const WorkLogForm: React.FC<WorkLogFormProps> = ({
+  workLog,
   taskId,
-  taskWorkLog,
   cancelHandler,
   onSuccess,
 }) => {
@@ -75,22 +63,19 @@ export const TaskWorkLogEditForm: React.FC<TaskWorkLogEditFormProps> = ({
 
   const { addMessage } = useSnackbar() || {}
 
-  const [createTaskWorkLogMutation, { loading: loadingCreateTaskWorkLog }] =
+  const [createWorkLogMutation, { loading: loadingCreate }] =
     useCreateTaskWorkLogMutation({
-      refetchQueries: [],
+      refetchQueries: [TaskWorkLogsDocument],
     })
-  const [updateTaskWorkLogMutation, { loading: loadingUpdateTaskWorkLog }] =
+  const [updateWorkLogMutation, { loading: loadingUpdate }] =
     useUpdateTaskWorkLogMutation({
-      refetchQueries: [],
+      refetchQueries: [TaskWorkLogsDocument],
     })
 
-  const loading = loadingCreateTaskWorkLog || loadingUpdateTaskWorkLog
+  const loading = loadingCreate || loadingUpdate
 
   const form = useForm<FormData>({
-    defaultValues: getDefaultValues({
-      taskWorkLog,
-      taskId,
-    }),
+    defaultValues: getDefaultValues(workLog),
     resolver: yupResolver(schema),
     shouldFocusError: false,
     reValidateMode: 'onChange',
@@ -98,46 +83,43 @@ export const TaskWorkLogEditForm: React.FC<TaskWorkLogEditFormProps> = ({
   })
 
   const onSubmit = useCallback(
-    (event: React.FormEvent) => {
+    (event: React.SubmitEvent) => {
       event.preventDefault()
 
       form
         .trigger()
         .then(async (reason) => {
           if (reason === true) {
-            const { ...other } = form.getValues()
+            const { content } = form.getValues()
 
-            const request = taskWorkLog
-              ? updateTaskWorkLogMutation({
+            const request = workLog
+              ? updateWorkLogMutation({
                   variables: {
-                    data: {
-                      ...other,
-                    },
-                    where: {
-                      id: taskWorkLog.id,
-                    },
+                    data: { content },
+                    where: { id: workLog.id },
                   },
                 })
-              : createTaskWorkLogMutation({
+              : createWorkLogMutation({
                   variables: {
                     data: {
-                      ...other,
+                      content,
+                      taskId,
                     },
                   },
                 })
 
             request
               .then((r) => {
-                const taskWorkLog = r.data?.response
+                const result = r.data?.response
 
-                if (taskWorkLog) {
+                if (result) {
                   addMessage?.('Success', {
                     variant: 'success',
                   })
 
+                  form.reset()
                   cancelHandler?.()
-
-                  onSuccess?.(taskWorkLog)
+                  onSuccess?.()
                 } else {
                   addMessage?.('Error', { variant: 'error' })
                 }
@@ -162,54 +144,54 @@ export const TaskWorkLogEditForm: React.FC<TaskWorkLogEditFormProps> = ({
     },
     [
       addMessage,
-      cancelHandler,
-      createTaskWorkLogMutation,
+      createWorkLogMutation,
       form,
+      workLog,
+      updateWorkLogMutation,
+      cancelHandler,
+      taskId,
       onSuccess,
-      taskWorkLog,
-      updateTaskWorkLogMutation,
     ],
   )
 
   const fieldRenderer = useCallback<
     ControllerProps<FormData, 'content'>['render']
-  >(({ field: { name, value, onChange }, fieldState: { error } }) => {
-    let label: string
-    const helperText = undefined
-    let EditorComponent: typeof MarkdownEditor
+  >(
+    ({
+      field: { name, value, onChange, onBlur: _onBlur },
+      fieldState: { error },
+    }) => {
+      let label: string
+      const helperText = undefined
+      const EditorComponent = MarkdownEditor
 
-    switch (name) {
-      case 'content':
-        label = 'Content'
-        EditorComponent = MarkdownEditor
-        break
-    }
+      switch (name) {
+        case 'content':
+          label = 'Content'
+          break
+      }
 
-    return (
-      <FormControl
-        label={label}
-        helperText={error ? error.message : helperText}
-        error={!!error}
-      >
-        <EditorComponent value={value || ''} onChange={onChange} />
-      </FormControl>
-    )
-  }, [])
+      return (
+        <FormControl
+          label={label}
+          helperText={error ? error.message : helperText}
+          error={!!error}
+        >
+          <EditorComponent value={value || ''} onChange={onChange} />
+        </FormControl>
+      )
+    },
+    [],
+  )
 
   const isActive = currentUser && currentUser.status === UserStatusEnum.ACTIVE
 
   return (
     <FormProvider {...form}>
-      <TaskWorkLogEditFormStyled onSubmit={onSubmit}>
-        {!isActive && (
-          <OfferBannerStyled>
-            You cannot publish taskTaskWorkLogs until you are activated
-          </OfferBannerStyled>
-        )}
-
+      <WorkLogFormStyled onSubmit={onSubmit}>
         <Controller name="content" render={fieldRenderer} />
 
-        <TaskWorkLogEditFormToolbarStyled>
+        <WorkLogFormToolbarStyled>
           {cancelHandler && (
             <Button
               variant={ComponentVariant.SECONDARY}
@@ -227,8 +209,8 @@ export const TaskWorkLogEditForm: React.FC<TaskWorkLogEditFormProps> = ({
           >
             Save
           </Button>
-        </TaskWorkLogEditFormToolbarStyled>
-      </TaskWorkLogEditFormStyled>
+        </WorkLogFormToolbarStyled>
+      </WorkLogFormStyled>
     </FormProvider>
   )
 }

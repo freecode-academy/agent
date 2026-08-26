@@ -11,6 +11,7 @@ export const TasksPage: Page<TasksPageProps> = ({
   selectedStatus,
   page,
   projectId,
+  siteOrigin,
 }) => {
   const { user: currentUser } = useAppContext()
 
@@ -23,13 +24,20 @@ export const TasksPage: Page<TasksPageProps> = ({
   const response = useTasksWithCountQuery({
     variables,
     pollInterval: 60000,
+    fetchPolicy: 'cache-and-network',
   })
 
   const tasks = response.data?.tasks || []
 
   return (
     <>
-      <SeoHeaders title="Tasks" />
+      <SeoHeaders
+        title="Tasks"
+        siteOrigin={siteOrigin}
+        canonical={`/tasks${page > 1 ? `?page=${page}` : ''}`}
+        nofollow
+        noindex
+      />
       <TasksView
         tasks={tasks}
         page={page}

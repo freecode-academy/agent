@@ -8,16 +8,16 @@ import { FormattedDate } from 'src/ui-kit/format/FormattedDate'
 import {
   TaskCardStyled,
   TaskCardTitle,
-  TaskCardStatus,
   TaskCardMeta,
   TaskCardDescription,
   TaskCardCardTitleStyled,
 } from './styles'
-import { TaskStatusBadge } from '../TaskStatusBadge'
 import Link from 'next/link'
 import { Markdown } from '../Markdown'
 import { TaskWorkLogs } from './WorkLogs'
 import { ProjectLink } from '../Link/Project'
+import { TaskCardStatus } from './TaskStatus'
+import { useAppContext } from '../AppContext'
 
 type TaskCardProps = {
   task: TaskFragment | TaskDetailedFragment
@@ -37,6 +37,13 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, variant }) => {
   //   skip: !task.id || variant !== 'full',
   // })
 
+  const { user: currentUser } = useAppContext()
+
+  const canEdit =
+    currentUser && task.createdById === currentUser.id && variant === 'full'
+      ? true
+      : false
+
   const Project = 'Project' in task ? task.Project : undefined
 
   return (
@@ -53,9 +60,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, variant }) => {
         )}
       </TaskCardTitle>
 
-      <TaskCardStatus>
-        {task.status && <TaskStatusBadge status={task.status} task={task} />}
-      </TaskCardStatus>
+      <TaskCardStatus canEdit={canEdit} status={task.status} taskId={task.id} />
 
       <TaskCardMeta>
         {task.createdAt && (

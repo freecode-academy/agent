@@ -37,7 +37,7 @@ function getQueryParams(query: ParsedUrlQuery) {
   }
 }
 
-export const TagsPage: Page = () => {
+export const TagsPage: Page = ({ siteOrigin }) => {
   const router = useRouter()
 
   const { query } = router
@@ -63,6 +63,8 @@ export const TagsPage: Page = () => {
         description={
           'Explore content by tags. Find articles, tutorials, and discussions organized by technology and topic.'
         }
+        canonical={'/tags'}
+        siteOrigin={siteOrigin}
       />
 
       <View
@@ -81,6 +83,7 @@ export const TagsPage: Page = () => {
 TagsPage.getInitialProps = async (context) => {
   const { apolloClient } = context
 
+  // eslint-disable-next-line @typescript-eslint/no-deprecated
   const result = await apolloClient.query<TagsConnectionQuery>({
     query: TagsConnectionDocument,
 

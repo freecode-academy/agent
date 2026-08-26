@@ -15,13 +15,18 @@ export const TaskCardCardTitleStyled = styled.span`
   `)}
 `
 
+export const TaskCardToolbar = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing.sm};
+`
+
 export const TaskCardTitle = styled.h3`
   margin: 0;
   font-size: 1rem;
   font-weight: 600;
+  flex: 1;
 `
-
-export const TaskCardStatus = styled.div``
 
 export const TaskCardMeta = styled.div`
   display: flex;

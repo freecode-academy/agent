@@ -1,7 +1,7 @@
-import { builder } from '../../../builder'
+import { builder } from 'server/schema/builder'
 import { AuthPayload, UserSignupDataInput } from '../inputs'
 import { createToken, hashPassword, TokenType } from '../helpers/auth'
-import { UserStatus } from '@prisma/client'
+import { Prisma, UserStatus } from '@prisma/client'
 import { checkReferrerToken } from '../helpers/checkReferrerToken'
 
 builder.mutationField('signup', (t) =>
@@ -11,11 +11,21 @@ builder.mutationField('signup', (t) =>
       data: t.arg({ type: UserSignupDataInput, required: true }),
     },
     resolve: async (_root, args, ctx) => {
-      const password = args.data.password
-      const email = args.data.email || undefined
-      const username = args.data.username || undefined
-      const fullname = args.data.fullname || undefined
-      const referrerToken = args.data.referrerToken
+      // const password = args.data.password
+      // const email = args.data.email || undefined
+      // const username = args.data.username || undefined
+      // const fullname = args.data.fullname || undefined
+      // const referrerToken = args.data.referrerToken
+
+      const {
+        password,
+        email,
+        fullname,
+        referrerToken,
+        username,
+        isAiAgent,
+        ...other
+      } = args.data
 
       const referrerId = await checkReferrerToken({
         referrerToken,
@@ -24,7 +34,7 @@ builder.mutationField('signup', (t) =>
 
       if (
         email &&
-        (await ctx.prisma.user.findFirst({
+        (await ctx.prisma.user.findUnique({
           where: { email },
         }))
       ) {
@@ -33,7 +43,7 @@ builder.mutationField('signup', (t) =>
 
       if (
         username &&
-        (await ctx.prisma.user.findFirst({
+        (await ctx.prisma.user.findUnique({
           where: { username },
         }))
       ) {
@@ -49,8 +59,7 @@ builder.mutationField('signup', (t) =>
       let status: UserStatus
 
       const defaultStatus = process.env.USER_DEFAULT_STATUS as
-        | undefined
-        | keyof typeof UserStatus
+        undefined | keyof typeof UserStatus
 
       if (defaultStatus) {
         if (Object.values(UserStatus).includes(defaultStatus)) {
@@ -62,15 +71,25 @@ builder.mutationField('signup', (t) =>
         status = UserStatus.active
       }
 
+      const data: Prisma.UserCreateInput = {
+        ...other,
+        email,
+        username,
+        fullname,
+        password: hashedPassword,
+        status,
+        isAiAgent: isAiAgent ?? undefined,
+        Referrer: referrerId
+          ? {
+              connect: {
+                id: referrerId,
+              },
+            }
+          : undefined,
+      }
+
       const user = await ctx.prisma.user.create({
-        data: {
-          email,
-          username,
-          fullname,
-          password: hashedPassword,
-          status,
-          referrerId,
-        },
+        data,
       })
 
       const token = await createToken(user, ctx, TokenType.Auth)

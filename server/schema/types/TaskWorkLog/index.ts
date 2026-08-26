@@ -7,16 +7,10 @@ builder.prismaObject('TaskWorkLog', {
       nullable: false,
     }),
     createdAt: t.expose('createdAt', { type: 'DateTime', nullable: false }),
-    content: t.exposeString('content', {
-      nullable: false,
-    }),
-    taskId: t.exposeID('taskId', {
-      nullable: false,
-    }),
+    content: t.exposeString('content'),
+    taskId: t.exposeID('taskId', { nullable: false }),
     Task: t.relation('Task'),
-    createdById: t.exposeID('createdById', {
-      nullable: false,
-    }),
+    createdById: t.exposeID('createdById', { nullable: false }),
     CreatedBy: t.relation('CreatedBy'),
   }),
 })
@@ -29,5 +23,5 @@ import './resolvers/taskWorkLog'
 import './resolvers/taskWorkLogs'
 import './resolvers/taskWorkLogsCount'
 import './resolvers/createTaskWorkLog'
-import './resolvers/update'
+import './resolvers/updateTaskWorkLog'
 import './resolvers/deleteTaskWorkLog'

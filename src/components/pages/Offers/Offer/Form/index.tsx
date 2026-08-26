@@ -97,7 +97,7 @@ export const OfferEditForm: React.FC<OfferEditFormProps> = ({
   })
 
   const onSubmit = useCallback(
-    (event: React.FormEvent) => {
+    (event: React.SubmitEvent) => {
       event.preventDefault()
 
       form

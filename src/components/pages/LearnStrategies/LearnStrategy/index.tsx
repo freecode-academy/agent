@@ -52,6 +52,8 @@ export const LearnStrategyPage: Page = () => {
         <SeoHeaders
           title={learnStrategy.name || 'Learn strategy'}
           description={learnStrategy.description || learnStrategy.name}
+          canonical={undefined}
+          siteOrigin={undefined}
         />
 
         <LearnStrategyPageStyled>
@@ -68,7 +70,8 @@ LearnStrategyPage.getInitialProps = async (context) => {
   const variables = getLearnStrategyVariables(context)
 
   const response = variables.where
-    ? await apolloClient.query<LearnStrategyQuery>({
+    ? // eslint-disable-next-line @typescript-eslint/no-deprecated
+      await apolloClient.query<LearnStrategyQuery>({
         query: LearnStrategyDocument,
 
         /**

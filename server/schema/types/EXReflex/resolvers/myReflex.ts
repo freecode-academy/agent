@@ -1,4 +1,4 @@
-import { builder } from '../../../builder'
+import { builder } from 'server/schema/builder'
 
 builder.queryField('myReflex', (t) =>
   t.prismaField({
@@ -12,7 +12,7 @@ builder.queryField('myReflex', (t) =>
         throw new Error('Unauthorized')
       }
 
-      return ctx.prisma.eXReflex.findFirst({
+      return ctx.prisma.eXReflex.findUnique({
         ...query,
         where: {
           id: args.id,

@@ -10,11 +10,7 @@ export type {
 } from './interfaces'
 
 export type ConnectionStatus =
-  | 'idle'
-  | 'connecting'
-  | 'connected'
-  | 'error'
-  | 'session_replaced'
+  'idle' | 'connecting' | 'connected' | 'error' | 'session_replaced'
 
 /**
  * Multiplayer WebSocket hook — connects to world3d WS server.

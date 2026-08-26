@@ -41,7 +41,7 @@ function getQueryParams(query: ParsedUrlQuery) {
   }
 }
 
-export const TechnologiesPage: Page = () => {
+export const TechnologiesPage: Page = ({ siteOrigin }) => {
   const router = useRouter()
 
   const { query } = router
@@ -85,6 +85,8 @@ export const TechnologiesPage: Page = () => {
         description={
           'Explore technologies used by our experts. Find specialists in React, Node.js, TypeScript, Python, and more.'
         }
+        canonical={'/technologies'}
+        siteOrigin={siteOrigin}
       />
 
       {inited && (

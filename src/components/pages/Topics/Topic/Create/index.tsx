@@ -5,7 +5,13 @@ import { ResourceEditForm } from '../Form'
 export const ResourceCreatePage: Page = () => {
   return (
     <>
-      <SeoHeaders title="Create resource" noindex nofollow />
+      <SeoHeaders
+        title="Create resource"
+        noindex
+        nofollow
+        canonical={undefined}
+        siteOrigin={undefined}
+      />
 
       <ResourceEditForm
         resource={undefined}

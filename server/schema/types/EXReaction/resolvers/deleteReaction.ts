@@ -1,4 +1,4 @@
-import { builder } from '../../../builder'
+import { builder } from 'server/schema/builder'
 
 builder.mutationField('deleteReaction', (t) =>
   t.prismaField({
@@ -11,7 +11,7 @@ builder.mutationField('deleteReaction', (t) =>
         throw new Error('Unauthorized')
       }
 
-      const existingReaction = await ctx.prisma.eXReaction.findFirst({
+      const existingReaction = await ctx.prisma.eXReaction.findUnique({
         where: {
           id: args.id,
           createdById: ctx.currentUser.id,

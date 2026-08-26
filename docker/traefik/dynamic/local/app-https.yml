@@ -1,0 +1,66 @@
+tls:
+  certificates:
+    - certFile: /etc/traefik/certs/localhost.crt
+      keyFile: /etc/traefik/certs/localhost.key
+
+http:
+  routers:
+    # static-https:
+    #   rule: 'PathRegexp(`^.*\.(js|css|woff2?|ttf|eot|svg|ico|png|jpg|jpeg|gif|webp|avif)$`)'
+    #   entryPoints:
+    #     - websecure
+    #   service: varnish
+    #   priority: 100
+    #   tls: {}
+
+    n8n-webhook-https:
+      rule: 'PathPrefix(`/webhook`)'
+      entryPoints:
+        - websecure
+      service: n8n
+      priority: 100
+      tls: {}
+
+    n8n-webhook-test-https:
+      rule: 'PathPrefix(`/webhook-test`)'
+      entryPoints:
+        - websecure
+      service: n8n
+      priority: 100
+      tls: {}
+
+    n8n-mcp-https:
+      rule: 'PathPrefix(`/mcp`)'
+      entryPoints:
+        - websecure
+      service: n8n
+      priority: 100
+      tls: {}
+
+    n8n-https:
+      rule: 'Host(`n8n.localhost`)'
+      entryPoints:
+        - websecure
+      service: n8n
+      priority: 100
+      tls: {}
+
+    app-https:
+      rule: 'PathPrefix(`/`)'
+      entryPoints:
+        - websecure
+      middlewares:
+        - compress
+      service: app
+      priority: 1
+      tls: {}
+
+    world3d-https:
+      rule: 'PathPrefix(`/world3d-service`)'
+      entryPoints:
+        - websecure
+      middlewares:
+        - world3d-strip-prefix
+      service: world3d
+      priority: 100
+      tls: {}

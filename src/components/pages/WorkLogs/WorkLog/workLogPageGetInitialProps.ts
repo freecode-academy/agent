@@ -15,14 +15,17 @@ export const workLogPageGetInitialProps: Page<WorkLogPageProps>['getInitialProps
     const variables = getWorkLogQueryVariables(workLogId)
 
     const workLog = workLogId
-      ? await apolloClient.query<TaskWorkLogQuery, TaskWorkLogQueryVariables>({
-          query: TaskWorkLogDocument,
-          variables,
-        })
+      ? await apolloClient
+          // eslint-disable-next-line @typescript-eslint/no-deprecated
+          .query<TaskWorkLogQuery, TaskWorkLogQueryVariables>({
+            query: TaskWorkLogDocument,
+            variables,
+          })
+          .then((r) => r.data?.response)
       : undefined
 
     return {
       workLogId,
-      statusCode: !workLog?.data?.response ? 404 : undefined,
+      statusCode: !workLog ? 404 : undefined,
     }
   }

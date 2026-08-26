@@ -307,13 +307,15 @@ const FinalCTA = styled.section`
     ${theme.bg};
 `
 
-export const MainPage: Page = () => {
+export const MainPage: Page = ({ siteOrigin }) => {
   const siteTitle = process.env.NEXT_PUBLIC_MAIN_PAGE_TITLE
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || ''
 
   return (
     <>
-      {siteTitle && <SeoHeaders title={siteTitle} />}
+      {siteTitle && (
+        <SeoHeaders title={siteTitle} canonical={'/'} siteOrigin={siteOrigin} />
+      )}
       <JsonLd
         data={createWebSite({
           name: siteTitle || '',

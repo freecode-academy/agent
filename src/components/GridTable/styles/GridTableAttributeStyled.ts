@@ -9,7 +9,7 @@ export type GridTableAttributeStyledProps = {
 
 export const GridTableAttributeStyled = styled.div<GridTableAttributeStyledProps>`
   @media screen and (max-width: ${({ theme }) =>
-      `${theme.breakpoints.sm - 1}px`}) {
+    `${theme.breakpoints.sm - 1}px`}) {
     border-bottom: 1px solid lightgrey;
 
     &::before {

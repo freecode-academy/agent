@@ -40,18 +40,18 @@ type PermissionsRuleTree = {
 
 const ruleTree = {
   Query: {
+    teamMembers: isSudo,
+
     ethAccount: isSudo,
     ethAccounts: isSudo,
-    concepts: isSudo,
+    // concepts: isSudo,
     facts: isSudo,
     factParticipations: isSudo,
     factProjections: isSudo,
     knowledgeSpaces: isSudo,
-
-    teamMembers: isSudo,
-    filesCount: isSudo,
-    files: isSudo,
-    file: isSudo,
+    // file: isSudo,
+    // files: isSudo,
+    // filesCount: isSudo,
   },
   Mutation: {
     createResource: isSudo,
@@ -88,6 +88,8 @@ const ruleTree = {
     signPost: isActive,
     world3dObjectCreate: isActive,
     sendMail: isSudo,
+    createRedirectRule: isSudo,
+    createSiteRoute: isSudo,
   },
 } satisfies PermissionsRuleTree
 

@@ -21,7 +21,12 @@ const CodeChallengeDiscuss: React.FC<CodeChallengeDiscussProps> = (props) => {
 
   return (
     <>
-      <SeoHeaders title={title} noindex={!topicId} />
+      <SeoHeaders
+        title={title}
+        noindex={!topicId}
+        canonical={undefined}
+        siteOrigin={undefined}
+      />
 
       {topic}
     </>

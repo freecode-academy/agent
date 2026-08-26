@@ -21,6 +21,7 @@ export const resourcePageGetInitialProps: Page<ResourcePageProps>['getInitialPro
 
     const resource = uri
       ? await apolloClient
+          // eslint-disable-next-line @typescript-eslint/no-deprecated
           .query<ResourceQuery, ResourceQueryVariables>({
             query: ResourceDocument,
             variables: {

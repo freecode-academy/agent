@@ -168,7 +168,7 @@ const UserTechnologyRow: React.FC<UserTechnologyRowProps> = ({
   // }, [])
 
   // const onSubmit = useCallback(
-  //   (event: React.FormEvent) => {
+  //   (event: React.SubmitEvent) => {
   //     event.preventDefault()
 
   //     data &&

@@ -1,4 +1,4 @@
-import { builder } from '../../../builder'
+import { builder } from 'server/schema/builder'
 
 builder.mutationField('deleteProposal', (t) =>
   t.prismaField({
@@ -11,7 +11,7 @@ builder.mutationField('deleteProposal', (t) =>
         throw new Error('Unauthorized')
       }
 
-      const existingProposal = await ctx.prisma.kBProposal.findFirst({
+      const existingProposal = await ctx.prisma.kBProposal.findUnique({
         where: {
           id: args.id,
           createdById: ctx.currentUser.id,

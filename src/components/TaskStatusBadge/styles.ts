@@ -20,6 +20,7 @@ export const TaskStatusBadgeStyled = styled.button<{
 }>`
   display: inline-block;
   padding: 4px 8px;
+  border: none;
   border-radius: 4px;
   font-size: 0.75rem;
   font-weight: 500;

@@ -28,7 +28,8 @@
     "incremental": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/components/LayoutV2/*"]
+      "@/*": ["./src/components/LayoutV2/*"],
+      ".storybook/*": [".storybook/*"]
     }
   },
   "include": [

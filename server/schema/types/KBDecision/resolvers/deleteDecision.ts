@@ -1,4 +1,4 @@
-import { builder } from '../../../builder'
+import { builder } from 'server/schema/builder'
 
 builder.mutationField('deleteDecision', (t) =>
   t.prismaField({
@@ -11,7 +11,7 @@ builder.mutationField('deleteDecision', (t) =>
         throw new Error('Unauthorized')
       }
 
-      const existingDecision = await ctx.prisma.kBDecision.findFirst({
+      const existingDecision = await ctx.prisma.kBDecision.findUnique({
         where: {
           id: args.id,
           createdById: ctx.currentUser.id,

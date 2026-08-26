@@ -1,6 +1,7 @@
 import {
   MeUserFragment,
   ProjectsConnectionDocument,
+  ProjectsConnectionQuery,
   ProjectsConnectionQueryVariables,
   useProjectsConnectionQuery,
 } from 'src/gql/generated'
@@ -34,7 +35,7 @@ type ProjectsPageProps = PageProps & {
   page: number
 }
 
-export const ProjectsPage: Page<ProjectsPageProps> = ({ page }) => {
+export const ProjectsPage: Page<ProjectsPageProps> = ({ page, siteOrigin }) => {
   const { user: currentUser } = useAppContext()
 
   const response = useProjectsConnectionQuery({
@@ -53,6 +54,8 @@ export const ProjectsPage: Page<ProjectsPageProps> = ({ page }) => {
         description={
           'Explore projects built by our community. Find open-source work, case studies, and collaboration opportunities.'
         }
+        canonical={'/projects'}
+        siteOrigin={siteOrigin}
       />
 
       <View
@@ -75,7 +78,11 @@ ProjectsPage.getInitialProps = async ({ query, apolloClient }) => {
       ? parseInt(pageParam, 10)
       : 1
 
-  await apolloClient.query({
+  // eslint-disable-next-line @typescript-eslint/no-deprecated
+  const result = await apolloClient.query<
+    ProjectsConnectionQuery,
+    ProjectsConnectionQueryVariables
+  >({
     query: ProjectsConnectionDocument,
     variables: getVariables({
       currentUser,
@@ -85,5 +92,6 @@ ProjectsPage.getInitialProps = async ({ query, apolloClient }) => {
 
   return {
     page,
+    statusCode: !result.data?.projects?.length && page > 1 ? 404 : undefined,
   }
 }

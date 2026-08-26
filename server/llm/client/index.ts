@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import {
   LLMClientChatCompletionRequest,
   LLMClientCompletionRequest,
@@ -14,6 +13,7 @@ import {
   LLMUsage,
   LLMChoice,
   LLMChoiceMessage,
+  LLM_TOP_MODELS,
 } from './interfaces'
 
 interface ProviderConfig {
@@ -85,6 +85,13 @@ function mapUsage(raw: LLMClientRawUsage | undefined): LLMUsage | undefined {
           audioTokens: raw.completion_tokens_details.audio_tokens,
         }
       : undefined,
+    serverToolUseDetails: raw.server_tool_use_details
+      ? {
+          webSearchRequests: raw.server_tool_use_details.web_search_requests,
+          toolCallsRequested: raw.server_tool_use_details.tool_calls_requested,
+          toolCallsExecuted: raw.server_tool_use_details.tool_calls_executed,
+        }
+      : undefined,
   }
 }
 
@@ -131,28 +138,83 @@ export class LLMClient {
       headers['Authorization'] = `Bearer ${config.apiKey}`
     }
 
-    const response = await fetch(url, {
-      ...options,
-      headers,
-    }).catch((error) => {
+    const CONNECT_TIMEOUT_MS = 15_000
+
+    // TODO Add argument
+    const RESPONSE_TIMEOUT_MS = 60_000
+
+    const connectController = new AbortController()
+    const connectTimer = setTimeout(
+      () => connectController.abort(),
+      CONNECT_TIMEOUT_MS,
+    )
+
+    let response: Response
+    try {
+      response = await fetch(url, {
+        ...options,
+        headers,
+        signal: connectController.signal,
+      })
+    } catch (error) {
+      clearTimeout(connectTimer)
+      if (error instanceof Error && error.name === 'AbortError') {
+        throw new Error(
+          `[llmClient] ${method} ${url} connection timeout (${CONNECT_TIMEOUT_MS}ms)`,
+        )
+      }
+      if (process.env.NODE_ENV === 'development') {
+        console.error(error)
+      }
+      throw error
+    }
+    clearTimeout(connectTimer)
+
+    const responseController = new AbortController()
+    const responseTimer = setTimeout(
+      () => responseController.abort(),
+      RESPONSE_TIMEOUT_MS,
+    )
+
+    if (!response.ok) {
+      clearTimeout(responseTimer)
+      const errorText = await response.text()
+      throw new Error(
+        `[llmClient] ${method} ${url} failed with status ${response.status}: ${errorText}`,
+      )
+    }
+
+    // const result: T = await response.json()
+
+    let text: string
+    try {
+      text = await Promise.race([
+        response.text(),
+        new Promise<never>((_, reject) => {
+          responseController.signal.addEventListener('abort', () =>
+            reject(
+              new Error(
+                `[llmClient] ${method} ${url} response timeout (${RESPONSE_TIMEOUT_MS}ms)`,
+              ),
+            ),
+          )
+        }),
+      ])
+    } finally {
+      clearTimeout(responseTimer)
+    }
+
+    try {
+      const result: T = JSON.parse(text)
+
+      return result
+    } catch (error) {
       if (process.env.NODE_ENV === 'development') {
         console.error(error)
       }
 
-      throw error
-    })
-
-    if (!response.ok) {
-      throw new Error(
-        `[llmClient] ${method} ${url} failed with status ${response.status}`,
-      )
+      throw new Error('Can not parse json')
     }
-
-    const result: T = await response.json()
-
-    console.log('result', JSON.stringify(result, null, 2))
-
-    return result
   }
 
   async completion(
@@ -179,16 +241,14 @@ export class LLMClient {
       id: raw.id,
       object: raw.object,
       created: raw.created,
-      choices: raw.choices.map(
-        (c): LLMChoice => ({
-          index: c.index,
-          message: {
-            role: 'assistant',
-            content: c.text,
-          },
-          finishReason: c.finish_reason,
-        }),
-      ),
+      choices: raw.choices.map((c): LLMChoice => ({
+        index: c.index,
+        message: {
+          role: 'assistant',
+          content: c.text,
+        },
+        finishReason: c.finish_reason,
+      })),
       usage: mapUsage(raw.usage),
     }
   }
@@ -198,12 +258,20 @@ export class LLMClient {
     model: LlmModel,
     request: LLMClientChatCompletionRequest,
   ): Promise<LLMResponse> {
+    const { providerOptions, ...requestBody } = request
+
+    const body = {
+      ...requestBody,
+      model,
+      ...(providerOptions ? { provider: providerOptions } : {}),
+    }
+
     const raw = await this.fetch<LLMClientRawChatCompletionResponse>(
       provider,
       '/chat/completions',
       {
         method: 'POST',
-        body: JSON.stringify({ ...request, model }),
+        body: JSON.stringify(body),
       },
     )
 
@@ -211,13 +279,11 @@ export class LLMClient {
       id: raw.id,
       object: raw.object,
       created: raw.created,
-      choices: raw.choices.map(
-        (c): LLMChoice => ({
-          index: c.index,
-          message: mapChatMessage(c.message),
-          finishReason: c.finish_reason,
-        }),
-      ),
+      choices: raw.choices.map((c): LLMChoice => ({
+        index: c.index,
+        message: mapChatMessage(c.message),
+        finishReason: c.finish_reason,
+      })),
       usage: mapUsage(raw.usage),
     }
   }
@@ -227,6 +293,13 @@ export class LLMClient {
     model: LlmModel,
     request: LLMClientImageGenerationRequest,
   ): Promise<LLMResponse> {
+    if (
+      LLM_TOP_MODELS.includes(model) &&
+      process.env.LLM_ALLOW_TOP_MODELS !== 'true'
+    ) {
+      throw new Error('LLM top models is not allowed')
+    }
+
     const raw = await this.fetch<LLMClientRawImageGenerationResponse>(
       provider,
       '/chat/completions',
@@ -234,7 +307,13 @@ export class LLMClient {
         method: 'POST',
         body: JSON.stringify({ ...request, model }),
       },
-    )
+    ).catch((error) => {
+      if (process.env.NODE_ENV === 'development') {
+        console.error(error)
+      }
+
+      throw error
+    })
 
     if (raw.error) {
       throw new Error(raw.error.message || 'Image generation failed')
@@ -244,19 +323,17 @@ export class LLMClient {
       id: raw.id,
       object: raw.object,
       created: raw.created,
-      choices: raw.choices.map(
-        (c): LLMChoice => ({
-          index: c.index,
-          message: {
-            role: c.message.role,
-            content: c.message.content,
-            images: c.message.images?.map((img) => ({
-              imageUrl: img.image_url.url,
-            })),
-          },
-          finishReason: c.finish_reason,
-        }),
-      ),
+      choices: raw.choices.map((c): LLMChoice => ({
+        index: c.index,
+        message: {
+          role: c.message.role,
+          content: c.message.content,
+          images: c.message.images?.map((img) => ({
+            imageUrl: img.image_url.url,
+          })),
+        },
+        finishReason: c.finish_reason,
+      })),
       usage: mapUsage(raw.usage),
     }
   }

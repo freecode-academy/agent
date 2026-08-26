@@ -1,4 +1,4 @@
-import { builder } from '../../../builder'
+import { builder } from 'server/schema/builder'
 
 builder.queryField('myFactProjection', (t) =>
   t.prismaField({
@@ -11,7 +11,7 @@ builder.queryField('myFactProjection', (t) =>
         throw new Error('Unauthorized')
       }
 
-      const projection = await ctx.prisma.kBFactProjection.findFirst({
+      const projection = await ctx.prisma.kBFactProjection.findUnique({
         ...query,
         where: {
           id: args.id,

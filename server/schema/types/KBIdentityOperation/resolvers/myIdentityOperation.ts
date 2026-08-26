@@ -1,4 +1,4 @@
-import { builder } from '../../../builder'
+import { builder } from 'server/schema/builder'
 
 builder.queryField('myIdentityOperation', (t) =>
   t.prismaField({
@@ -11,7 +11,7 @@ builder.queryField('myIdentityOperation', (t) =>
         throw new Error('Unauthorized')
       }
 
-      const operation = await ctx.prisma.kBIdentityOperation.findFirst({
+      const operation = await ctx.prisma.kBIdentityOperation.findUnique({
         ...query,
         where: {
           id: args.id,

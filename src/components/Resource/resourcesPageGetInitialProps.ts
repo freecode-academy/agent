@@ -20,6 +20,7 @@ export function resourcesPageGetInitialProps(
         ? parseInt(query.page, 10)
         : 1
 
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
     await apolloClient.query<
       ResourcesConnectionQuery,
       ResourcesConnectionQueryVariables

@@ -37,7 +37,7 @@ type OffersPageProps = PageProps & {
   page: number
 }
 
-export const OffersPage: Page<OffersPageProps> = ({ page }) => {
+export const OffersPage: Page<OffersPageProps> = ({ page, siteOrigin }) => {
   const { user: currentUser } = useAppContext()
 
   const offersResponse = useOffersConnectionQuery({
@@ -52,7 +52,11 @@ export const OffersPage: Page<OffersPageProps> = ({ page }) => {
 
   return (
     <>
-      <SeoHeaders title="Offers" />
+      <SeoHeaders
+        title="Offers"
+        canonical={'/offers'}
+        siteOrigin={siteOrigin}
+      />
       <OffersPageView
         offers={offers ?? []}
         count={count}
@@ -72,6 +76,7 @@ OffersPage.getInitialProps = async ({ query, apolloClient }) => {
       ? parseInt(pageParam, 10)
       : 1
 
+  // eslint-disable-next-line @typescript-eslint/no-deprecated
   await apolloClient.query<
     OffersConnectionQuery,
     OffersConnectionQueryVariables

@@ -50,7 +50,6 @@ export const TaskStatusUpdater: React.FC<TaskStatusUpdaterProps> = ({
           <TaskStatusBadge
             key={n}
             status={n}
-            task={undefined}
             active={task.status === n}
             disabled={loading}
             onClick={onClick}

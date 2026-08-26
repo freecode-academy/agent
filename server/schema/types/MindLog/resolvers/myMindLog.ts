@@ -1,4 +1,4 @@
-import { builder } from '../../../builder'
+import { builder } from 'server/schema/builder'
 import { MindLogWhereUniqueInput } from '../inputs'
 
 builder.queryField('myMindLog', (t) =>
@@ -18,7 +18,7 @@ builder.queryField('myMindLog', (t) =>
         throw new Error('MindLog ID is required')
       }
 
-      return ctx.prisma.mindLog.findFirst({
+      return ctx.prisma.mindLog.findUnique({
         ...query,
         where: {
           id: mindLogId,

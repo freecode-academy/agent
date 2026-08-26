@@ -1,4 +1,4 @@
-import { builder } from '../../../builder'
+import { builder } from 'server/schema/builder'
 
 builder.mutationField('deleteReflex', (t) =>
   t.prismaField({
@@ -11,7 +11,7 @@ builder.mutationField('deleteReflex', (t) =>
         throw new Error('Unauthorized')
       }
 
-      const existingReflex = await ctx.prisma.eXReflex.findFirst({
+      const existingReflex = await ctx.prisma.eXReflex.findUnique({
         where: {
           id: args.id,
           createdById: ctx.currentUser.id,

@@ -48,14 +48,14 @@ async function startServer() {
   stopGraphql = stop
 
   if (withN8N) {
-    // Start n8n as child process (waits for API to be ready)
-    await initN8n()
-
-    // Run bootstrap (create owner, import credentials if needed)
-    await runBootstrap()
+    // Start n8n as child process in background (non-blocking)
+    initN8n().then(() => runBootstrap())
   }
 
   const server = express()
+
+  // Trust proxy headers (X-Forwarded-Proto, X-Forwarded-For) from Traefik
+  server.set('trust proxy', true)
 
   // Proxy to n8n (webhook, webhook-test, mcp)
   const n8nUrl = process.env.N8N_URL || 'http://localhost:5678'
@@ -112,7 +112,7 @@ async function startServer() {
     await app.prepare()
 
     // Next.js handles everything else
-    server.get('*', (req, res) => {
+    server.get('{*path}', (req, res) => {
       return handle(req, res)
     })
   }

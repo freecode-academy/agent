@@ -56,6 +56,7 @@ model User {
   intro            String?    @db.Text
   content          String?    @db.Text
   rating           Int        @default(0)
+  isAiAgent        Boolean    @default(false)
 
   Tokens          Token[]
   EthAccount      EthAccount?
@@ -127,6 +128,8 @@ model User {
 
   OffersCreated Offer[] @relation(name: "OfferCreatedBy")
 
+  IncidentsResolved Incident[] @relation(name: "IncidentResolvedBy")
+
   @@unique([email])
   @@unique([username])
   @@index([CreatedBy], map: "User_CreatedBy")
@@ -179,7 +182,7 @@ model File {
   filename    String?  @db.Text
   mimetype    String   @db.Text
   encoding    String   @db.Text
-  hash        String?  @db.Text
+  hash        String?  @unique @db.VarChar(64)
   size        Decimal?
   rank        Int?
 
@@ -189,8 +192,8 @@ model File {
   createdAt DateTime @default(now()) @db.Timestamp(3)
   updatedAt DateTime @default(now()) @updatedAt @db.Timestamp(3)
 
-  CreatedBy String? @db.VarChar(36)
-  User      User?   @relation(fields: [CreatedBy], references: [id])
+  createdById String? @db.VarChar(36)
+  CreatedBy   User?   @relation(fields: [createdById], references: [id])
 
   KBConceptFiles KBConceptFile[]
 
@@ -207,7 +210,7 @@ model File {
   // Eof Custom
   // ==============================================
 
-  @@index([CreatedBy], map: "File_CreatedBy")
+  @@index([createdById], map: "File_CreatedBy")
   @@index([Gallery], map: "File_Gallery")
   @@index([ImageResource], map: "File_ImageResource")
 }
@@ -300,8 +303,7 @@ model Task {
   id               String     @id @default(cuid()) @db.VarChar(36)
   createdAt        DateTime   @default(now()) @db.Timestamp(3)
   updatedAt        DateTime   @default(now()) @updatedAt @db.Timestamp(3)
-  name             String     @db.Text
-  title            String?    @db.Text
+  title            String     @db.Text
   description      String?    @db.Text
   content          String?    @db.Text
   status           TaskStatus @default(value: New)
@@ -366,6 +368,12 @@ model TaskWorkLog {
 // - One KB = one subject of cognition
 // ============================================
 
+enum KBConceptVisibility {
+  public
+  hidden
+  unpublished
+}
+
 // Concept: A semantic anchor representing an entity in the knowledge graph.
 // Can be a person, organization, event, abstract idea, etc.
 // Concepts are intentionally loose — they can be drafts, poorly defined initially.
@@ -380,8 +388,8 @@ model KBConcept {
   name        String   @db.VarChar(500)
   // Brief description of what this concept represents
   description String?  @db.Text
-
-  content String? @db.Text
+  intro       String?  @db.Text
+  content     String?  @db.Text
 
   image String? @db.Text
 
@@ -409,6 +417,18 @@ model KBConcept {
   Descendants KBConcept[] @relation("ConceptRoot")
 
   KBConceptFiles KBConceptFile[]
+  SiteRoute      SiteRoute?
+
+  uri String? @unique @db.VarChar(1024)
+
+  // File
+  path     String? @unique @db.VarChar(1024)
+  mimetype String? @db.VarChar(100)
+  hash     String? @unique @db.VarChar(64)
+  size     Float?
+
+  quality    Float               @default(0.7)
+  visibility KBConceptVisibility @default(hidden)
 
   @@unique([rootId, code])
   @@unique([parentId, code])
@@ -416,6 +436,8 @@ model KBConcept {
   @@index([rootId])
   @@index([type])
   @@index([code])
+  @@index([quality])
+  @@index([visibility])
 }
 
 // Label roles define how a name relates to its concept:
@@ -1843,5 +1865,138 @@ model Offer {
   createdById String @db.VarChar(36)
   CreatedBy   User   @relation(fields: [createdById], references: [id], name: "OfferCreatedBy", onDelete: Cascade)
 
+  @@index([createdById])
+}
+
+// ============================================
+// Statistics & Redirects
+// ============================================
+
+enum RedirectPatternType {
+  regex
+  prefix
+  exact
+}
+
+enum IncidentStatus {
+  open
+  resolved
+  ignored
+}
+
+enum SystemLogLevel {
+  error
+  warning
+  info
+  debug
+}
+
+enum SystemLogSource {
+  client
+  server
+  api
+}
+
+model SystemLog {
+  id        String   @id @default(cuid()) @db.VarChar(36)
+  createdAt DateTime @default(now()) @db.Timestamp(3)
+
+  level   SystemLogLevel  @default(info)
+  source  SystemLogSource @default(server)
+  message String          @db.Text
+  stack   String?         @db.Text
+
+  url        String? @db.Text
+  path       String? @db.VarChar(2048)
+  statusCode Int?
+  method     String? @db.VarChar(10)
+  userAgent  String? @db.Text
+  robotType  String? @db.VarChar(50)
+  ip         String? @db.VarChar(45)
+  referer    String? @db.Text
+  headers    Json?
+  data       Json?
+
+  redirectRuleId String?       @db.VarChar(36)
+  RedirectRule   RedirectRule? @relation(fields: [redirectRuleId], references: [id], onDelete: SetNull)
+
+  incidentId String?   @db.VarChar(36)
+  Incident   Incident? @relation(fields: [incidentId], references: [id], onDelete: SetNull)
+
+  @@index([level])
+  @@index([source])
+  @@index([statusCode])
+  @@index([path])
+  @@index([createdAt])
+  @@index([robotType])
+  @@index([incidentId])
+  @@index([redirectRuleId])
+}
+
+model RedirectRule {
+  id        String   @id @default(cuid()) @db.VarChar(36)
+  createdAt DateTime @default(now()) @db.Timestamp(3)
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamp(3)
+
+  name        String              @db.VarChar(255)
+  pattern     String              @db.Text
+  patternType RedirectPatternType @default(regex)
+  replacement String              @db.Text
+  statusCode  Int                 @default(301)
+  priority    Int                 @default(0)
+  enabled     Boolean             @default(true)
+  comment     String?             @db.Text
+
+  SystemLogs SystemLog[]
+
+  @@unique([pattern, patternType])
+  @@index([enabled])
+  @@index([priority])
+}
+
+model Incident {
+  id        String   @id @default(cuid()) @db.VarChar(36)
+  createdAt DateTime @default(now()) @db.Timestamp(3)
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamp(3)
+
+  title       String               @db.VarChar(500)
+  pattern     String?              @db.Text
+  patternType RedirectPatternType?
+  status      IncidentStatus       @default(open)
+  resolution  String?              @db.Text
+  resolvedAt  DateTime?            @db.Timestamp(3)
+
+  resolvedById String? @db.VarChar(36)
+  ResolvedBy   User?   @relation(fields: [resolvedById], references: [id], onDelete: SetNull, name: "IncidentResolvedBy")
+
+  SystemLogs SystemLog[]
+
+  @@index([status])
+  @@index([createdAt])
+  @@index([resolvedById])
+}
+
+// -- End of Statistics & Redirects --
+
+model SiteRoute {
+  id        String   @id @default(cuid()) @db.VarChar(36)
+  createdAt DateTime @default(now()) @db.Timestamp(3)
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamp(3)
+
+  path String @unique
+  slug String
+  rank Int    @default(0)
+
+  parentId String?
+  Parent   SiteRoute? @relation("SiteRouteTree", fields: [parentId], references: [id])
+
+  Children SiteRoute[] @relation("SiteRouteTree")
+
+  kBConceptId String?    @unique
+  KBConcept   KBConcept? @relation(fields: [kBConceptId], references: [id])
+
+  createdById String @db.VarChar(36)
+
+  @@unique([parentId, slug])
   @@index([createdById])
 }

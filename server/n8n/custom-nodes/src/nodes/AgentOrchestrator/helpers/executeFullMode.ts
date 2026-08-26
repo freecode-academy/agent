@@ -52,9 +52,7 @@ export const executeFullMode = async (
   }
 
   const user = items[0]?.json?.user as
-    | { id: string; username?: string; fullname?: string }
-    | null
-    | undefined
+    { id: string; username?: string; fullname?: string } | null | undefined
   const sessionId = (items[0]?.json?.sessionId as string) || ''
 
   const connectedTools = await getConnectedTools(ctx)

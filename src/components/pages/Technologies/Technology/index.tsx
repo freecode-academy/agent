@@ -12,6 +12,7 @@ import { Page } from '../../_App/interfaces'
 import { useRouter } from 'next/router'
 import { ParsedUrlQuery } from 'querystring'
 import { SeoHeaders } from 'src/components/seo/SeoHeaders'
+import { makeTechnologyLink } from 'src/components/Link/Technology'
 
 function getQueryParams(query: ParsedUrlQuery): TechnologyQueryVariables {
   const id = query.id
@@ -24,7 +25,7 @@ function getQueryParams(query: ParsedUrlQuery): TechnologyQueryVariables {
   }
 }
 
-export const TechnologyPage: Page = () => {
+export const TechnologyPage: Page = ({ siteOrigin }) => {
   const router = useRouter()
 
   const { query } = router
@@ -43,16 +44,20 @@ export const TechnologyPage: Page = () => {
   const technology = response.data?.object
 
   return (
-    <>
-      <SeoHeaders
-        title={technology?.name ?? undefined}
-        description={technology?.description}
-        noindex={!technology}
-        nofollow={!technology}
-      />
+    technology && (
+      <>
+        <SeoHeaders
+          title={technology?.name ?? ''}
+          description={technology?.description}
+          noindex={!technology}
+          nofollow={!technology}
+          canonical={makeTechnologyLink(technology)}
+          siteOrigin={siteOrigin}
+        />
 
-      {technology && <TechnologyView technology={technology} />}
-    </>
+        {technology && <TechnologyView technology={technology} />}
+      </>
+    )
   )
 }
 
@@ -60,6 +65,7 @@ TechnologyPage.getInitialProps = async (context) => {
   const { apolloClient } = context
 
   // TODO Fix private rooms access
+  // eslint-disable-next-line @typescript-eslint/no-deprecated
   const result = await apolloClient.query<TechnologyQuery>({
     query: TechnologyDocument,
 

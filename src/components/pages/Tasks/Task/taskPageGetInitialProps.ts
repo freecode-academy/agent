@@ -11,10 +11,13 @@ export const taskPageGetInitialProps: Page<TaskPageProps>['getInitialProps'] =
     const variables = getTaskQueryVariables(taskId)
 
     const task = taskId
-      ? await apolloClient.query<TaskQuery, TaskQueryVariables>({
-          query: TaskDocument,
-          variables,
-        })
+      ? await apolloClient
+          // eslint-disable-next-line @typescript-eslint/no-deprecated
+          .query<TaskQuery, TaskQueryVariables>({
+            query: TaskDocument,
+            variables,
+          })
+          .then((r) => r.data?.response)
       : undefined
 
     return {

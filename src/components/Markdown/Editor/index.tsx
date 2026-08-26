@@ -27,6 +27,9 @@ import { memo, useCallback, useMemo, useState } from 'react'
 import { MarkdownEditorStyled } from './styles'
 import { MarkdownEditorToolbar } from './Toolbar'
 import { useSingleUploadMutation } from 'src/gql/generated'
+import { useStopPropagationScroll } from 'src/hooks/useStopPropagationScroll'
+import { FilesUploaderEditor } from './FilesUploaderEditor'
+import { mathPlugin } from './mathPlugin'
 
 type MarkdownEditorEditorProps = {
   value: string | null | undefined
@@ -40,6 +43,8 @@ const MarkdownEditorComponent: React.FC<MarkdownEditorEditorProps> = ({
 }) => {
   const [editor, editorSetter] = useState<MDXEditorMethods | null>(null)
   const [uploadFile] = useSingleUploadMutation()
+
+  const { containerRef } = useStopPropagationScroll()
 
   const imageUploadHandler = useCallback(
     async (file: File): Promise<string> => {
@@ -61,7 +66,22 @@ const MarkdownEditorComponent: React.FC<MarkdownEditorEditorProps> = ({
   )
 
   const jsxComponentDescriptors = useMemo<JsxComponentDescriptor[]>(() => {
-    return []
+    return [
+      {
+        name: 'files-uploader',
+        kind: 'flow',
+        props: [],
+        hasChildren: true,
+        Editor: FilesUploaderEditor,
+      },
+      {
+        name: 'file',
+        kind: 'text',
+        props: [{ name: 'data-id', type: 'string' }],
+        hasChildren: true,
+        Editor: () => null,
+      },
+    ]
   }, [])
 
   const plugins = useMemo(() => {
@@ -107,6 +127,7 @@ const MarkdownEditorComponent: React.FC<MarkdownEditorEditorProps> = ({
       }),
       tablePlugin(),
       markdownShortcutPlugin(),
+      mathPlugin(),
       diffSourcePlugin({ viewMode: 'rich-text' }),
 
       toolbarPlugin({
@@ -120,7 +141,7 @@ const MarkdownEditorComponent: React.FC<MarkdownEditorEditorProps> = ({
   }, [editor, imageUploadHandler, jsxComponentDescriptors])
 
   return (
-    <MarkdownEditorStyled {...other}>
+    <MarkdownEditorStyled ref={containerRef} {...other}>
       <MDXEditor
         ref={editorSetter}
         contentEditableClassName="content"

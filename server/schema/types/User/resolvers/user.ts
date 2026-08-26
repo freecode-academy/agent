@@ -1,4 +1,4 @@
-import { builder } from '../../../builder'
+import { builder } from 'server/schema/builder'
 import { UserWhereUniqueInput } from '../inputs'
 
 builder.queryField('user', (t) =>
@@ -9,7 +9,7 @@ builder.queryField('user', (t) =>
       where: t.arg({ type: UserWhereUniqueInput, required: true }),
     },
     resolve: (query, _root, args, ctx) =>
-      ctx.prisma.user.findFirst({
+      ctx.prisma.user.findUnique({
         ...query,
         where: {
           id: args.where.id ?? undefined,

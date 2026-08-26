@@ -2,9 +2,9 @@ import { Page } from '../_App/interfaces'
 import { TasksPageProps } from './interfaces'
 import {
   TasksWithCountDocument,
+  TaskStatusEnum,
   TasksWithCountQuery,
   TasksWithCountQueryVariables,
-  TaskStatusEnum,
 } from 'src/gql/generated'
 import { getTasksWithCountQueryVariables } from './helpers'
 
@@ -32,16 +32,18 @@ export const tasksPageGetInitialProps: Page<TasksPageProps>['getInitialProps'] =
       projectId,
     )
 
-    await apolloClient.query<TasksWithCountQuery, TasksWithCountQueryVariables>(
-      {
+    const tasks = await apolloClient
+      // eslint-disable-next-line @typescript-eslint/no-deprecated
+      .query<TasksWithCountQuery, TasksWithCountQueryVariables>({
         query: TasksWithCountDocument,
         variables,
-      },
-    )
+      })
+      .then((r) => r.data?.tasks)
 
     return {
       selectedStatus,
       page,
       projectId,
+      statusCode: !tasks?.length && page > 1 ? 404 : undefined,
     }
   }

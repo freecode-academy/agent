@@ -16,6 +16,7 @@ import { useSnackbar } from 'src/ui-kit/Snackbar'
 import { Button } from 'src/ui-kit/Button'
 import { AuthProviders } from '../AuthProviders'
 import { ComponentVariant } from 'src/ui-kit/interfaces'
+import { AuthFormFooterStyled } from '../styles'
 
 export type { SignInFormData }
 
@@ -45,7 +46,7 @@ export const SignInForm: React.FC<SignInFormProps> = ({
   const [signinMutation] = useSigninMutation({})
 
   const onSubmit = useCallback(
-    (e: React.FormEvent) => {
+    (e: React.SubmitEvent) => {
       e.preventDefault()
 
       form.trigger().then(async (isValid) => {
@@ -130,18 +131,20 @@ export const SignInForm: React.FC<SignInFormProps> = ({
         <Controller name="username" render={fieldRenderer} />
         <Controller name="password" render={fieldRenderer} />
 
-        <AuthProviders
-          onSuccessHandler={onSuccessHandler}
-          referrerToken={null}
-        />
+        <AuthFormFooterStyled>
+          <AuthProviders
+            onSuccessHandler={onSuccessHandler}
+            referrerToken={null}
+          />
 
-        <Button
-          type="submit"
-          disabled={loading}
-          variant={ComponentVariant.PRIMARY}
-        >
-          {loading ? 'Signing in...' : 'Sign In'}
-        </Button>
+          <Button
+            type="submit"
+            disabled={loading}
+            variant={ComponentVariant.PRIMARY}
+          >
+            {loading ? 'Signing in...' : 'Sign In'}
+          </Button>
+        </AuthFormFooterStyled>
       </FormProvider>
     </SignInFormStyled>
   )

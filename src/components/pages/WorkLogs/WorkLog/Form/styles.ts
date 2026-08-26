@@ -1,13 +1,12 @@
 import styled from 'styled-components'
 
-export const TaskWorkLogEditFormToolbarStyled = styled.div`
+export const WorkLogFormToolbarStyled = styled.div`
   display: flex;
   gap: 1rem;
-  justify-content: end;
+  /* justify-content: end; */
 `
 
-export const TaskWorkLogEditFormStyled = styled.form`
-  min-height: 100%;
+export const WorkLogFormStyled = styled.form`
   display: flex;
   flex-direction: column;
   gap: 1rem;

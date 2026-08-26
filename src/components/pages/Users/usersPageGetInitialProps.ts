@@ -18,18 +18,19 @@ export const usersPageGetInitialProps: Page<UsersPageProps>['getInitialProps'] =
 
     const currentUser = getCurrentUser(apolloClient)
 
-    await apolloClient.query<
-      UsersConnectionQuery,
-      UsersConnectionQueryVariables
-    >({
-      query: UsersConnectionDocument,
-      variables: getUsersQueryVariables({
-        page,
-        currentUser,
-      }),
-    })
+    const users = await apolloClient
+      // eslint-disable-next-line @typescript-eslint/no-deprecated
+      .query<UsersConnectionQuery, UsersConnectionQueryVariables>({
+        query: UsersConnectionDocument,
+        variables: getUsersQueryVariables({
+          page,
+          currentUser,
+        }),
+      })
+      .then((r) => r.data?.users)
 
     return {
       page,
+      statusCode: !users?.length ? 404 : undefined,
     }
   }

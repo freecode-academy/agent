@@ -18,6 +18,7 @@ export const userPageGetInitialProps: Page<UserPageProps>['getInitialProps'] =
 
     const user = variables
       ? await apolloClient
+          // eslint-disable-next-line @typescript-eslint/no-deprecated
           .query<UserQuery, UserQueryVariables>({
             query: UserDocument,
             variables,

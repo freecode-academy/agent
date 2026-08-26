@@ -35,6 +35,8 @@ export const CodeChallengeBlocksPage: Page = () => {
       <SeoHeaders
         title="Interactive Coding Challenges — HTML, CSS, JavaScript"
         description="Practice web development with free interactive exercises. Master HTML, CSS, and JavaScript through hands-on coding challenges."
+        canonical={undefined}
+        siteOrigin={undefined}
       />
 
       <View objects={objects} count={objects.length} />
@@ -45,6 +47,7 @@ export const CodeChallengeBlocksPage: Page = () => {
 CodeChallengeBlocksPage.getInitialProps = async (context) => {
   const { apolloClient } = context
 
+  // eslint-disable-next-line @typescript-eslint/no-deprecated
   const result = await apolloClient.query<
     CodeChallengeBlocksQuery,
     CodeChallengeBlocksQueryVariables

@@ -1,4 +1,4 @@
-import { builder } from '../../../builder'
+import { builder } from 'server/schema/builder'
 
 builder.mutationField('deleteConflict', (t) =>
   t.prismaField({
@@ -11,7 +11,7 @@ builder.mutationField('deleteConflict', (t) =>
         throw new Error('Unauthorized')
       }
 
-      const existingConflict = await ctx.prisma.kBConflict.findFirst({
+      const existingConflict = await ctx.prisma.kBConflict.findUnique({
         where: {
           id: args.id,
           createdById: ctx.currentUser.id,

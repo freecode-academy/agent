@@ -54,8 +54,7 @@ export abstract class WorkflowFactory {
 
   getCredentials(agentCredentialsKey: string) {
     const agentCreds = this.credentialsMap[agentCredentialsKey] as unknown as
-      | AgentCredentials
-      | undefined
+      AgentCredentials | undefined
 
     if (!agentCreds) {
       throw new Error(

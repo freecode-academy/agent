@@ -11,6 +11,7 @@ import { ProjectView as View } from './View'
 import { Page, NextPageContextCustom } from '../../_App/interfaces'
 import { useRouter, NextRouter } from 'next/router'
 import { SeoHeaders } from 'src/components/seo/SeoHeaders'
+import { makeProjectLink } from 'src/components/Link/Project'
 
 const getProjectVariables = (router: NextRouter | NextPageContextCustom) => {
   const variables: ProjectsQueryVariables = {
@@ -67,7 +68,7 @@ const getProjectVariables = (router: NextRouter | NextPageContextCustom) => {
   return variables
 }
 
-export const ProjectPage: Page = () => {
+export const ProjectPage: Page = ({ siteOrigin }) => {
   const router = useRouter()
 
   const variables = useMemo(() => {
@@ -88,10 +89,21 @@ export const ProjectPage: Page = () => {
   }
 
   return (
-    <>
-      <SeoHeaders title={Project.name} description={Project.description} />
-      <View project={Project} />
-    </>
+    Project && (
+      <>
+        <SeoHeaders
+          title={Project.name}
+          description={
+            Project.description || Project.name
+              ? `Project "${Project.name}" — tasks, progress, and collaboration details.`
+              : ''
+          }
+          canonical={makeProjectLink(Project)}
+          siteOrigin={siteOrigin}
+        />
+        <View project={Project} />
+      </>
+    )
   )
 }
 
@@ -102,7 +114,8 @@ ProjectPage.getInitialProps = async (context) => {
 
   // TODO Fix private rooms access
   const response = variables.where
-    ? await apolloClient.query<ProjectsQuery>({
+    ? // eslint-disable-next-line @typescript-eslint/no-deprecated
+      await apolloClient.query<ProjectsQuery>({
         query: ProjectsDocument,
 
         /**

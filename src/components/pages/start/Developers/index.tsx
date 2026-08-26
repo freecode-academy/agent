@@ -12,6 +12,8 @@ export const DevelopersStartPage: Page = () => {
       <SeoHeaders
         title="Getting Started — Your Web Development Journey Begins Here"
         description="Step-by-step guide for aspiring developers. Learn HTML, CSS, JavaScript, React, and join a community of mentors and experts."
+        canonical={undefined}
+        siteOrigin={undefined}
       />
 
       <DevelopersStartPageStyled>

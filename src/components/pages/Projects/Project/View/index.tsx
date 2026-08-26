@@ -2,7 +2,6 @@ import React from 'react'
 import { ProjectViewStyled } from './styles'
 import { ProjectFragment } from 'src/gql/generated'
 // import { useRouter } from 'next/router'
-import { SeoHeaders } from 'src/components/seo/SeoHeaders'
 import { H2 } from 'src/components/LayoutV2/styles'
 import { Markdown } from 'src/components/Markdown'
 import { ProjectTasks } from './Tasks'
@@ -23,7 +22,7 @@ export const ProjectView: React.FC<ProjectViewProps> = ({
   // const page = Number(router.query.page) || 1
   // const skip = (page - 1) * TASKS_PER_PAGE
 
-  const { description, Resource } = project
+  const { Resource } = project
 
   const name = Resource?.name || project.name || ''
 
@@ -36,15 +35,6 @@ export const ProjectView: React.FC<ProjectViewProps> = ({
 
   return (
     <>
-      <SeoHeaders
-        title={name}
-        description={
-          description || name
-            ? `Project "${name}" — tasks, progress, and collaboration details.`
-            : ''
-        }
-        // canonical={makeProjectLink(project)}
-      />
       <ProjectViewStyled {...other}>
         <H2>{name}</H2>
 

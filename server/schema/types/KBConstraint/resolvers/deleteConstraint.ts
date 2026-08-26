@@ -1,4 +1,4 @@
-import { builder } from '../../../builder'
+import { builder } from 'server/schema/builder'
 
 builder.mutationField('deleteConstraint', (t) =>
   t.prismaField({
@@ -11,7 +11,7 @@ builder.mutationField('deleteConstraint', (t) =>
         throw new Error('Unauthorized')
       }
 
-      const existingConstraint = await ctx.prisma.kBConstraint.findFirst({
+      const existingConstraint = await ctx.prisma.kBConstraint.findUnique({
         where: {
           id: args.id,
           createdById: ctx.currentUser.id,

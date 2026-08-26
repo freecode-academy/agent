@@ -1,12 +1,12 @@
 import { useTaskQuery } from 'src/gql/generated'
 import { Page } from '../../_App/interfaces'
 import { TaskPageProps } from './interfaces'
-import { TaskCard } from 'src/components/TaskCard'
 import { SeoHeaders } from 'src/components/seo/SeoHeaders'
-import { TaskPageStyled } from './styles'
 import { taskPageGetInitialProps } from './taskPageGetInitialProps'
+import { TaskPageView } from './View'
+import { createTaskLink } from 'src/components/Link/Task'
 
-export const TaskPage: Page<TaskPageProps> = ({ taskId }) => {
+export const TaskPage: Page<TaskPageProps> = ({ taskId, siteOrigin }) => {
   const response = useTaskQuery({
     variables: {
       where: {
@@ -19,14 +19,16 @@ export const TaskPage: Page<TaskPageProps> = ({ taskId }) => {
   const task = response.data?.response
 
   return (
-    <>
-      <SeoHeaders title={task?.title || 'Task'} />
-      {task && (
-        <TaskPageStyled>
-          <TaskCard task={task} variant="full" />
-        </TaskPageStyled>
-      )}
-    </>
+    task && (
+      <>
+        <SeoHeaders
+          title={task.title || 'Task'}
+          canonical={createTaskLink(task)}
+          siteOrigin={siteOrigin}
+        />
+        {task && <TaskPageView task={task} />}
+      </>
+    )
   )
 }
 

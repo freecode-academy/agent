@@ -10,9 +10,10 @@ import { createBlogPosting } from 'src/components/seo/JsonLd/helpers'
 import { JsonLd } from 'src/components/seo/JsonLd'
 import { ProjectResourceView } from './view/Project'
 import { TeamResourceView } from './view/Team'
+import { makeResourceLink } from 'src/components/Link/Resource'
 
 export const ResourcePage: Page<ResourcePageProps> = (props) => {
-  const { uri, page } = props
+  const { uri, page, siteOrigin } = props
 
   const response = useResourceQuery({
     variables: {
@@ -87,16 +88,14 @@ export const ResourcePage: Page<ResourcePageProps> = (props) => {
   return (
     <>
       <SeoHeaders
-        title={resource.name ?? undefined}
+        title={resource.name || ''}
         description={resource.longtitle}
         noindex={!searchable}
         nofollow={!searchable}
+        canonical={makeResourceLink(resource)}
+        siteOrigin={siteOrigin}
       />
 
-      <SeoHeaders
-        title={resource.name || 'Post'}
-        description={resource.longtitle}
-      />
       {blogPostingSchema && <JsonLd data={blogPostingSchema} />}
 
       {content}

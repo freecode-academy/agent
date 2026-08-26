@@ -15,14 +15,17 @@ export const mindLogPageGetInitialProps: Page<MindLogPageProps>['getInitialProps
     const variables = getMindLogQueryVariables(mindLogId)
 
     const mindLog = mindLogId
-      ? await apolloClient.query<MindLogQuery, MindLogQueryVariables>({
-          query: MindLogDocument,
-          variables,
-        })
+      ? await apolloClient
+          // eslint-disable-next-line @typescript-eslint/no-deprecated
+          .query<MindLogQuery, MindLogQueryVariables>({
+            query: MindLogDocument,
+            variables,
+          })
+          .then((r) => r.data?.response)
       : undefined
 
     return {
       mindLogId,
-      statusCode: !mindLog?.data?.response ? 404 : undefined,
+      statusCode: !mindLog ? 404 : undefined,
     }
   }

@@ -8,7 +8,7 @@ export function useOpenChatWithMessage() {
     (
       event:
         | React.MouseEvent<HTMLButtonElement>
-        | React.FormEvent<HTMLFormElement>,
+        | React.SubmitEvent<HTMLFormElement>,
     ) => {
       event.preventDefault()
       event.stopPropagation()
@@ -33,8 +33,7 @@ export function useOpenChatWithMessage() {
         formData.forEach((value, key) => {
           if (value && typeof value === 'string' && value.trim()) {
             const input = form.querySelector(`[name="${key}"]`) as
-              | HTMLInputElement
-              | HTMLTextAreaElement
+              HTMLInputElement | HTMLTextAreaElement
             const label = input?.name || key
 
             if (label) {

@@ -1,4 +1,4 @@
-import { builder } from '../../../builder'
+import { builder } from 'server/schema/builder'
 import { EXReflexUpdateInput } from '../inputs'
 
 builder.mutationField('updateReflex', (t) =>
@@ -13,7 +13,7 @@ builder.mutationField('updateReflex', (t) =>
         throw new Error('Unauthorized')
       }
 
-      const existingReflex = await ctx.prisma.eXReflex.findFirst({
+      const existingReflex = await ctx.prisma.eXReflex.findUnique({
         where: {
           id: args.id,
           createdById: ctx.currentUser.id,

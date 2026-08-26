@@ -13,7 +13,13 @@ export const LearnStrategyCreatePage: Page = () => {
 
   return (
     <>
-      <SeoHeaders title="Create learn strategy" noindex nofollow />
+      <SeoHeaders
+        title="Create learn strategy"
+        noindex
+        nofollow
+        canonical={undefined}
+        siteOrigin={undefined}
+      />
 
       <LearnStrategyForm
         learnStrategy={undefined}

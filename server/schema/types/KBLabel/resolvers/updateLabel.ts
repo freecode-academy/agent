@@ -1,4 +1,4 @@
-import { builder } from '../../../builder'
+import { builder } from 'server/schema/builder'
 import { KBLabelUpdateInput } from '../inputs'
 
 builder.mutationField('updateLabel', (t) =>
@@ -14,7 +14,7 @@ builder.mutationField('updateLabel', (t) =>
       }
 
       // Check if label exists and belongs to user
-      const existingLabel = await ctx.prisma.kBLabel.findFirst({
+      const existingLabel = await ctx.prisma.kBLabel.findUnique({
         where: {
           id: args.id,
           createdById: ctx.currentUser.id,

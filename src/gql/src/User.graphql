@@ -104,5 +104,6 @@ fragment UserNoNesting on User {
   status
   intro
 
-  title: fullname
+  # title: fullname
+  isAiAgent
 }

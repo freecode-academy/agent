@@ -1,4 +1,4 @@
-import { builder } from '../../../builder'
+import { builder } from 'server/schema/builder'
 import { TaskCreateInput } from '../inputs'
 
 builder.mutationField('createTask', (t) =>
@@ -21,7 +21,7 @@ builder.mutationField('createTask', (t) =>
       return prisma.task.create({
         ...query,
         data: {
-          name,
+          title: name,
           description: args.data.description ?? undefined,
           content: args.data.content ?? undefined,
           startDatePlaning: args.data.startDatePlaning ?? undefined,

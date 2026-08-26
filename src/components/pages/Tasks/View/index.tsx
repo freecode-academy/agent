@@ -34,7 +34,7 @@ import {
   CrossCard,
   CrossLinks,
 } from 'src/components/LayoutV2/components/CrossLinks'
-import { makeTaskLink } from 'src/components/Link/Task'
+import { createTaskLink } from 'src/components/Link/Task'
 import { Markdown } from 'src/components/Markdown'
 import { Pagination } from 'src/components/Pagination'
 import { UserLink } from 'src/components/Link/User'
@@ -128,11 +128,11 @@ export const TasksView: React.FC<TasksViewProps> = ({
                       <BadgeRow>
                         {/* <Badge tone={stateTone(state)}>{state}</Badge>
                       <Badge>{effort}</Badge> */}
-                        <TaskStatusBadge status={status} task={n} />
+                        <TaskStatusBadge status={status} />
                       </BadgeRow>
                     )}
 
-                    <Link href={makeTaskLink(n)} title={n.title ?? undefined}>
+                    <Link href={createTaskLink(n)} title={n.title ?? undefined}>
                       <CardTitle>{title}</CardTitle>
                     </Link>
                     <Markdown>{intro}</Markdown>

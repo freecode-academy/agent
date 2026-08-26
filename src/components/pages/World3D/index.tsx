@@ -6,7 +6,13 @@ import { SeoHeaders } from 'src/components/seo/SeoHeaders'
 export const World3DScenePage: Page = () => {
   return (
     <>
-      <SeoHeaders title="3D World" noindex nofollow />
+      <SeoHeaders
+        title="3D World"
+        noindex
+        nofollow
+        canonical={undefined}
+        siteOrigin={undefined}
+      />
       <World3DScenePageGlobalStyles />
       <World3DScene />
     </>

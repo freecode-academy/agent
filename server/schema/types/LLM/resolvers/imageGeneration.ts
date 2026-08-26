@@ -1,4 +1,4 @@
-import { builder } from '../../../builder'
+import { builder } from 'server/schema/builder'
 import type { LLMResponse } from '../../../../llm/client/interfaces'
 import {
   LlmProvider,
@@ -153,7 +153,8 @@ export const llmImageGenerationResolver = async (
         content: prompt,
       },
     ],
-    modalities: ['image', 'text'],
+    // modalities: ['image', 'text'],
+    // modalities: ['image'],
     image_config: {
       aspect_ratio: aspectRatio ?? undefined,
       image_size: imageSize ?? undefined,

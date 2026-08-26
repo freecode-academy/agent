@@ -1,4 +1,4 @@
-import { builder } from '../../../builder'
+import { builder } from 'server/schema/builder'
 import {
   AuthPayload,
   UserWhereUniqueInput,
@@ -25,7 +25,7 @@ builder.mutationField('signin', (t) =>
         }
       }
 
-      const user = await ctx.prisma.user.findFirst({
+      const user = await ctx.prisma.user.findUnique({
         where: {
           id: where.id ?? undefined,
           email: where.email ?? undefined,

@@ -44,7 +44,7 @@ type TeamsPageProps = PageProps & {
   page: number
 }
 
-export const TeamsPage: Page<TeamsPageProps> = ({ page }) => {
+export const TeamsPage: Page<TeamsPageProps> = ({ page, siteOrigin }) => {
   const { user: currentUser } = useAppContext()
 
   const response = useTeamsConnectionQuery({
@@ -58,7 +58,7 @@ export const TeamsPage: Page<TeamsPageProps> = ({ page }) => {
 
   return (
     <>
-      <SeoHeaders title="Teams" />
+      <SeoHeaders title="Teams" canonical={'/teams'} siteOrigin={siteOrigin} />
 
       <View
         teams={response.data?.teams || []}
@@ -79,6 +79,7 @@ TeamsPage.getInitialProps = async ({ apolloClient, query }) => {
       ? parseInt(pageParam, 10)
       : 1
 
+  // eslint-disable-next-line @typescript-eslint/no-deprecated
   await apolloClient.query<TeamsConnectionQuery, TeamsConnectionQueryVariables>(
     {
       query: TeamsConnectionDocument,

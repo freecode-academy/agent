@@ -2,10 +2,12 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 
 export interface SeoHeadersProps {
-  title?: string
+  title: string
   description?: string | null
   noindex?: boolean
   nofollow?: boolean
+  canonical: string | null | undefined
+  siteOrigin: string | undefined
 }
 
 export const SeoHeaders: React.FC<SeoHeadersProps> = ({
@@ -13,6 +15,8 @@ export const SeoHeaders: React.FC<SeoHeadersProps> = ({
   description,
   noindex = false,
   nofollow = false,
+  canonical,
+  siteOrigin,
 }) => {
   const router = useRouter()
 
@@ -25,8 +29,14 @@ export const SeoHeaders: React.FC<SeoHeadersProps> = ({
 
   return (
     <Head>
-      {title && <title>{title}</title>}
+      <title>{title}</title>
       {description && <meta name="description" content={description} />}
+      {canonical && (
+        <link
+          rel="canonical"
+          href={siteOrigin ? `${siteOrigin}${canonical}` : canonical}
+        />
+      )}
 
       <meta
         name="robots"

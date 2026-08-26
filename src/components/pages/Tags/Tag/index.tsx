@@ -13,6 +13,7 @@ import {
 import { NextPageContextCustom, Page } from '../../_App/interfaces'
 import { useRouter, NextRouter } from 'next/router'
 import { SeoHeaders } from 'src/components/seo/SeoHeaders'
+import { createTagLink } from 'src/components/Link/Tag'
 
 function getVariables(
   router: NextRouter | NextPageContextCustom,
@@ -26,7 +27,7 @@ function getVariables(
   }
 }
 
-export const TagPage: Page = () => {
+export const TagPage: Page = ({ siteOrigin }) => {
   const router = useRouter()
 
   const variables = useMemo(() => {
@@ -63,23 +64,25 @@ export const TagPage: Page = () => {
 
   // const { variables, loading } = queryResult
 
-  const object = response.data?.object
+  const tag = response.data?.object
 
-  if (!object) {
+  if (!tag) {
     return null
   }
 
   return (
     <>
       <SeoHeaders
-        title={object.name || undefined}
+        title={tag.name || ''}
         description={
-          object.name &&
-          `Browse all articles tagged with "${object.name}" — tutorials, discussions, and insights.`
+          tag.name &&
+          `Browse all articles tagged with "${tag.name}" — tutorials, discussions, and insights.`
         }
+        canonical={createTagLink(tag)}
+        siteOrigin={siteOrigin}
       />
 
-      {object.name}
+      {tag.name}
 
       {/* <View object={object} /> */}
     </>
@@ -92,7 +95,8 @@ TagPage.getInitialProps = async (context) => {
   const variables = getVariables(context)
 
   const result = variables
-    ? await apolloClient.query<TagQuery>({
+    ? // eslint-disable-next-line @typescript-eslint/no-deprecated
+      await apolloClient.query<TagQuery>({
         query: TagDocument,
 
         /**

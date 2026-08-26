@@ -1,4 +1,4 @@
-import { builder } from '../../../builder'
+import { builder } from 'server/schema/builder'
 import { TaskWorkLogCreateInput } from '../inputs'
 
 builder.mutationField('createTaskWorkLog', (t) =>
@@ -14,7 +14,7 @@ builder.mutationField('createTaskWorkLog', (t) =>
         throw new Error('Not authenticated')
       }
 
-      const task = await prisma.task.findFirst({
+      const task = await ctx.prisma.task.findUnique({
         where: {
           id: args.data.taskId,
         },
@@ -25,12 +25,10 @@ builder.mutationField('createTaskWorkLog', (t) =>
       }
 
       if (!currentUser.sudo) {
-        if (
-          !(
-            task.createdById === currentUser.id ||
-            task.assigneeId === currentUser.id
-          )
-        ) {
+        if (!(
+          task.createdById === currentUser.id ||
+          task.assigneeId === currentUser.id
+        )) {
           throw new Error('Access denied')
         }
       }

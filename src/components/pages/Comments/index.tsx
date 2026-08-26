@@ -14,7 +14,7 @@ export type CommentsPageProps = PageProps & {
   page: number
 }
 
-export const CommentsPage: Page<CommentsPageProps> = ({ page }) => {
+export const CommentsPage: Page<CommentsPageProps> = ({ page, siteOrigin }) => {
   const postsResponse = useResourcesConnectionQuery({
     variables: getResourcesConnectionQueryVariables({
       page,
@@ -29,7 +29,11 @@ export const CommentsPage: Page<CommentsPageProps> = ({ page }) => {
 
   return (
     <>
-      <SeoHeaders title="Comments" />
+      <SeoHeaders
+        title="Comments"
+        canonical={'/comments'}
+        siteOrigin={siteOrigin}
+      />
       {resources && (
         <ResourcesPageView
           resources={resources}
@@ -50,6 +54,7 @@ CommentsPage.getInitialProps = async ({ query, apolloClient }) => {
 
   // const currentUser = getCurrentUser(apolloClient)
 
+  // eslint-disable-next-line @typescript-eslint/no-deprecated
   await apolloClient.query<
     ResourcesConnectionQuery,
     ResourcesConnectionQueryVariables

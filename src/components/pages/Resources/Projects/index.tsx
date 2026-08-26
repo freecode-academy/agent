@@ -29,7 +29,13 @@ export const ResourcesProjectsPage: Page<ResourcesProjectsPageProps> = ({
 
   return (
     <>
-      <SeoHeaders title="Projects" noindex nofollow />
+      <SeoHeaders
+        title="Projects"
+        noindex
+        nofollow
+        canonical={undefined}
+        siteOrigin={undefined}
+      />
 
       <ResourcesPageView
         resources={resources}

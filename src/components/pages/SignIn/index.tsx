@@ -3,8 +3,12 @@ import { useCallback } from 'react'
 import { SignInForm } from 'src/components/Auth/SignInForm'
 import { SignInPageStyled } from './styles'
 import { SeoHeaders } from 'src/components/seo/SeoHeaders'
+import { useAuthedRedirect } from 'src/components/Auth/hooks/useAuthedRedirect'
+import { Page } from '../_App/interfaces'
 
-export const SignInPage: React.FC = () => {
+export const SignInPage: Page = ({ siteOrigin }) => {
+  useAuthedRedirect()
+
   const router = useRouter()
 
   const handleSuccess = useCallback(() => {
@@ -13,7 +17,13 @@ export const SignInPage: React.FC = () => {
 
   return (
     <SignInPageStyled>
-      <SeoHeaders title={'Sign in'} noindex nofollow />
+      <SeoHeaders
+        title={'Sign in'}
+        canonical={'/signin'}
+        siteOrigin={siteOrigin}
+        noindex
+        nofollow
+      />
 
       <h1>Sign In</h1>
       <SignInForm onSuccessHandler={handleSuccess} />

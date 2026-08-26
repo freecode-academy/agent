@@ -12,6 +12,7 @@ import { Page } from '../../_App/interfaces'
 import { useRouter } from 'next/router'
 import { ParsedUrlQuery } from 'querystring'
 import { SeoHeaders } from 'src/components/seo/SeoHeaders'
+import { makeTeamLink } from 'src/components/Link/Team'
 
 function getQueryParams(query: ParsedUrlQuery): TeamQueryVariables {
   const id = query.id
@@ -23,7 +24,7 @@ function getQueryParams(query: ParsedUrlQuery): TeamQueryVariables {
   }
 }
 
-export const TeamPage: Page = () => {
+export const TeamPage: Page = ({ siteOrigin }) => {
   const router = useRouter()
 
   const { query } = router
@@ -42,16 +43,20 @@ export const TeamPage: Page = () => {
   const team = response.data?.team
 
   return (
-    <>
-      <SeoHeaders
-        title={team?.title}
-        description={team?.description}
-        noindex={!team}
-        nofollow={!team}
-      />
+    team && (
+      <>
+        <SeoHeaders
+          title={team?.title || ''}
+          description={team?.description}
+          noindex={!team}
+          nofollow={!team}
+          canonical={makeTeamLink(team)}
+          siteOrigin={siteOrigin}
+        />
 
-      {team && <TeamView team={team} />}
-    </>
+        {team && <TeamView team={team} />}
+      </>
+    )
   )
 }
 
@@ -59,6 +64,7 @@ TeamPage.getInitialProps = async (context) => {
   const { apolloClient } = context
 
   // TODO Fix private rooms access
+  // eslint-disable-next-line @typescript-eslint/no-deprecated
   const result = await apolloClient.query<TeamQuery>({
     query: TeamDocument,
 

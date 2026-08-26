@@ -1,4 +1,4 @@
-import { builder } from '../../../builder'
+import { builder } from 'server/schema/builder'
 import { TaskWhereUniqueInput } from '../inputs'
 
 builder.mutationField('deleteTask', (t) =>
@@ -17,7 +17,7 @@ builder.mutationField('deleteTask', (t) =>
         throw new Error('Task ID is required')
       }
 
-      const existing = await ctx.prisma.task.findFirst({
+      const existing = await ctx.prisma.task.findUnique({
         where: {
           id: taskId,
           assigneeId: ctx.currentUser.id,

@@ -15,7 +15,6 @@ import { TechnologyLearnStrategyStages } from './LearnStrategyStages'
 import { useAppContext } from 'src/components/AppContext'
 import { Button } from 'src/ui-kit/Button'
 import { ComponentSize } from 'src/ui-kit/interfaces'
-import { SeoHeaders } from 'src/components/seo/SeoHeaders'
 import { Markdown } from 'src/components/Markdown'
 
 export const TechnologyView: React.FC<TechnologyViewProps> = ({
@@ -155,14 +154,6 @@ export const TechnologyView: React.FC<TechnologyViewProps> = ({
 
   return (
     <>
-      <SeoHeaders
-        title={technology.name || ''}
-        description={
-          technology.description ||
-          `${technology.name} — find experts, learning resources, and community insights.`
-        }
-      />
-
       {editButton}
 
       {editFormOpened ? (

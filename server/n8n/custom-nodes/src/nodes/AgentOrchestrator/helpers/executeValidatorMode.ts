@@ -25,9 +25,7 @@ export const executeValidatorMode = async (
   const systemMessage = ctx.getNodeParameter('systemMessage', 0, '') as string
   const userInput = (items[0]?.json?.chatInput as string) || ''
   const user = items[0]?.json?.user as
-    | { id: string; username?: string; fullname?: string }
-    | null
-    | undefined
+    { id: string; username?: string; fullname?: string } | null | undefined
   const sessionId = (items[0]?.json?.sessionId as string) || ''
 
   const tools = await getConnectedTools(ctx)

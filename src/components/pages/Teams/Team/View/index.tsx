@@ -5,7 +5,6 @@ import { TeamForm } from '../Form'
 import { useAppContext } from 'src/components/AppContext'
 import { Button } from 'src/ui-kit/Button'
 import { ComponentSize } from 'src/ui-kit/interfaces'
-import { SeoHeaders } from 'src/components/seo/SeoHeaders'
 import { Markdown } from 'src/components/Markdown'
 import { TeamMembers } from './TeamMembers'
 import { getResizedImagePath } from 'src/helpers/getResizedImagePath'
@@ -51,14 +50,6 @@ export const TeamView: React.FC<TeamViewProps> = ({ team }) => {
 
   return (
     <>
-      <SeoHeaders
-        title={team.title || ''}
-        // description={
-        //   team.description ||
-        //   `${team.name} — find experts, learning resources, and community insights.`
-        // }
-      />
-
       <TeamViewStyled>
         {buttons}
 

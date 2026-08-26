@@ -23,7 +23,7 @@ export const GridTableStyled = styled.ol`
   }
 
   @media screen and (max-width: ${({ theme }) =>
-      `${theme.breakpoints.sm - 1}px`}) {
+    `${theme.breakpoints.sm - 1}px`}) {
     display: grid;
     grid-template-columns: 1fr;
 

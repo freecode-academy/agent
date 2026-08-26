@@ -1,4 +1,4 @@
-import { builder } from '../../../builder'
+import { builder } from 'server/schema/builder'
 import { TaskWhereUniqueInput, TaskUpdateInput } from '../inputs'
 
 builder.mutationField('updateTask', (t) =>
@@ -21,7 +21,7 @@ builder.mutationField('updateTask', (t) =>
         throw new Error('Task ID is required')
       }
 
-      const existing = await ctx.prisma.task.findFirst({
+      const existing = await ctx.prisma.task.findUnique({
         where: {
           id: taskId,
         },
@@ -51,7 +51,7 @@ builder.mutationField('updateTask', (t) =>
         },
         data: {
           ...other,
-          name: args.data.name ?? undefined,
+          title: args.data.name ?? undefined,
           status: args.data.status ?? undefined,
         },
       })

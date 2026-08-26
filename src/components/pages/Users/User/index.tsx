@@ -8,8 +8,13 @@ import { SeoHeaders } from 'src/components/seo/SeoHeaders'
 import { JsonLd } from 'src/components/seo/JsonLd'
 import { Page } from '../../_App/interfaces'
 import { createPerson } from 'src/components/seo/JsonLd/helpers'
+import { createUserLink } from 'src/components/Link/User'
 
-export const UserPage: Page<UserPageProps> = ({ userId, username }) => {
+export const UserPage: Page<UserPageProps> = ({
+  userId,
+  username,
+  siteOrigin,
+}) => {
   const variables = getUserQueryVariables(userId, username)
 
   const response = useUserQuery({
@@ -19,7 +24,7 @@ export const UserPage: Page<UserPageProps> = ({ userId, username }) => {
 
   const user = response.data?.object
 
-  const searchable = user?.status === UserStatusEnum.ACTIVE
+  const searchable = user?.status === UserStatusEnum.ACTIVE ? true : false
 
   const personSchema = useMemo(() => {
     if (!user) {
@@ -33,19 +38,23 @@ export const UserPage: Page<UserPageProps> = ({ userId, username }) => {
   }, [user])
 
   return (
-    <>
-      <SeoHeaders
-        title={
-          (user &&
-            [user.fullname, user.username].filter((n) => !!n).join(' | ')) ||
-          undefined
-        }
-        noindex={!searchable}
-        nofollow={!searchable}
-      />
-      {personSchema && <JsonLd data={personSchema} />}
-      {user && <UserPageView user={user} />}
-    </>
+    user && (
+      <>
+        <SeoHeaders
+          title={
+            (user &&
+              [user.fullname, user.username].filter((n) => !!n).join(' | ')) ||
+            ''
+          }
+          noindex={!searchable}
+          nofollow={!searchable}
+          canonical={createUserLink(user)}
+          siteOrigin={siteOrigin}
+        />
+        {personSchema && <JsonLd data={personSchema} />}
+        {user && <UserPageView user={user} />}
+      </>
+    )
   )
 }
 

@@ -13,7 +13,13 @@ export const TechnologyCreatePage: Page = () => {
 
   return (
     <>
-      <SeoHeaders title="Create technology" noindex nofollow />
+      <SeoHeaders
+        title="Create technology"
+        noindex
+        nofollow
+        canonical={undefined}
+        siteOrigin={undefined}
+      />
 
       <TechnologyForm technology={undefined} cancelHandler={cancelHandler} />
     </>

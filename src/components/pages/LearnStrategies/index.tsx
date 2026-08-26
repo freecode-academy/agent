@@ -51,6 +51,8 @@ export const LearnStrategiesPage: Page = () => {
       <SeoHeaders
         title="Learning Strategies — Your Path to Tech Expertise"
         description="Structured learning roadmaps for web development. Master HTML, CSS, JavaScript, React, and more with proven strategies."
+        canonical={undefined}
+        siteOrigin={undefined}
       />
 
       <LearnStrategiesView

@@ -24,6 +24,8 @@ export const CodeChallengePageInitial: React.FC<
       <SeoHeaders
         title={`Challenge: ${object.name}`}
         description={`Practice coding with "${object.name}" — interactive exercise with instant feedback.`}
+        canonical={undefined}
+        siteOrigin={undefined}
       />
 
       <CodeChallengeView

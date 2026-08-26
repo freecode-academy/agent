@@ -1,4 +1,4 @@
-import { builder } from '../../../builder'
+import { builder } from 'server/schema/builder'
 import { KBConstraintUpdateInput } from '../inputs'
 
 builder.mutationField('updateConstraint', (t) =>
@@ -13,7 +13,7 @@ builder.mutationField('updateConstraint', (t) =>
         throw new Error('Unauthorized')
       }
 
-      const existingConstraint = await ctx.prisma.kBConstraint.findFirst({
+      const existingConstraint = await ctx.prisma.kBConstraint.findUnique({
         where: {
           id: args.id,
           createdById: ctx.currentUser.id,

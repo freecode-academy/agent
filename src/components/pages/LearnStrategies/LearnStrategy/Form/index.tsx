@@ -115,7 +115,7 @@ export const LearnStrategyForm: React.FC<LearnStrategyFormProps> = ({
   const loading = createLoading || updateLoading
 
   const onSubmit = useCallback(
-    (event: React.FormEvent) => {
+    (event: React.SubmitEvent) => {
       event.preventDefault()
 
       form

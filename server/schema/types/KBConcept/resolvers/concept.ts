@@ -1,4 +1,4 @@
-import { builder } from '../../../builder'
+import { builder } from 'server/schema/builder'
 import { KBConceptWhereUniqueInput } from '../inputs'
 
 builder.queryField('concept', (t) =>
@@ -9,19 +9,17 @@ builder.queryField('concept', (t) =>
     },
     resolve: async (query, _root, args, ctx) => {
       const {
-        where: { id },
+        where: { id, uri, ...other },
       } = args
 
       const concept = await ctx.prisma.kBConcept.findUnique({
         ...query,
         where: {
           id: id ?? undefined,
+          uri: uri ?? undefined,
+          ...other,
         },
       })
-
-      if (!concept) {
-        throw new Error('Concept not found or access denied')
-      }
 
       return concept
     },

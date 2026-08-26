@@ -42,8 +42,10 @@ export const CodeChallengeBlockPage: Page = () => {
   return (
     <>
       <SeoHeaders
-        title={object.name ?? undefined}
+        title={object.name ?? ''}
         description={`${object.name} — coding exercises and challenges to improve your skills.`}
+        canonical={undefined}
+        siteOrigin={undefined}
       />
 
       <CodeChallengeBlocksPageBlockView object={object} opened={true} />
@@ -55,6 +57,7 @@ CodeChallengeBlockPage.getInitialProps = async (context) => {
   const { apolloClient } = context
 
   // TODO Fix private rooms access
+  // eslint-disable-next-line @typescript-eslint/no-deprecated
   const result = await apolloClient.query<
     CodeChallengeBlockQuery,
     CodeChallengeBlockQueryVariables

@@ -104,11 +104,7 @@ export const deleteReflexSchema: yup.ObjectSchema<DeleteReflexMutationVariables>
   })
 
 export type ReflexOperation =
-  | 'myReflexes'
-  | 'myReflex'
-  | 'createReflex'
-  | 'updateReflex'
-  | 'deleteReflex'
+  'myReflexes' | 'myReflex' | 'createReflex' | 'updateReflex' | 'deleteReflex'
 
 export const reflexOperations: ReflexOperation[] = [
   'myReflexes',

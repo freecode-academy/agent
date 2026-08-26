@@ -18,6 +18,7 @@ import { useSearchParams } from 'next/navigation'
 import { GET_PARAM_REFERRERTOKEN_NAME, SignUpFormData } from './interfaces'
 import { signUpSchema } from './schema'
 import { ComponentVariant } from 'src/ui-kit/interfaces'
+import { AuthFormFooterStyled } from '../styles'
 
 export interface SignUpFormProps {
   onSuccessHandler?: (data: SignupMutation['response']) => void
@@ -50,7 +51,7 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({
   const [signupMutation] = useSignupMutation({})
 
   const onSubmit = useCallback(
-    (e: React.FormEvent) => {
+    (e: React.SubmitEvent) => {
       e.preventDefault()
 
       form.trigger().then(async (isValid) => {
@@ -153,18 +154,20 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({
         <Controller name="password" render={fieldRenderer} />
         <Controller name="referrerToken" render={fieldRenderer} />
 
-        <AuthProviders
-          onSuccessHandler={onSuccessHandler}
-          referrerToken={form.getValues().referrerToken ?? null}
-        />
+        <AuthFormFooterStyled>
+          <AuthProviders
+            onSuccessHandler={onSuccessHandler}
+            referrerToken={form.getValues().referrerToken ?? null}
+          />
 
-        <Button
-          type="submit"
-          disabled={loading}
-          variant={ComponentVariant.PRIMARY}
-        >
-          {loading ? 'Signing up...' : 'Sign up'}
-        </Button>
+          <Button
+            type="submit"
+            disabled={loading}
+            variant={ComponentVariant.PRIMARY}
+          >
+            {loading ? 'Signing up...' : 'Sign up'}
+          </Button>
+        </AuthFormFooterStyled>
       </FormProvider>
     </SignUpFormStyled>
   )

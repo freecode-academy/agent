@@ -98,8 +98,7 @@ async function resolveWorkflowDependencies(
       // Resolve targetWorkflow in workflowInputs.value (for proxy workflows)
       // targetWorkflow is a WorkflowName string that gets resolved to workflow ID
       const workflowInputs = updatedNode.parameters?.workflowInputs as
-        | { value?: { targetWorkflow?: string } }
-        | undefined
+        { value?: { targetWorkflow?: string } } | undefined
       const targetWorkflow = workflowInputs?.value?.targetWorkflow
       if (typeof targetWorkflow === 'string' && targetWorkflow) {
         const resolvedId = idMap[targetWorkflow]

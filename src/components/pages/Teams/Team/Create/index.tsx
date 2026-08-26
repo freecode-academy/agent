@@ -13,7 +13,13 @@ export const TeamCreatePage: Page = () => {
 
   return (
     <>
-      <SeoHeaders title="Create team" noindex nofollow />
+      <SeoHeaders
+        title="Create team"
+        noindex
+        nofollow
+        canonical={undefined}
+        siteOrigin={undefined}
+      />
 
       <TeamForm team={undefined} cancelHandler={cancelHandler} />
     </>

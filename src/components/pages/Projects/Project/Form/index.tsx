@@ -106,7 +106,7 @@ export const ProjectEditForm: React.FC<ProjectEditFormProps> = ({
   })
 
   const onSubmit = useCallback(
-    (event: React.FormEvent) => {
+    (event: React.SubmitEvent) => {
       event.preventDefault()
 
       form

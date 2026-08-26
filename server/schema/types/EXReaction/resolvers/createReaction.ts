@@ -1,4 +1,4 @@
-import { builder } from '../../../builder'
+import { builder } from 'server/schema/builder'
 import { EXReactionCreateInput } from '../inputs'
 
 builder.mutationField('createReaction', (t) =>
@@ -13,7 +13,7 @@ builder.mutationField('createReaction', (t) =>
       }
 
       // Verify reflex exists and belongs to user
-      const reflex = await ctx.prisma.eXReflex.findFirst({
+      const reflex = await ctx.prisma.eXReflex.findUnique({
         where: {
           id: args.data.reflexId,
           createdById: ctx.currentUser.id,

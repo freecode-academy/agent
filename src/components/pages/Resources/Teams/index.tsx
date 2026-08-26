@@ -34,7 +34,13 @@ export const ResourcesTeamsPage: Page<ResourcesTeamsPageProps> = ({ page }) => {
 
   return (
     <>
-      <SeoHeaders title="Web studios" noindex nofollow />
+      <SeoHeaders
+        title="Web studios"
+        noindex
+        nofollow
+        canonical={undefined}
+        siteOrigin={undefined}
+      />
 
       <ResourcesPageView
         resources={resources}
