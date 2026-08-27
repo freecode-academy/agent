@@ -16,7 +16,7 @@ export const ResourcesPageView: React.FC<ResourcesPageViewProps> = ({
   count,
   page,
 }) => {
-  const totalPages = count ? Math.floor(count / 10) + 1 : 0
+  const totalPages = count ? Math.ceil(count / 10) : 0
 
   const { user: currentUser } = useAppContext()
 

@@ -13,6 +13,8 @@ import { SeoHeaders } from 'src/components/seo/SeoHeaders'
 import { getCurrentUser } from 'src/helpers/getCurrentUser'
 import { useAppContext } from 'src/components/AppContext'
 
+const limit = 6
+
 type getVariablesProps = {
   page: number
   currentUser: MeUserFragment | null | undefined
@@ -21,8 +23,8 @@ type getVariablesProps = {
 export function getVariables({
   page,
 }: getVariablesProps): ProjectsConnectionQueryVariables {
-  const shortSkip = 3
-  const first = page > 1 ? 6 : shortSkip
+  const shortSkip = limit
+  const first = page > 1 ? limit : shortSkip
 
   return {
     skip:

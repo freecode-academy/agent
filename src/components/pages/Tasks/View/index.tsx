@@ -57,7 +57,7 @@ export const TasksView: React.FC<TasksViewProps> = ({
   page,
   showContent,
 }) => {
-  const totalPages = count ? Math.floor(count / limit) : 0
+  const totalPages = count ? Math.ceil(count / limit) : 0
 
   return (
     <>

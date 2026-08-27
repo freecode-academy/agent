@@ -16,7 +16,7 @@ export const ResourcesPageView: React.FC<ResourcesPageViewProps> = ({
   page,
   title,
 }) => {
-  const totalPages = count ? Math.floor(count / 10) + 1 : 0
+  const totalPages = count ? Math.ceil(count / 10) : 0
 
   return (
     <ResourcesPageViewStyled>

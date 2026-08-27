@@ -28,7 +28,7 @@ export const TechnologiesView: React.FC<TechnologiesViewProps> = ({
   limit,
 }) => {
   const { user: currentUser } = useAppContext()
-  const totalPages = count ? Math.floor(count / (limit ?? 10)) + 1 : 0
+  const totalPages = count ? Math.ceil(count / (limit ?? 10)) : 0
 
   return (
     <TechnologiesViewStyled>
