@@ -210,9 +210,9 @@ model File {
   // Eof Custom
   // ==============================================
 
-  @@index([createdById], map: "File_CreatedBy")
   @@index([Gallery], map: "File_Gallery")
   @@index([ImageResource], map: "File_ImageResource")
+  @@index([createdById], map: "File_CreatedBy")
 }
 
 model KBConceptFile {

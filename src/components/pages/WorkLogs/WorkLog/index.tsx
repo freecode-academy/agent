@@ -31,6 +31,7 @@ export const WorkLogPage: Page<WorkLogPageProps> = ({
           siteOrigin={siteOrigin}
           canonical={workLog && createWorkLogLink(workLog)}
         />
+
         <WorkLogPageStyled>
           <WorkLogCard workLog={workLog} variant="full" />
         </WorkLogPageStyled>
