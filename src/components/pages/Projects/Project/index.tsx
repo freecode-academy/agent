@@ -27,12 +27,7 @@ const getProjectVariables = (router: NextRouter | NextPageContextCustom) => {
       },
     }
   } else {
-    const uri = new URL(
-      router.asPath || '',
-      global.location?.origin || 'http://localhost',
-    )
-
-    const pathname = uri.pathname
+    const pathname = router.asPath && decodeURIComponent(router.asPath)
 
     if (pathname && pathname !== '/') {
       variables.where = {
