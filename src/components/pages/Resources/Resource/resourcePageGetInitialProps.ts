@@ -17,7 +17,8 @@ export const resourcePageGetInitialProps: Page<ResourcePageProps>['getInitialPro
         ? parseInt(query.page, 10)
         : 1
 
-    const uri: string | undefined = asPath?.replace(/\?.*/, '')
+    const uri: string | undefined =
+      asPath && decodeURI(asPath).replace(/\?.*/, '')
 
     const resource = uri
       ? await apolloClient
