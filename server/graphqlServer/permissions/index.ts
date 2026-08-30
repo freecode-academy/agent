@@ -82,6 +82,7 @@ const ruleTree = {
     createReaction: isActive,
     createReflex: isActive,
     deleteConcept: isActive,
+    validateConcepts: isActive,
     llmCompletion: isActive,
     llmChatCompletion: isActive,
     llmImageGeneration: isActive,
