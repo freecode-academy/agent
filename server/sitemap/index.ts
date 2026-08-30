@@ -1,25 +1,107 @@
-import { Prisma, ProjectType, UserStatus } from '@prisma/client'
+import {
+  KBConcept,
+  KBConceptVisibility,
+  Prisma,
+  UserStatus,
+} from '@prisma/client'
 import { Request, Response } from 'express'
 import { prismaClient } from 'server/prisma'
-import { buildProjectsWhere } from 'server/schema/types/Project/helpers/buildProjectsWhere'
-import { buildResourcesWhere } from 'server/schema/types/Resource/helpers/buildResourcesWhere'
+import { buildPostWhere } from 'server/schema/types/Post/helpers/buildPostWhere'
 import { buildUserWhere } from 'server/schema/types/User/helpers/buildUserWhere'
+import { createConceptLink } from 'src/components/Link/Concept'
+import { getLocaleFromRequest } from 'server/helpers/getLocaleFromRequest'
+import { LOCALE_CODES as allLocales } from 'src/Custom/components/LocaleSwitcher/interfaces'
+import { createTaskLink } from 'src/components/Link/Task'
 
-const SITEMAP_LIMIT = 1000
+const intLocales = allLocales.toSorted((a, b) => {
+  if (a === b) {
+    return 0
+  }
+  if (b === 'ru') {
+    return +1
+  }
+  if (a === 'ru') {
+    return -1
+  }
 
-export type SitemapSection =
-  | 'main'
-  | 'users'
-  | 'resources'
-  | 'tags'
-  | 'offers'
-  | 'projects'
-  | 'tasks'
-  | 'worklogs'
+  return a.charCodeAt(0) - b.charCodeAt(0)
+})
+
+const getLocalePrefix = (locale: string): string => {
+  return locale !== 'ru' ? `/${locale}` : ''
+}
+
+const generateHreflangLinks = (
+  siteOrigin: string,
+  url: string,
+  defaultLocale: string,
+): string => {
+  let links = ''
+  const defaultPrefix = getLocalePrefix(defaultLocale)
+
+  links += `    <xhtml:link rel="alternate" hreflang="x-default" href="${siteOrigin}${defaultPrefix}${url}" />\n`
+  for (const code of intLocales) {
+    const prefix = getLocalePrefix(code)
+    links += `    <xhtml:link rel="alternate" hreflang="${code}" href="${siteOrigin}${prefix}${url}" />\n`
+  }
+
+  return links
+}
+
+function prepareLatsMod(value: string | Date) {
+  return new Date(value).toISOString()
+}
+
+const generateUrlBlocks = (
+  siteOrigin: string,
+  item: UrlItem,
+  priority: number,
+): string => {
+  let xml = ''
+  for (const localeCode of intLocales) {
+    const locPrefix = getLocalePrefix(localeCode)
+
+    xml += '  <url>\n'
+    xml += `    <loc>${siteOrigin}${locPrefix}${item.url}</loc>\n`
+    xml += `    <lastmod>${prepareLatsMod(item.updatedAt)}</lastmod>\n`
+    xml += `    <priority>${priority}</priority>\n`
+    xml += generateHreflangLinks(siteOrigin, item.url, 'ru')
+    xml += '  </url>\n'
+  }
+  return xml
+}
+
+export enum SitemapSection {
+  index = '/sitemap.xml',
+  main = '/sitemap/main.xml',
+  concepts = '/sitemap/concepts.xml',
+  tasks = '/sitemap/tasks.xml',
+  worklogs = '/sitemap/worklogs.xml',
+
+  posts = '/sitemap/posts.xml',
+  users = '/sitemap/users.xml',
+}
+
+async function getKbConcepts(): Promise<UrlItem[]> {
+  const concepts = await prismaClient.$queryRaw<
+    Pick<KBConcept, 'id' | 'uri' | 'updatedAt'>[]
+  >`
+    SELECT id, uri, "updatedAt" FROM "KBConcept" 
+    WHERE visibility = ${Prisma.raw(`'${KBConceptVisibility.public}'`)} AND "en" IS NOT NULL AND uri IS NOT NULL
+    ORDER BY "updatedAt" DESC
+  `
+
+  return concepts
+    .filter((n) => !!n.uri)
+    .map((n) => ({
+      updatedAt: new Date(n.updatedAt).toISOString(),
+      url: createConceptLink(n),
+    }))
+}
 
 type UrlItem = {
   url: string
-  updatedAt: string
+  updatedAt: Date | string
 }
 
 type SitemapGeneratorProps = {
@@ -33,111 +115,49 @@ const generateSitemapXML = (
     priority = 0.9,
   }: SitemapGeneratorProps & {
     priority?: number
+    locale?: string
   },
 ): string => {
+  const isInternational = true
+
   let xml = '<?xml version="1.0" encoding="UTF-8"?>\n'
-  xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+  xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'
+  if (isInternational) {
+    xml += ' xmlns:xhtml="http://www.w3.org/1999/xhtml"'
+  }
+  xml += '>\n'
 
   items.forEach((item) => {
-    xml += '  <url>\n'
-    xml += `    <loc>${siteOrigin}${item.url}</loc>\n`
-    xml += `    <lastmod>${item.updatedAt}</lastmod>\n`
-    xml += `    <priority>${priority}</priority>\n`
-    xml += '  </url>\n'
+    if (isInternational) {
+      xml += generateUrlBlocks(siteOrigin, item, priority)
+    } else {
+      xml += '  <url>\n'
+      xml += `    <loc>${siteOrigin}${item.url}</loc>\n`
+      xml += `    <lastmod>${prepareLatsMod(item.updatedAt)}</lastmod>\n`
+      xml += `    <priority>${priority}</priority>\n`
+      xml += '  </url>\n'
+    }
   })
 
   xml += '</urlset>'
   return xml
 }
 
-const getSectionCount = async (section: SitemapSection): Promise<number> => {
-  switch (section) {
-    case 'users':
-      return prismaClient.user.count({ where: usersWhere })
-    case 'resources':
-      return prismaClient.resource.count({ where: resourcesWhere })
-    case 'tags':
-      return prismaClient.tag.count({ where: tagsWhere })
-    case 'offers':
-      return prismaClient.offer.count({ where: offersWhere })
-    case 'projects':
-      return prismaClient.project.count({ where: projectsWhere })
-    case 'tasks':
-      return prismaClient.task.count({ where: tasksWhere })
-    case 'worklogs':
-      return prismaClient.taskWorkLog.count({ where: workLogsWhere })
-    case 'main':
-      return 0
-  }
-}
-
-export const generateSitemapIndex = async ({
+const generateSitemapIndex = async ({
   siteOrigin,
 }: SitemapGeneratorProps): Promise<string> => {
-  const [
-    usersCount,
-    resourcesCount,
-    tagsCount,
-    offersCount,
-    projectsCount,
-    tasksCount,
-    worklogsCount,
-  ] = await Promise.all([
-    getSectionCount('users'),
-    getSectionCount('resources'),
-    getSectionCount('tags'),
-    getSectionCount('offers'),
-    getSectionCount('projects'),
-    getSectionCount('tasks'),
-    getSectionCount('worklogs'),
-  ])
-
-  const usersPages = Math.ceil(usersCount / SITEMAP_LIMIT)
-  const resourcesPages = Math.ceil(resourcesCount / SITEMAP_LIMIT)
-  const tagsPages = Math.ceil(tagsCount / SITEMAP_LIMIT)
-  const offersPages = Math.ceil(offersCount / SITEMAP_LIMIT)
-  const projectPages = Math.ceil(projectsCount / SITEMAP_LIMIT)
-  const taskPages = Math.ceil(tasksCount / SITEMAP_LIMIT)
-  const worklogsPages = Math.ceil(worklogsCount / SITEMAP_LIMIT)
-
-  let xml = '<?xml version="1.0" encoding="UTF-8"?>\n'
-  xml += '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
-
-  xml += `  <sitemap><loc>${siteOrigin}/sitemap.xml?section=main</loc></sitemap>\n`
-
-  for (let i = 1; i <= usersPages; i++) {
-    xml += `  <sitemap><loc>${siteOrigin}/sitemap.xml?section=users&amp;page=${i}</loc></sitemap>\n`
-  }
-
-  for (let i = 1; i <= resourcesPages; i++) {
-    xml += `  <sitemap><loc>${siteOrigin}/sitemap.xml?section=resources&amp;page=${i}</loc></sitemap>\n`
-  }
-
-  for (let i = 1; i <= tagsPages; i++) {
-    xml += `  <sitemap><loc>${siteOrigin}/sitemap.xml?section=tags&amp;page=${i}</loc></sitemap>\n`
-  }
-
-  for (let i = 1; i <= offersPages; i++) {
-    xml += `  <sitemap><loc>${siteOrigin}/sitemap.xml?section=offers&amp;page=${i}</loc></sitemap>\n`
-  }
-
-  for (let i = 1; i <= projectPages; i++) {
-    xml += `  <sitemap><loc>${siteOrigin}/sitemap.xml?section=projects&amp;page=${i}</loc></sitemap>\n`
-  }
-
-  for (let i = 1; i <= taskPages; i++) {
-    xml += `  <sitemap><loc>${siteOrigin}/sitemap.xml?section=tasks&amp;page=${i}</loc></sitemap>\n`
-  }
-
-  for (let i = 1; i <= worklogsPages; i++) {
-    xml += `  <sitemap><loc>${siteOrigin}/sitemap.xml?section=worklogs&amp;page=${i}</loc></sitemap>\n`
-  }
-
-  xml += '</sitemapindex>'
-  return xml
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <sitemap>
+        <loc>${siteOrigin}/sitemap/main.xml</loc>
+    </sitemap>
+    <sitemap>
+        <loc>${siteOrigin}${SitemapSection.concepts}</loc>
+    </sitemap>
+</sitemapindex>`
 }
 
-export const generateSitemapMain = async (
+const generateSitemapMain = async (
   props: SitemapGeneratorProps,
 ): Promise<string> => {
   const now = new Date()
@@ -152,19 +172,7 @@ export const generateSitemapMain = async (
       updatedAt: monday.toISOString().split('T')[0],
     },
     {
-      url: `/comments`,
-      updatedAt: monday.toISOString().split('T')[0],
-    },
-    {
-      url: `/people`,
-      updatedAt: monday.toISOString().split('T')[0],
-    },
-    {
-      url: `/about`,
-      updatedAt: monday.toISOString().split('T')[0],
-    },
-    {
-      url: `/start/developers`,
+      url: `/concepts`,
       updatedAt: monday.toISOString().split('T')[0],
     },
   ]
@@ -172,51 +180,81 @@ export const generateSitemapMain = async (
   return generateSitemapXML(xmlData, props)
 }
 
-const resourcesWhere = buildResourcesWhere()
-
-export const generateSitemapResources = async (
-  props: SitemapGeneratorProps & { page: number },
+const generateSitemapConcepts = async (
+  props: SitemapGeneratorProps,
 ): Promise<string> => {
-  const resources = await prismaClient.resource.findMany({
-    where: resourcesWhere,
-    orderBy: {
-      createdAt: 'desc',
-    },
-    take: SITEMAP_LIMIT,
-    skip: (props.page - 1) * SITEMAP_LIMIT,
-  })
-
-  const xmlData: UrlItem[] = resources.map((n) => {
-    const { uri, updatedAt } = n
-
-    return {
-      url: `/${(uri ?? '').replaceAll(/^\/+|\/+$/g, '')}`,
-      updatedAt: updatedAt.toISOString(),
-    }
-  })
+  const xmlData: UrlItem[] = await getKbConcepts()
 
   return generateSitemapXML(xmlData, props)
 }
 
-const tagsWhere: Prisma.TagWhereInput = {}
-
-export const generateSitemapTags = async (
-  props: SitemapGeneratorProps & { page: number },
+const generateSitemapTasks = async (
+  props: SitemapGeneratorProps,
 ): Promise<string> => {
-  const tags = await prismaClient.tag.findMany({
-    where: tagsWhere,
+  const xmlData: UrlItem[] = await prismaClient.task
+    .findMany({
+      orderBy: {
+        updatedAt: 'desc',
+      },
+    })
+    .then((r) => {
+      return r.map<UrlItem>((n) => {
+        return {
+          ...n,
+          url: createTaskLink(n),
+        }
+      })
+    })
+
+  return generateSitemapXML(xmlData, props)
+}
+
+const generateSitemapWorkLogs = async (
+  props: SitemapGeneratorProps,
+): Promise<string> => {
+  const xmlData: UrlItem[] = await prismaClient.taskWorkLog
+    .findMany({
+      orderBy: {
+        createdAt: 'desc',
+      },
+    })
+    .then((r) => {
+      return r.map<UrlItem>((n) => {
+        return {
+          ...n,
+          url: `/worklogs/${n.id}`,
+          updatedAt: n.createdAt,
+        }
+      })
+    })
+
+  return generateSitemapXML(xmlData, props)
+}
+
+const postsWhere = buildPostWhere(
+  {
+    status: 'published',
+  },
+  undefined,
+)
+
+export const generateSitemapPosts = async (
+  props: SitemapGeneratorProps,
+): Promise<string> => {
+  const posts = await prismaClient.post.findMany({
+    where: postsWhere,
     orderBy: {
-      createdAt: 'desc',
+      createdAt: 'asc',
     },
-    take: SITEMAP_LIMIT,
-    skip: (props.page - 1) * SITEMAP_LIMIT,
   })
 
-  const xmlData: UrlItem[] = tags.map((n) => {
-    const { name, updatedAt } = n
+  const xmlData: UrlItem[] = posts.map((n) => {
+    const { id, updatedAt } = n
+
+    const uri = `/posts/${id}`
 
     return {
-      url: `/tag/${name}`,
+      url: `/${(uri ?? '').replaceAll(/^\/+|\/+$/g, '')}`,
       updatedAt: updatedAt.toISOString(),
     }
   })
@@ -232,51 +270,22 @@ const usersWhere = buildUserWhere(
 )
 
 export const generateSitemapUsers = async (
-  props: SitemapGeneratorProps & { page: number },
+  props: SitemapGeneratorProps,
 ): Promise<string> => {
-  const users = await prismaClient.user.findMany({
+  const posts = await prismaClient.user.findMany({
     where: usersWhere,
     orderBy: {
-      createdAt: 'desc',
+      createdAt: 'asc',
     },
-    take: SITEMAP_LIMIT,
-    skip: (props.page - 1) * SITEMAP_LIMIT,
   })
 
-  const xmlData: UrlItem[] = users.map((n) => {
-    const { id, username, updatedAt } = n
-
-    return {
-      // url: `/users/${id}`,
-      url: username ? `/profile/${username}` : `/profile/id/${id}`,
-      updatedAt: updatedAt.toISOString(),
-    }
-  })
-
-  return generateSitemapXML(xmlData, props)
-}
-
-const offersWhere: Prisma.OfferWhereInput = {
-  published: true,
-}
-
-export const generateSitemapOffers = async (
-  props: SitemapGeneratorProps & { page: number },
-): Promise<string> => {
-  const offers = await prismaClient.offer.findMany({
-    where: offersWhere,
-    orderBy: {
-      updatedAt: 'desc',
-    },
-    take: SITEMAP_LIMIT,
-    skip: (props.page - 1) * SITEMAP_LIMIT,
-  })
-
-  const xmlData: UrlItem[] = offers.map((n) => {
+  const xmlData: UrlItem[] = posts.map((n) => {
     const { id, updatedAt } = n
 
+    const uri = `/users/${id}`
+
     return {
-      url: `/offers/${id}`,
+      url: `/${(uri ?? '').replaceAll(/^\/+|\/+$/g, '')}`,
       updatedAt: updatedAt.toISOString(),
     }
   })
@@ -284,152 +293,39 @@ export const generateSitemapOffers = async (
   return generateSitemapXML(xmlData, props)
 }
 
-const projectsWhere: Prisma.ProjectWhereInput = buildProjectsWhere(
-  undefined,
-  undefined,
-)
-
-export const generateSitemapProjects = async (
-  props: SitemapGeneratorProps & { page: number },
-): Promise<string> => {
-  const projects = await prismaClient.project.findMany({
-    where: projectsWhere,
-    orderBy: {
-      updatedAt: 'desc',
-    },
-    take: SITEMAP_LIMIT,
-    skip: (props.page - 1) * SITEMAP_LIMIT,
-    include: {
-      Resource_Project_ResourceToResource: {
-        select: {
-          uri: true,
-        },
-      },
-    },
-  })
-
-  const xmlData: UrlItem[] = projects.map((n) => {
-    const { id, updatedAt, Resource_Project_ResourceToResource: Resource } = n
-
-    const { uri: resourceUri } = Resource || {}
-
-    return {
-      url: resourceUri || `/projects/id/${id}`,
-      updatedAt: updatedAt.toISOString(),
-    }
-  })
-
-  return generateSitemapXML(xmlData, props)
-}
-
-const tasksWhere: Prisma.TaskWhereInput = {
-  Project: {
-    OR: [
-      {
-        type: null,
-      },
-      {
-        type: {
-          not: {
-            equals: ProjectType.Education,
-          },
-        },
-      },
-    ],
-  },
-}
-
-export const generateSitemapTasks = async (
-  props: SitemapGeneratorProps & { page: number },
-): Promise<string> => {
-  const tasks = await prismaClient.task.findMany({
-    where: tasksWhere,
-    orderBy: {
-      updatedAt: 'desc',
-    },
-    take: SITEMAP_LIMIT,
-    skip: (props.page - 1) * SITEMAP_LIMIT,
-  })
-
-  const xmlData: UrlItem[] = tasks.map((n) => {
-    const { id, updatedAt } = n
-
-    return {
-      url: `/tasks/${id}`,
-      updatedAt: updatedAt.toISOString(),
-    }
-  })
-
-  return generateSitemapXML(xmlData, props)
-}
-
-const workLogsWhere: Prisma.TaskWorkLogWhereInput = {}
-
-export const generateSitemapWorkLogs = async (
-  props: SitemapGeneratorProps & { page: number },
-): Promise<string> => {
-  const workLogs = await prismaClient.taskWorkLog.findMany({
-    where: workLogsWhere,
-    orderBy: {
-      createdAt: 'desc',
-    },
-    take: SITEMAP_LIMIT,
-    skip: (props.page - 1) * SITEMAP_LIMIT,
-  })
-
-  const xmlData: UrlItem[] = workLogs.map((n) => {
-    const { id, createdAt } = n
-
-    return {
-      url: `/worklogs/${id}`,
-      updatedAt: createdAt.toISOString(),
-    }
-  })
-
-  return generateSitemapXML(xmlData, props)
-}
-
-/**
- * Обрабатывает запрос для генерации sitemap
- * @param type тип sitemap (cities или companies)
- * @param res объект ответа Express
- */
 export const generateSitemap = async (req: Request, res: Response) => {
+  const locale = getLocaleFromRequest(req)
+
   res.header('Content-Type', 'application/xml')
 
   const siteOrigin = `${req.protocol}://${req.headers.host}`
-  const section = req.query.section as SitemapSection | undefined
-  const page = parseInt(req.query.page as string) || 1
 
-  if (!section) {
-    res.send(await generateSitemapIndex({ siteOrigin }))
-    return
-  }
+  const props = { siteOrigin, locale }
 
-  switch (section) {
-    case 'main':
-      res.send(await generateSitemapMain({ siteOrigin }))
+  switch (req.url) {
+    case SitemapSection.concepts:
+      res.send(await generateSitemapConcepts(props))
       break
-    case 'users':
-      res.send(await generateSitemapUsers({ siteOrigin, page }))
+
+    case SitemapSection.tasks:
+      res.send(await generateSitemapTasks(props))
       break
-    case 'resources':
-      res.send(await generateSitemapResources({ siteOrigin, page }))
+
+    case SitemapSection.worklogs:
+      res.send(await generateSitemapWorkLogs(props))
       break
-    case 'tags':
-      res.send(await generateSitemapTags({ siteOrigin, page }))
+
+    case SitemapSection.index:
+      res.send(await generateSitemapIndex(props))
       break
-    case 'offers':
-      res.send(await generateSitemapOffers({ siteOrigin, page }))
+    case SitemapSection.main:
+      res.send(await generateSitemapMain(props))
       break
-    case 'projects':
-      res.send(await generateSitemapProjects({ siteOrigin, page }))
+    case SitemapSection.posts:
+      res.send(await generateSitemapPosts({ siteOrigin }))
       break
-    case 'tasks':
-      res.send(await generateSitemapTasks({ siteOrigin, page }))
-      break
-    case 'worklogs':
-      res.send(await generateSitemapWorkLogs({ siteOrigin, page }))
+    case SitemapSection.users:
+      res.send(await generateSitemapUsers({ siteOrigin }))
       break
     default:
       res.status(404).send('Not found')

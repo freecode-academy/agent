@@ -1,0 +1,5 @@
+query MainPageData($detailedInfo: Boolean = true) {
+  concept(where: { uri: "/" }) {
+    ...KBConcept_
+  }
+}

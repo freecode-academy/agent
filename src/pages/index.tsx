@@ -1,1 +1,1 @@
-export { MainPage as default } from 'src/components/pages/MainPage'
+export { MainPageFreecode as default } from 'src/FreecodeAcademy/MainPage'

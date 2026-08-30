@@ -12,6 +12,7 @@ import './resolvers/signin'
 import './resolvers/updateCurrentUser'
 import './resolvers/updateUser'
 import './resolvers/createReferrerToken'
+import { getFieldValueByLang } from '../KBConcept/helpers/getFieldValueByLang'
 
 // User object type
 builder.prismaObject('User', {
@@ -27,10 +28,22 @@ builder.prismaObject('User', {
         ctx.currentUser?.id === user.id ? user.email : null,
     }),
     image: t.exposeString('image'),
-    content: t.exposeString('content'),
-    intro: t.exposeString('intro'),
     username: t.exposeString('username', { nullable: true }),
-    fullname: t.exposeString('fullname', { nullable: true }),
+    intro: t.string({
+      resolve(source, _, ctx) {
+        return getFieldValueByLang(source, 'intro', ctx)
+      },
+    }),
+    content: t.string({
+      resolve(source, _, ctx) {
+        return getFieldValueByLang(source, 'content', ctx)
+      },
+    }),
+    fullname: t.string({
+      resolve(source, _, ctx) {
+        return getFieldValueByLang(source, 'fullname', ctx)
+      },
+    }),
     sudo: t.exposeBoolean('sudo', { nullable: true }),
     isAiAgent: t.exposeBoolean('isAiAgent', { nullable: false }),
     status: t.field({

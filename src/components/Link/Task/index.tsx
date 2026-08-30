@@ -1,8 +1,10 @@
 import Link from 'next/link'
 import { TaskNoNestingFragment } from 'src/gql/generated'
 
-export function createTaskLink(task: TaskNoNestingFragment) {
-  const { id } = task
+export function createTaskLink(
+  object: Pick<TaskNoNestingFragment, 'id'>,
+): string {
+  const { id } = object
 
   return `/tasks/${id}`
 }

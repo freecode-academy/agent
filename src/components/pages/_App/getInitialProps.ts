@@ -15,10 +15,22 @@ import {
   CreateSystemLogMutationVariables,
 } from 'src/gql/generated/createSystemLog'
 import { SystemLogLevel, SystemLogSource } from 'src/gql/generated'
+import {
+  isLocale,
+  Locale,
+} from 'src/Custom/components/LocaleSwitcher/interfaces'
 
 export const getInitialProps: MainApp['getInitialProps'] = async (
   appContext,
 ) => {
+  const { router } = appContext
+
+  const locale: Locale = isLocale(router.locale)
+    ? router.locale
+    : isLocale(router.defaultLocale)
+      ? router.defaultLocale
+      : 'ru'
+
   /**
    * In order to be able to assemble a common apollo state
    * from the application and then from pages and documents,
@@ -27,6 +39,7 @@ export const getInitialProps: MainApp['getInitialProps'] = async (
   const apolloClient = initializeApollo({
     withWs: withWs,
     appContext,
+    locale,
   })
 
   /**
@@ -35,6 +48,23 @@ export const getInitialProps: MainApp['getInitialProps'] = async (
   const ctx: NextPageContextCustom = {
     ...appContext.ctx,
     apolloClient,
+  }
+
+  // Normalize asPath: on client-side navigation Next.js includes locale prefix,
+  // but on server-side it doesn't. Remove locale prefix for consistency.
+  const { defaultLocale } = router
+
+  if (ctx.asPath && locale && locale !== defaultLocale) {
+    const localePrefix = `/${locale}`
+    // Check for exact match: /vi or /vi/ or /vi? or /vi/path or /vi?query
+    if (
+      ctx.asPath === localePrefix ||
+      ctx.asPath.startsWith(`${localePrefix}/`) ||
+      ctx.asPath.startsWith(`${localePrefix}?`)
+    ) {
+      const stripped = ctx.asPath.slice(localePrefix.length)
+      ctx.asPath = stripped.startsWith('?') ? `/${stripped}` : stripped || '/'
+    }
   }
 
   const newAppContext = {
@@ -75,6 +105,7 @@ export const getInitialProps: MainApp['getInitialProps'] = async (
       initialApolloState: apolloClient.cache.extract(),
       siteOrigin: getSiteOrigin(ctx.req),
     },
+    locale,
   }
 
   if (
@@ -85,7 +116,14 @@ export const getInitialProps: MainApp['getInitialProps'] = async (
   ) {
     const req = ctx.req
     const res = ctx.res
-    const url = req.url || ''
+    const url =
+      'originalUrl' in req &&
+      req.originalUrl &&
+      req.originalUrl &&
+      typeof req.originalUrl === 'string'
+        ? req.originalUrl
+        : req.url || ''
+
     const path = url.split('?')[0]
 
     const skip = [

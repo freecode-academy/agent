@@ -20,9 +20,10 @@ import { SnackbarProvider, Snackbar } from 'src/ui-kit/Snackbar'
 import { getInitialProps } from './getInitialProps'
 import { useScrollPage } from 'src/hooks/useScrollPage'
 import { ChatProvider } from 'src/components/Chat/ChatWidget/context'
-import { LayoutV2 } from 'src/components/LayoutV2'
+import { LayoutV2 as Layout } from 'src/components/LayoutV2'
+import { LexiconProvider } from 'src/Custom/Lexicon'
 
-export const App: MainApp<AppProps> = ({ Component, pageProps }) => {
+export const App: MainApp<AppProps> = ({ Component, pageProps, locale }) => {
   useEffect(() => {
     if (process.env.NEXT_PUBLIC_BETTERLYTICS_SITE_ID) {
       betterlytics.init(process.env.NEXT_PUBLIC_BETTERLYTICS_SITE_ID, {
@@ -38,7 +39,7 @@ export const App: MainApp<AppProps> = ({ Component, pageProps }) => {
 
   useScrollPage()
 
-  const apolloClient = useApollo(pageProps.initialApolloState, withWs)
+  const apolloClient = useApollo(pageProps.initialApolloState, withWs, locale)
 
   const { data, loading: userLoading } = useMeQuery({
     client: apolloClient,
@@ -86,16 +87,22 @@ export const App: MainApp<AppProps> = ({ Component, pageProps }) => {
 
       <ThemeProvider theme={theme}>
         <GlobalStyle />
-        <SnackbarProvider>
-          <ApolloProvider client={apolloClient}>
-            <AppContextProvider user={user} userLoading={userLoading}>
-              <ChatProvider>
-                <LayoutV2>{content}</LayoutV2>
-              </ChatProvider>
-              <Snackbar />
-            </AppContextProvider>
-          </ApolloProvider>
-        </SnackbarProvider>
+        <LexiconProvider>
+          <SnackbarProvider>
+            <ApolloProvider client={apolloClient}>
+              <AppContextProvider
+                user={user}
+                userLoading={userLoading}
+                locale={locale}
+              >
+                <ChatProvider>
+                  <Layout>{content}</Layout>
+                </ChatProvider>
+                <Snackbar />
+              </AppContextProvider>
+            </ApolloProvider>
+          </SnackbarProvider>
+        </LexiconProvider>
       </ThemeProvider>
     </>
   )

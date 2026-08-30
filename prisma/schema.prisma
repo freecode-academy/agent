@@ -130,6 +130,9 @@ model User {
 
   IncidentsResolved Incident[] @relation(name: "IncidentResolvedBy")
 
+  // Langs
+  en Json?
+
   @@unique([email])
   @@unique([username])
   @@index([CreatedBy], map: "User_CreatedBy")
@@ -429,6 +432,9 @@ model KBConcept {
 
   quality    Float               @default(0.7)
   visibility KBConceptVisibility @default(hidden)
+
+  // Langs
+  en Json?
 
   @@unique([rootId, code])
   @@unique([parentId, code])

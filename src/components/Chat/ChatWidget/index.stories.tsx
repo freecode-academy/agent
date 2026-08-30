@@ -113,10 +113,10 @@ export const MessageBot: StoryObj = {
     <div style={{ width: 380, padding: 16, background: '#f5f5f5' }}>
       <Message $isUser={false}>
         <Markdown>
-          Great question! Here are some steps to learn React: 1. **Learn
-          JavaScript basics** - ES6+ features 2. **Understand JSX** - React's
-          syntax extension 3. **Components and Props** - Building blocks 4.
-          **State and Hooks** - Managing data
+          Отличный вопрос! Вот шаги для изучения React: 1. **Изучите основы
+          JavaScript** - возможности ES6+ 2. **Поймите JSX** - расширение
+          синтаксиса React 3. **Компоненты и Props** - Строительные блоки 4.
+          **State и Hooks** - Управление данными
         </Markdown>
       </Message>
     </div>
@@ -199,8 +199,8 @@ export const ChatWindowDefault: StoryObj = {
         </ChatHeader>
         <ChatContentContainer $hasMessages={false}>
           <WelcomeMessage>
-            <h4>Hi! How can I help?</h4>
-            <p>Ask me anything</p>
+            <h4>Привет! Чем могу помочь?</h4>
+            <p>Спросите что угодно</p>
           </WelcomeMessage>
           <ChatInputContainer>
             <PreventDefault>
@@ -311,7 +311,7 @@ export const ChatWindowStreaming: StoryObj = {
           <ChatInputContainer>
             <PreventDefault>
               <ChatTextarea
-                placeholder="Type your question..."
+                placeholder="Введите ваш вопрос..."
                 rows={1}
                 disabled
               />
