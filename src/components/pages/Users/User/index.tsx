@@ -10,12 +10,8 @@ import { Page } from '../../_App/interfaces'
 import { createPerson } from 'src/components/seo/JsonLd/helpers'
 import { createUserLink } from 'src/components/Link/User'
 
-export const UserPage: Page<UserPageProps> = ({
-  userId,
-  username,
-  siteOrigin,
-}) => {
-  const variables = getUserQueryVariables(userId, username)
+export const UserPage: Page<UserPageProps> = ({ userId, siteOrigin }) => {
+  const variables = getUserQueryVariables(userId)
 
   const response = useUserQuery({
     skip: !variables,
@@ -37,25 +33,22 @@ export const UserPage: Page<UserPageProps> = ({
     })
   }, [user])
 
-  return (
-    user && (
-      <>
-        <SeoHeaders
-          title={
-            (user &&
-              [user.fullname, user.username].filter((n) => !!n).join(' | ')) ||
-            ''
-          }
-          noindex={!searchable}
-          nofollow={!searchable}
-          canonical={createUserLink(user)}
-          siteOrigin={siteOrigin}
-        />
-        {personSchema && <JsonLd data={personSchema} />}
-        {user && <UserPageView user={user} />}
-      </>
-    )
-  )
+  return user ? (
+    <>
+      <SeoHeaders
+        title={
+          [user.fullname, user.username].filter((n) => !!n).join(' | ') ||
+          'Anonim'
+        }
+        noindex={!searchable}
+        nofollow={!searchable}
+        canonical={createUserLink(user)}
+        siteOrigin={siteOrigin}
+      />
+      {personSchema && <JsonLd data={personSchema} />}
+      {user && <UserPageView user={user} />}
+    </>
+  ) : null
 }
 
 UserPage.getInitialProps = userPageGetInitialProps

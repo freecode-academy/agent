@@ -1,1 +1,1 @@
-export { TeamsPage as default } from 'src/components/pages/Teams'
+export { TeamsPage as default } from '@/pages/Teams/'

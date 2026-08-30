@@ -1,1 +1,1 @@
-export { OfferPage as default } from 'src/components/pages/Offers/Offer'
+export { OfferPage as default } from '@/pages/Offers/Offer'

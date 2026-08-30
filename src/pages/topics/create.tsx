@@ -1,1 +1,1 @@
-export { ResourceCreatePage as default } from 'src/components/pages/Topics/Topic/Create'
+export { ResourceCreatePageFreecode as default } from '@/pages/Topics/Topic/Create'

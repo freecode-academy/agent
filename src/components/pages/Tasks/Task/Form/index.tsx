@@ -26,9 +26,6 @@ import { FormControl } from 'src/ui-kit/FormControl'
 import { Button } from 'src/ui-kit/Button'
 import { ComponentVariant } from 'src/ui-kit/interfaces'
 import { useAppContext } from 'src/components/AppContext'
-import { useApolloClient } from '@apollo/client/react'
-// import { FileUploader, FileUploaderProps } from 'src/components/FileUploader'
-import { OfferBannerStyled } from 'src/components/Offer/styles'
 
 const MarkdownEditor = dynamic(
   () => import('src/components/Markdown/Editor').then((r) => r.MarkdownEditor),
@@ -37,28 +34,13 @@ const MarkdownEditor = dynamic(
   },
 )
 
-type FormData = Omit<
-  TaskCreateInput,
-  'parentId' | 'assigneeId' | 'startDatePlaning' | 'endDatePlaning'
->
+type FormData = Omit<TaskCreateInput, 'parentId'>
 
-type getDefaultValuesProps = {
-  task: TaskEditFormProps['task']
-  projectId: string | undefined
-}
-
-function getDefaultValues({
-  task,
-  projectId,
-}: getDefaultValuesProps): FormData {
+function getDefaultValues(task: TaskEditFormProps['task']): FormData {
   return {
     name: task?.title ?? '',
     description: task?.description ?? '',
     content: task?.content ?? '',
-    projectId: task ? (task?.projectId ?? undefined) : projectId,
-    // intro: task?.intro ?? '',
-    // image: task?.image ?? '',
-    // published: task?.published ?? true,
   }
 }
 
@@ -66,20 +48,22 @@ export const schema: yup.ObjectSchema<FormData> = yup.object().shape({
   name: yup.string().required(),
   description: yup.string(),
   content: yup.string(),
-  projectId: yup.string(),
-  // intro: yup.string(),
-  // image: yup.string(),
-  // published: yup.boolean(),
+  assigneeId: yup.string(),
+  startDatePlaning: yup.date(),
+  endDatePlaning: yup.date(),
+  projectId: yup.string().nullable(),
 })
 
 type TaskEditFormProps = {
   task: TaskFragment | undefined
+  parentId: string | null | undefined
   cancelHandler: (() => void) | undefined
 }
 
 export const TaskEditForm: React.FC<TaskEditFormProps> = ({
   task,
   cancelHandler,
+  parentId,
 }) => {
   const { user: currentUser } = useAppContext()
 
@@ -88,26 +72,14 @@ export const TaskEditForm: React.FC<TaskEditFormProps> = ({
   const router = useRouter()
 
   const [createTaskMutation, { loading: loadingCreateTask }] =
-    useCreateTaskMutation({
-      refetchQueries: [],
-    })
+    useCreateTaskMutation()
   const [updateTaskMutation, { loading: loadingUpdateTask }] =
-    useUpdateTaskMutation({
-      refetchQueries: [],
-    })
-
-  const client = useApolloClient()
+    useUpdateTaskMutation()
 
   const loading = loadingCreateTask || loadingUpdateTask
 
   const form = useForm<FormData>({
-    defaultValues: getDefaultValues({
-      task,
-      projectId:
-        typeof router.query.projectId === 'string' && router.query.projectId
-          ? router.query.projectId
-          : undefined,
-    }),
+    defaultValues: getDefaultValues(task),
     resolver: yupResolver(schema),
     shouldFocusError: false,
     reValidateMode: 'onChange',
@@ -127,7 +99,6 @@ export const TaskEditForm: React.FC<TaskEditFormProps> = ({
             const request = task
               ? updateTaskMutation({
                   variables: {
-                    // lang: language,
                     data: {
                       ...other,
                     },
@@ -138,9 +109,9 @@ export const TaskEditForm: React.FC<TaskEditFormProps> = ({
                 })
               : createTaskMutation({
                   variables: {
-                    // lang: language,
                     data: {
                       ...other,
+                      parentId,
                     },
                   },
                 })
@@ -155,8 +126,6 @@ export const TaskEditForm: React.FC<TaskEditFormProps> = ({
                   })
 
                   cancelHandler?.()
-
-                  client.resetStore().catch(console.error)
 
                   router.push(`/tasks/${task.id}`)
                 } else {
@@ -189,59 +158,26 @@ export const TaskEditForm: React.FC<TaskEditFormProps> = ({
       router,
       updateTaskMutation,
       cancelHandler,
-      client,
+      parentId,
     ],
   )
 
-  // const onChangeImage = useCallback<NonNullable<FileUploaderProps['onChange']>>(
-  //   (file) => {
-  //     if (file?.path) {
-  //       form.setValue('image', file.path, {
-  //         shouldValidate: true,
-  //       })
-  //     }
-  //   },
-  //   [form],
-  // )
-
   const fieldRenderer = useCallback<
-    ControllerProps<FormData, 'content' | 'description' | 'name'>['render']
+    // ControllerProps<FormData, 'content' | 'description' | 'title'>['render']
+    ControllerProps<FormData, 'name' | 'description' | 'content'>['render']
   >(({ field: { name, value, onChange, onBlur }, fieldState: { error } }) => {
     let label: string
     const helperText = undefined
-    let EditorComponent:
-      | typeof TextField
-      | typeof MarkdownEditor
-      | React.FC<{
-          value: string
-        }>
-      | React.FC<React.HtmlHTMLAttributes<HTMLSelectElement>> = TextField
+    let EditorComponent: typeof TextField | typeof MarkdownEditor = TextField
 
     switch (name) {
       case 'name':
         label = 'Title'
         break
       case 'description':
-        label = 'SEO description'
+        label = 'Description'
+        EditorComponent = MarkdownEditor
         break
-      // case 'image':
-      //   label = 'Main image'
-
-      //   EditorComponent = ({ value }: { value: string }) => {
-      //     return (
-      //       <>
-      //         <FileUploader
-      //           value={value ? `/images/resized/middle/${value}` : ''}
-      //           onChange={onChangeImage}
-      //         />
-      //       </>
-      //     )
-      //   }
-      //   break
-      // case 'intro':
-      //   label = 'Intro'
-      //   EditorComponent = MarkdownEditor
-      //   break
       case 'content':
         label = 'Content'
         EditorComponent = MarkdownEditor
@@ -268,16 +204,8 @@ export const TaskEditForm: React.FC<TaskEditFormProps> = ({
   return (
     <FormProvider {...form}>
       <TaskEditFormStyled onSubmit={onSubmit}>
-        {!isActive && (
-          <OfferBannerStyled>
-            You cannot publish tasks until you are activated
-          </OfferBannerStyled>
-        )}
-
         <Controller name="name" render={fieldRenderer} />
-        {/* <Controller name="image" render={fieldRenderer} /> */}
         <Controller name="description" render={fieldRenderer} />
-        {/* <Controller name="intro" render={fieldRenderer} /> */}
         <Controller name="content" render={fieldRenderer} />
 
         <TaskEditFormToolbarStyled>

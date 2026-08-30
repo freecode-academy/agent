@@ -1,14 +1,11 @@
 import { UserQueryVariables } from 'src/gql/generated'
 
 export function getUserQueryVariables(
-  id: string | undefined,
-  username: string | undefined,
+  userId: string | undefined,
 ): UserQueryVariables {
   return {
     where: {
-      id,
-      username,
+      id: userId,
     },
-    withUserTechnologies: true,
   }
 }

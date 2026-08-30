@@ -28,7 +28,7 @@
     "incremental": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/components/LayoutV2/*"],
+      "@/*": ["./src/FreecodeAcademy/*"],
       ".storybook/*": [".storybook/*"]
     }
   },

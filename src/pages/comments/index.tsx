@@ -1,1 +1,1 @@
-export { CommentsPage as default } from 'src/components/pages/Comments'
+export { CommentsPage as default } from '@/pages/Comments'

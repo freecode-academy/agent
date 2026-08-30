@@ -8,6 +8,8 @@ import {
 } from 'src/gql/generated'
 import { getTasksWithCountQueryVariables } from './helpers'
 
+const PAGE_SIZE = 20
+
 export const tasksPageGetInitialProps: Page<TasksPageProps>['getInitialProps'] =
   async ({ query, apolloClient }) => {
     const queryStatus = query.status
@@ -17,19 +19,15 @@ export const tasksPageGetInitialProps: Page<TasksPageProps>['getInitialProps'] =
         : null
 
     const pageParam = query.page
-
     const page =
       typeof pageParam === 'string' && parseInt(pageParam, 10) > 0
         ? parseInt(pageParam, 10)
         : 1
 
-    const projectId =
-      (typeof query.projectId === 'string' && query.projectId) || undefined
-
     const variables = getTasksWithCountQueryVariables(
       selectedStatus,
       page,
-      projectId,
+      PAGE_SIZE,
     )
 
     const tasks = await apolloClient
@@ -43,7 +41,6 @@ export const tasksPageGetInitialProps: Page<TasksPageProps>['getInitialProps'] =
     return {
       selectedStatus,
       page,
-      projectId,
-      statusCode: !tasks?.length && page > 1 ? 404 : undefined,
+      statusCode: !tasks?.length ? 404 : undefined,
     }
   }

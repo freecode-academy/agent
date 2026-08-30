@@ -17,7 +17,6 @@ import { SendTransfer } from './SendTransfer'
 import { StatusToggler } from './StatusToggler'
 import { SeparatorStyled } from 'src/components/Separator/styles'
 import { GetReferrerToken } from './GetReferrerToken'
-import { UserTechnologies } from './UserTechnologies'
 import { getResizedImagePath } from 'src/helpers/getResizedImagePath'
 
 type UserPageViewProps = {
@@ -82,14 +81,6 @@ export const UserPageView: React.FC<UserPageViewProps> = ({
           </UserPageActionsStyled>
         </>
       )}
-
-      {(user.UserTechnologies && user.UserTechnologies?.length > 0) ||
-      isCurrentUser ? (
-        <UserTechnologies
-          userTechnologies={user.UserTechnologies ?? []}
-          isCurrentUser={isCurrentUser}
-        />
-      ) : null}
 
       {!isCurrentUser && currentUser && (
         <SendTransfer currentUser={currentUser} recipient={user} />

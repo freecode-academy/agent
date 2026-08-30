@@ -1,1 +1,1 @@
-export { UsersPage as default } from 'src/components/pages/Users'
+export { UsersPageFreecode as default } from 'src/FreecodeAcademy/pages/Users'

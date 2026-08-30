@@ -4,9 +4,9 @@ import {
   useTasksWithCountQuery,
 } from 'src/gql/generated'
 
-import { TasksView } from 'src/components/pages/Tasks/View'
 import Link from 'next/link'
-import { Buttons, PrimaryBtn } from '@/styles'
+import { Buttons, PrimaryBtn } from '@/Layout/styles'
+import { TasksView } from '@/pages/Tasks/View'
 
 type ProjectTasksProps = {
   project: ProjectFragment

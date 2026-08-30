@@ -4,32 +4,20 @@ import {
   UserStatusEnum,
 } from 'src/gql/generated'
 
-const limit = 6
-
 type getUsersQueryVariablesProps = {
   page: number
+  first?: number
   currentUser: MeUserFragment | null | undefined
 }
 
 export function getUsersQueryVariables({
   currentUser,
   page,
+  first = 10,
 }: getUsersQueryVariablesProps): UsersConnectionQueryVariables {
-  const shortSkip = limit
-
-  const first = page > 1 ? limit : shortSkip
-
   return {
-    where: {
-      status: currentUser?.sudo ? undefined : UserStatusEnum.ACTIVE,
-      image: {
-        not: {
-          equals: '',
-        },
-      },
-    },
-    skip:
-      page > 2 ? (page - 2) * first + shortSkip : page === 2 ? shortSkip : 0,
+    where: { status: currentUser ? undefined : UserStatusEnum.ACTIVE },
+    skip: (page - 1) * first,
     first,
   }
 }

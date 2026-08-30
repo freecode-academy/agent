@@ -5,20 +5,18 @@ import { TasksView } from './View'
 import { SeoHeaders } from 'src/components/seo/SeoHeaders'
 import { getTasksWithCountQueryVariables } from './helpers'
 import { tasksPageGetInitialProps } from './tasksPageGetInitialProps'
-import { useAppContext } from 'src/components/AppContext'
+
+const PAGE_SIZE = 20
 
 export const TasksPage: Page<TasksPageProps> = ({
   selectedStatus,
   page,
-  projectId,
   siteOrigin,
 }) => {
-  const { user: currentUser } = useAppContext()
-
   const variables = getTasksWithCountQueryVariables(
     selectedStatus,
     page,
-    projectId,
+    PAGE_SIZE,
   )
 
   const response = useTasksWithCountQuery({
@@ -28,6 +26,8 @@ export const TasksPage: Page<TasksPageProps> = ({
   })
 
   const tasks = response.data?.tasks || []
+  const totalCount = response.data?.tasksCount || 0
+  const totalPages = Math.ceil(totalCount / PAGE_SIZE)
 
   return (
     <>
@@ -40,10 +40,9 @@ export const TasksPage: Page<TasksPageProps> = ({
       />
       <TasksView
         tasks={tasks}
-        page={page}
-        limit={response.variables.take ?? 0}
-        count={response.data?.tasksCount ?? 0}
-        showContent={page < 2 && !currentUser}
+        loading={response.loading}
+        currentPage={page}
+        totalPages={totalPages}
       />
     </>
   )

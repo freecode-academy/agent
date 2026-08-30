@@ -16,7 +16,7 @@ export const TaskCreatePage: Page = () => {
       <TaskEditForm
         task={undefined}
         cancelHandler={undefined}
-        // parentId={undefined}
+        parentId={undefined}
       />
     </>
   )

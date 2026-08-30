@@ -2,7 +2,7 @@ import React from 'react'
 
 import { CodeChallengeDiscussProps } from './interfacse'
 import { SeoHeaders } from 'src/components/seo/SeoHeaders'
-import { TopicView } from 'src/components/pages/Resources/Resource/view/Topic'
+import { TopicView } from '@/pages/Resources/Resource/view/Topic'
 
 const CodeChallengeDiscuss: React.FC<CodeChallengeDiscussProps> = (props) => {
   const { challenge, topicId } = props

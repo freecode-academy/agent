@@ -31,6 +31,6 @@ export const usersPageGetInitialProps: Page<UsersPageProps>['getInitialProps'] =
 
     return {
       page,
-      statusCode: !users?.length && page > 1 ? 404 : undefined,
+      statusCode: !users?.length ? 404 : undefined,
     }
   }

@@ -1,1 +1,1 @@
-export { BlogsPage as default } from 'src/components/pages/Blogs'
+export { BlogsPage as default } from '@/pages/Blogs'

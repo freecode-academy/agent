@@ -24,17 +24,20 @@ import {
   Sub,
   Section,
   SectionLede,
-} from 'src/components/LayoutV2/styles'
-import { WhyItem, WhyStrip } from 'src/components/LayoutV2/components/WhyStrip'
+} from 'src/FreecodeAcademy/Layout/styles'
+import {
+  WhyItem,
+  WhyStrip,
+} from 'src/FreecodeAcademy/Layout/components/WhyStrip'
 // import {
 //   Badge,
 //   BadgeRow,
 //   badgeTone,
-// } from 'src/components/LayoutV2/components/Badge'
+// } from 'src/FreecodeAcademy/Layout/components/Badge'
 import {
   CrossCard,
   CrossLinks,
-} from 'src/components/LayoutV2/components/CrossLinks'
+} from 'src/FreecodeAcademy/Layout/components/CrossLinks'
 import { UserLink } from 'src/components/Link/User'
 import Link from 'next/link'
 import { makeProjectLink } from 'src/components/Link/Project'

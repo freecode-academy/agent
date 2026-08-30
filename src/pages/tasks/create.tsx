@@ -1,1 +1,1 @@
-export { TaskCreatePage as default } from 'src/components/pages/Tasks/Task/Create'
+export { TaskCreatePageFreecode as default } from '@/pages/Tasks/Task/Create'

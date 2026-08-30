@@ -20,7 +20,7 @@ import { SnackbarProvider, Snackbar } from 'src/ui-kit/Snackbar'
 import { getInitialProps } from './getInitialProps'
 import { useScrollPage } from 'src/hooks/useScrollPage'
 import { ChatProvider } from 'src/components/Chat/ChatWidget/context'
-import { LayoutV2 as Layout } from 'src/components/LayoutV2'
+import { LayoutFreecode as Layout } from 'src/FreecodeAcademy/Layout'
 import { LexiconProvider } from 'src/Custom/Lexicon'
 
 export const App: MainApp<AppProps> = ({ Component, pageProps, locale }) => {

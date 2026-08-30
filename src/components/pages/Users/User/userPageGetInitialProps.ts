@@ -8,15 +8,9 @@ export const userPageGetInitialProps: Page<UserPageProps>['getInitialProps'] =
     const userId: string | undefined =
       typeof query.id === 'string' && query.id ? query.id : undefined
 
-    const username: string | undefined =
-      typeof query.username === 'string' && query.username
-        ? query.username
-        : undefined
+    const variables = getUserQueryVariables(userId)
 
-    const variables =
-      userId || username ? getUserQueryVariables(userId, username) : undefined
-
-    const user = variables
+    const user = userId
       ? await apolloClient
           // eslint-disable-next-line @typescript-eslint/no-deprecated
           .query<UserQuery, UserQueryVariables>({
@@ -28,7 +22,6 @@ export const userPageGetInitialProps: Page<UserPageProps>['getInitialProps'] =
 
     return {
       userId,
-      username,
       statusCode: !user ? 404 : undefined,
     }
   }

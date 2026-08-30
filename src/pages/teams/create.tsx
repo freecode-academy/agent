@@ -1,1 +1,1 @@
-export { TeamCreatePage as default } from 'src/components/pages/Teams/Team/Create'
+export { TeamCreatePage as default } from '@/pages/Teams/Team/Create'

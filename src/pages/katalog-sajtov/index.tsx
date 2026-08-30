@@ -1,1 +1,1 @@
-export { ResourcesProjectsPage as default } from 'src/components/pages/Resources/Projects'
+export { ResourcesProjectsPage as default } from '@/pages/Resources/Projects'

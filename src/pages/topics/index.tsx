@@ -1,1 +1,1 @@
-export { TopicsPage as default } from 'src/components/pages/Topics'
+export { TopicsPageFreecode as default } from '@/pages/Topics'
