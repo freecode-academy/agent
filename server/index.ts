@@ -5,7 +5,7 @@ import './prisma'
 import { setupGraphqlServer } from './graphqlServer'
 import { initN8n, stopN8n } from './n8n'
 import { runBootstrap } from './n8n/bootstrap'
-import { generateSitemap } from './sitemap'
+import { generateSitemap } from './sitemap/old'
 import { imageResizerMiddleware } from './middleware/imageResizer'
 
 const withN8N = process.env.N8N_ENABLED === 'true'
