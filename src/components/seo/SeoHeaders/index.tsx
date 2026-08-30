@@ -34,7 +34,7 @@ export const SeoHeaders: React.FC<SeoHeadersProps> = ({
 }) => {
   const { locale } = useAppContext()
 
-  const isInternational = true
+  const isInternational = false
   const localePrefix = getLocalePrefix(locale)
 
   let href = siteOrigin
