@@ -11,6 +11,7 @@ import { JsonLd } from 'src/components/seo/JsonLd'
 import { ProjectResourceView } from './view/Project'
 import { TeamResourceView } from './view/Team'
 import { makeResourceLink } from 'src/components/Link/Resource'
+import { ResourcePageStyled } from './styles'
 
 export const ResourcePage: Page<ResourcePageProps> = (props) => {
   const { uri, page, siteOrigin } = props
@@ -98,7 +99,7 @@ export const ResourcePage: Page<ResourcePageProps> = (props) => {
 
       {blogPostingSchema && <JsonLd data={blogPostingSchema} />}
 
-      {content}
+      <ResourcePageStyled>{content}</ResourcePageStyled>
     </>
   )
 }

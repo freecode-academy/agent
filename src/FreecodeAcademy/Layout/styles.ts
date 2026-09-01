@@ -4,6 +4,9 @@ import styled, { css, keyframes } from 'styled-components'
 
 import heroImg from '@/assets/hero.jpg'
 import { minWidth } from 'src/theme/helpers'
+import { ResourcePageStyled } from '@/pages/Resources/Resource/styles'
+import { ResourcesPageViewStyled } from '@/pages/Topics/View/styles'
+import { UserPageViewStyled } from '@/pages/Users/User/View/styles'
 
 const fadeUp = keyframes`
   from { opacity: 0; transform: translateY(14px); }
@@ -401,4 +404,15 @@ export const Buttons = styled.div`
   ${minWidth.sm(css`
     flex-direction: row;
   `)}
+`
+
+export const LayoutFreecodeStyled = styled.div`
+  display: contents;
+
+  ${ResourcePageStyled}, ${ResourcesPageViewStyled}, ${UserPageViewStyled} {
+    padding: 15px;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
 `

@@ -1,1 +1,1 @@
-export { ResourceFreecode as default } from '@/components/Resource'
+export { ResourcePage as default } from '@/pages/Resources/Resource'
