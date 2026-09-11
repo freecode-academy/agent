@@ -3,8 +3,6 @@ import { FormattedDate } from 'src/ui-kit/format/FormattedDate'
 import { Markdown } from 'src/components/Markdown'
 import {
   ResourceStyled,
-  ResourceBannerStyled,
-  ResourceTitleStyled,
   ResourceMetaStyled,
   ResourceAuthorStyled,
   ResourceDateStyled,
@@ -15,6 +13,7 @@ import { ResourceVariant } from './interfaces'
 import { ResourceLink } from 'src/components/Link/Resource'
 import { SeparatorStyled } from 'src/components/Separator/styles'
 import { UserLink } from 'src/components/Link/User'
+import { ResourceFullView } from './Full'
 
 type ResourceProps = {
   resource: ResourceFragment
@@ -25,14 +24,6 @@ export const ResourceFreecode: React.FC<ResourceProps> = ({
   resource,
   variant = 'list',
 }) => {
-  const title = resource.name
-
-  const isPublished = resource.published && !resource.deleted
-
-  const titleElement = (
-    <ResourceTitleStyled $variant={variant}>{title}</ResourceTitleStyled>
-  )
-
   let dateNode: React.ReactNode | null = resource.createdAt && (
     <ResourceDateStyled>
       <FormattedDate value={resource.createdAt} format="dateMedium" />
@@ -43,20 +34,12 @@ export const ResourceFreecode: React.FC<ResourceProps> = ({
     dateNode = <ResourceLink resource={resource}>{dateNode}</ResourceLink>
   }
 
-  return (
+  return variant === 'full' ? (
+    <ResourceFullView resource={resource} />
+  ) : (
     <ResourceStyled $variant={variant}>
-      {variant === 'full' && !isPublished && (
-        <ResourceBannerStyled>
-          This resource is not published
-        </ResourceBannerStyled>
-      )}
-
       <ResourceStyledToolbar>
-        {variant === 'list' ? (
-          <ResourceLink resource={resource} />
-        ) : variant === 'full' ? (
-          titleElement
-        ) : null}
+        {variant === 'list' ? <ResourceLink resource={resource} /> : null}
 
         <SeparatorStyled />
         {/* <ResourceStatusChip resource={resource} /> */}
@@ -77,7 +60,7 @@ export const ResourceFreecode: React.FC<ResourceProps> = ({
           <Markdown>{resource.intro}</Markdown>
         ) : (
           <>
-            <Markdown>{resource.contentV2}</Markdown>
+            <Markdown>{resource.content}</Markdown>
 
             {/* {currentUser && <CreateResourceComment resource={resource} />} */}
           </>

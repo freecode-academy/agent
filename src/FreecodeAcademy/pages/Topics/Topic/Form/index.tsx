@@ -48,7 +48,7 @@ function getDefaultValues(
     title: resource?.name ?? '',
     description: resource?.longtitle ?? '',
     intro: resource?.intro ?? '',
-    content: resource?.contentV2 ?? '',
+    contentV3: resource?.content || '',
     // type: resource?.type ?? ResourceType.TOPIC,
     // status: resource?.status ?? ResourceStatus.PUBLISHED,
   }
@@ -68,7 +68,7 @@ export const schema: yup.ObjectSchema<FormData> = yup.object().shape({
   title: yup.string().required(),
   description: yup.string(),
   intro: yup.string(),
-  content: yup.string().required(),
+  contentV3: yup.string().required(),
   type: yup
     .mixed<ResourceType>()
     .oneOf(Object.values(ResourceType))
@@ -212,7 +212,7 @@ export const ResourceEditForm: React.FC<ResourceEditFormProps> = ({
   const fieldRenderer = useCallback<
     ControllerProps<
       FormData,
-      'content' | 'description' | 'intro' | 'title' | 'image'
+      'contentV3' | 'description' | 'intro' | 'title' | 'image'
     >['render']
   >(
     ({ field: { name, value, onChange, onBlur }, fieldState: { error } }) => {
@@ -271,7 +271,7 @@ export const ResourceEditForm: React.FC<ResourceEditFormProps> = ({
         //     )
         //   }
         //   break
-        case 'content':
+        case 'contentV3':
           label = 'Content'
           EditorComponent = MarkdownEditor
           break
@@ -311,7 +311,7 @@ export const ResourceEditForm: React.FC<ResourceEditFormProps> = ({
         {/* {resource?.id && <Controller name="status" render={fieldRenderer} />} */}
         <Controller name="intro" render={fieldRenderer} />
         {/* <Controller name="intro" render={fieldRenderer} /> */}
-        <Controller name="content" render={fieldRenderer} />
+        <Controller name="contentV3" render={fieldRenderer} />
 
         <ResourceEditFormToolbarStyled>
           {cancelHandler && (

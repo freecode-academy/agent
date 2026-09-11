@@ -1,4 +1,4 @@
-import { ResourcesConnectionQueryVariables } from 'src/gql/generated'
+import { ResourcesConnectionQueryVariables, SortOrder } from 'src/gql/generated'
 
 type getResourcesConnectionQueryVariablesProps =
   Partial<ResourcesConnectionQueryVariables> & {
@@ -12,8 +12,11 @@ export function getResourcesConnectionQueryVariables({
   ...other
 }: getResourcesConnectionQueryVariablesProps): ResourcesConnectionQueryVariables {
   return {
-    ...other,
     skip: (page - 1) * first,
     first,
+    orderBy: {
+      createdAt: SortOrder.DESC,
+    },
+    ...other,
   }
 }

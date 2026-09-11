@@ -58,7 +58,6 @@ fragment ResourceNoNesting on Resource {
   type
   name
   longtitle
-  # content
   intro
   # components
   # contentText
@@ -83,7 +82,9 @@ fragment ResourceNoNesting on Resource {
   image
 
   ... @include(if: $resourceWithDetailes) {
-    contentV2
+    content
+    # contentV2
+    contentOld
   }
 }
 

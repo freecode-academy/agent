@@ -21,8 +21,20 @@ builder.prismaObject('Resource', {
     // contentText: t.exposeString('contentText', { nullable: true }),
     // contentV2: t.exposeString('contentV2', { nullable: true }),
 
-    contentV2: t.string({
-      resolve: ({ contentV2, contentText }) => contentV2 || contentText,
+    content: t.string({
+      resolve: ({ contentV2, contentText, contentV3 }) =>
+        contentV3 || contentV2 || contentText,
+    }),
+    // contentV2: t.string({
+    //   resolve: ({ contentV2, contentText, contentV3 }) =>
+    //     contentV3 ? null : contentV2 || contentText,
+    // }),
+    // contentV3: t.string({
+    //   resolve: ({ contentV2, contentText }) => contentV2 || contentText,
+    // }),
+    contentOld: t.string({
+      resolve: ({ contentV2, contentText }, _, { currentUser }) =>
+        currentUser?.sudo === true ? contentV2 || contentText : null,
     }),
     published: t.exposeBoolean('published', {
       nullable: false,

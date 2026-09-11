@@ -2,19 +2,23 @@ import { Header } from './components/Header'
 import { Footer } from './components/Footer'
 import { ChatWidget } from 'src/components/Chat/ChatWidget'
 import { LayoutFreecodeStyled } from './styles'
+import { FreecodeGlobalStyles } from '@/styles'
 
 export const LayoutFreecode: React.FC<React.PropsWithChildren> = ({
   children,
 }) => {
   return (
-    <LayoutFreecodeStyled>
-      <Header />
+    <>
+      <FreecodeGlobalStyles />
+      <LayoutFreecodeStyled>
+        <Header />
 
-      {children}
+        {children}
 
-      <Footer />
+        <Footer />
 
-      <ChatWidget />
-    </LayoutFreecodeStyled>
+        <ChatWidget />
+      </LayoutFreecodeStyled>
+    </>
   )
 }

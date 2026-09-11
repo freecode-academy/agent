@@ -30,11 +30,13 @@ builder.mutationField('updateResource', (t) =>
         throw new Error('Forbidden')
       }
 
+      const { contentV3: content } = args.data
+
       const validation = validateResource({
         title: args.data.title ?? resource.name,
         description: args.data.description ?? resource.longtitle,
         intro: args.data.intro ?? resource.intro,
-        content: args.data.content ?? resource.contentV2 ?? '',
+        content: content ?? resource.contentV3,
       })
 
       if (!validation.valid) {
@@ -64,7 +66,7 @@ builder.mutationField('updateResource', (t) =>
           name: args.data.title ?? undefined,
           longtitle: args.data.description ?? undefined,
           intro: args.data.intro ?? undefined,
-          contentV2: args.data.content ?? undefined,
+          contentV3: content ?? undefined,
           // status: args.data.status ?? undefined,
           // revision: { increment: 1 },
           // signature: null,

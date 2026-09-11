@@ -16,3 +16,4 @@ export * from '../UserTechnology'
 
 import './File'
 import './Offer'
+import './admin'

@@ -1340,8 +1340,10 @@ model Resource {
   content     Json?
   contentText String?      @db.Text
 
-  intro                                     String?         @db.Text
-  contentV2                                 String?         @db.Text
+  intro     String? @db.Text
+  contentV2 String? @db.Text
+  contentV3 String? @db.Text
+
   published                                 Boolean         @default(true)
   deleted                                   Boolean         @default(false)
   hidemenu                                  Boolean         @default(false)

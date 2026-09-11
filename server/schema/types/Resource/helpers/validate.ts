@@ -2,7 +2,7 @@ export interface ResourceValidationInput {
   title?: string | null
   description?: string | null
   intro?: string | null
-  content: string
+  content: string | null | undefined
 }
 
 export interface ValidationError {

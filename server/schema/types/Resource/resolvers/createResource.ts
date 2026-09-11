@@ -17,8 +17,15 @@ builder.mutationField('createResource', (t) =>
         throw new Error('Unauthorized')
       }
 
-      const { title, description, intro, content, type, parentId, ...other } =
-        args.data
+      const {
+        title,
+        description,
+        intro,
+        contentV3: content,
+        type,
+        parentId,
+        ...other
+      } = args.data
 
       if (!title) {
         throw new Error('title is empty')
@@ -70,7 +77,7 @@ builder.mutationField('createResource', (t) =>
           name: title,
           longtitle: description,
           intro,
-          contentV2: content,
+          contentV3: content,
           // status: status ?? 'draft',
           CreatedBy: currentUser.id,
           // parentId,

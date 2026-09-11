@@ -27,7 +27,7 @@ export const BlogView: React.FC<BlogViewProps> = ({ resource, page }) => {
         <>
           {resource.name}
 
-          <Markdown>{resource.contentV2}</Markdown>
+          <Markdown>{resource.content}</Markdown>
         </>
       )}
 

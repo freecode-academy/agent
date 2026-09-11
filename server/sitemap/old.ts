@@ -10,6 +10,7 @@ const SITEMAP_LIMIT = 1000
 export type SitemapSection =
   | 'main'
   | 'users'
+  | 'topics'
   | 'resources'
   | 'tags'
   | 'offers'
@@ -50,12 +51,28 @@ const generateSitemapXML = (
   return xml
 }
 
+const resourcesWhereCommon = buildResourcesWhere()
+
+const topicsWhere: Prisma.ResourceWhereInput = {
+  ...resourcesWhereCommon,
+  type: 'Topic',
+}
+
+const otherResourcesWhere: Prisma.ResourceWhereInput = {
+  ...resourcesWhereCommon,
+  type: {
+    not: 'Topic',
+  },
+}
+
 const getSectionCount = async (section: SitemapSection): Promise<number> => {
   switch (section) {
     case 'users':
       return prismaClient.user.count({ where: usersWhere })
+    case 'topics':
+      return prismaClient.resource.count({ where: topicsWhere })
     case 'resources':
-      return prismaClient.resource.count({ where: resourcesWhere })
+      return prismaClient.resource.count({ where: otherResourcesWhere })
     case 'tags':
       return prismaClient.tag.count({ where: tagsWhere })
     case 'offers':
@@ -76,6 +93,7 @@ export const generateSitemapIndex = async ({
 }: SitemapGeneratorProps): Promise<string> => {
   const [
     usersCount,
+    topicsCount,
     resourcesCount,
     tagsCount,
     offersCount,
@@ -84,6 +102,7 @@ export const generateSitemapIndex = async ({
     worklogsCount,
   ] = await Promise.all([
     getSectionCount('users'),
+    getSectionCount('topics'),
     getSectionCount('resources'),
     getSectionCount('tags'),
     getSectionCount('offers'),
@@ -93,6 +112,7 @@ export const generateSitemapIndex = async ({
   ])
 
   const usersPages = Math.ceil(usersCount / SITEMAP_LIMIT)
+  const topicsPages = Math.ceil(topicsCount / SITEMAP_LIMIT)
   const resourcesPages = Math.ceil(resourcesCount / SITEMAP_LIMIT)
   const tagsPages = Math.ceil(tagsCount / SITEMAP_LIMIT)
   const offersPages = Math.ceil(offersCount / SITEMAP_LIMIT)
@@ -104,6 +124,10 @@ export const generateSitemapIndex = async ({
   xml += '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
 
   xml += `  <sitemap><loc>${siteOrigin}/sitemap.xml?section=main</loc></sitemap>\n`
+
+  for (let i = 1; i <= topicsPages; i++) {
+    xml += `  <sitemap><loc>${siteOrigin}/sitemap.xml?section=topics&amp;page=${i}</loc></sitemap>\n`
+  }
 
   for (let i = 1; i <= usersPages; i++) {
     xml += `  <sitemap><loc>${siteOrigin}/sitemap.xml?section=users&amp;page=${i}</loc></sitemap>\n`
@@ -172,18 +196,22 @@ export const generateSitemapMain = async (
   return generateSitemapXML(xmlData, props)
 }
 
-const resourcesWhere = buildResourcesWhere()
-
-export const generateSitemapResources = async (
+const generateResourcesSitemap = async (
   props: SitemapGeneratorProps & { page: number },
+  where: Prisma.ResourceWhereInput,
 ): Promise<string> => {
   const resources = await prismaClient.resource.findMany({
-    where: resourcesWhere,
+    where,
     orderBy: {
       createdAt: 'desc',
     },
     take: SITEMAP_LIMIT,
     skip: (props.page - 1) * SITEMAP_LIMIT,
+    select: {
+      id: true,
+      updatedAt: true,
+      uri: true,
+    },
   })
 
   const xmlData: UrlItem[] = resources.map((n) => {
@@ -197,6 +225,14 @@ export const generateSitemapResources = async (
 
   return generateSitemapXML(xmlData, props)
 }
+
+export const generateSitemapTopics = (
+  props: SitemapGeneratorProps & { page: number },
+): Promise<string> => generateResourcesSitemap(props, topicsWhere)
+
+export const generateSitemapResources = (
+  props: SitemapGeneratorProps & { page: number },
+): Promise<string> => generateResourcesSitemap(props, otherResourcesWhere)
 
 const tagsWhere: Prisma.TagWhereInput = {}
 
@@ -412,6 +448,9 @@ export const generateSitemap = async (req: Request, res: Response) => {
       break
     case 'users':
       res.send(await generateSitemapUsers({ siteOrigin, page }))
+      break
+    case 'topics':
+      res.send(await generateSitemapTopics({ siteOrigin, page }))
       break
     case 'resources':
       res.send(await generateSitemapResources({ siteOrigin, page }))

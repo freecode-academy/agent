@@ -33,7 +33,7 @@ export const ResourceCreateInput = builder.inputType('ResourceCreateInput', {
     title: t.string({ required: false }),
     description: t.string({ required: false }),
     intro: t.string({ required: false }),
-    content: t.string({ required: true }),
+    contentV3: t.string({ required: true }),
     type: t.field({ type: ResourceTypeEnum, required: false }),
     parentId: t.id({
       description: 'Reply',
@@ -49,7 +49,7 @@ export const ResourceUpdateDataInput = builder.inputType(
       title: t.string({ required: false }),
       description: t.string({ required: false }),
       intro: t.string({ required: false }),
-      content: t.string({ required: false }),
+      contentV3: t.string({ required: false }),
       type: t.field({ type: ResourceTypeEnum, required: false }),
       image: t.string({ required: false }),
     }),
