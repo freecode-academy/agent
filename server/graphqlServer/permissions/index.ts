@@ -54,8 +54,8 @@ const ruleTree = {
     // filesCount: isSudo,
   },
   Mutation: {
-    createResource: isSudo,
-    updateResource: isSudo,
+    createResource: isActive,
+    updateResource: isActive,
 
     // Example: require authentication for specific mutations
     // someProtectedMutation: isAuthenticated,
