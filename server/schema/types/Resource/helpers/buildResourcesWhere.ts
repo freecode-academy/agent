@@ -9,13 +9,13 @@ interface ResourceWhereInput {
 
 export function buildResourcesWhere(
   where?: ResourceWhereInput | null | undefined,
-  ctx?: PrismaContext | undefined,
+  _ctx?: PrismaContext | undefined,
 ): Prisma.ResourceWhereInput {
-  const { currentUser } = ctx || {}
+  // const { currentUser } = ctx || {}
 
   const { type, blogId, topicId, ...other } = where || {}
 
-  let filterByStatus: Prisma.ResourceWhereInput['AND'] | undefined = [
+  const filterByStatus: Prisma.ResourceWhereInput['AND'] | undefined = [
     {
       published: true,
     },
@@ -24,20 +24,20 @@ export function buildResourcesWhere(
     },
   ]
 
-  if (currentUser) {
-    if (currentUser.sudo) {
-      filterByStatus = undefined
-    } else {
-      filterByStatus = [
-        {
-          CreatedBy: currentUser.id,
-        },
-        {
-          AND: filterByStatus,
-        },
-      ]
-    }
-  }
+  // if (currentUser) {
+  //   if (currentUser.sudo) {
+  //     filterByStatus = undefined
+  //   } else {
+  //     filterByStatus = [
+  //       {
+  //         CreatedBy: currentUser.id,
+  //       },
+  //       {
+  //         AND: filterByStatus,
+  //       },
+  //     ]
+  //   }
+  // }
 
   const result: Prisma.ResourceWhereInput = {
     type: type || undefined,
