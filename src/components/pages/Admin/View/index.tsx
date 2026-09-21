@@ -8,6 +8,7 @@ export const AdminPageView: React.FC = () => {
       <AdminPageViewNavStyled>
         <Link href={'/admin/search-agent'}>Search agent</Link>
         <Link href={'/admin/tts'}>TTS</Link>
+        <Link href={'/admin/redirect-rules'}>Redirect rules</Link>
       </AdminPageViewNavStyled>
     </AdminPageViewStyled>
   )
